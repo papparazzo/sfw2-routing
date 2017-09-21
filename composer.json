@@ -1,0 +1,7 @@
+{
+    "name": "sfw2/routing",
+    "type": "library",
+    "require": {
+        "php": "^7.0"
+    }
+}
