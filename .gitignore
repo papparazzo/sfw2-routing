@@ -1,4 +1,4 @@
-/vendor
+/src/vendor
 /composer.lock
 
 # netbeans project files
