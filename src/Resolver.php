@@ -67,6 +67,15 @@ class Resolver {
         }
     }
 
+    protected function getData($module, $controller, $action) {
+        $ctrl = $this->getCtrlInstance($module, $controller, $action);
+        $data = $ctrl->{$action}();
+        if($data == '') {
+            throw new ResolverException('no data', ResolverException::NO_DATA_FOUND);
+        }
+        return $data;
+    }
+
     protected function getCtrlInstance($module, $controller, $action) {
         $msg = $module . '/' . $controller . '/' . $action;
         if(!isset($this->controllers[$module][$controller])) {
@@ -117,14 +126,5 @@ class Resolver {
             require_once($classPath);
         }
         return true;
-    }
-
-    protected function getData($module, $controller, $action) {
-        $ctrl = $this->getCtrlInstance($module, $controller, $action);
-        $data = $ctrl->{$action}();
-        if($data == '') {
-            throw new ResolverException('no data', ResolverException::NO_DATA_FOUND);
-        }
-        return $data;
     }
 }
