@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SFW2\\": "src/"
+            "SFW2\\Routing\\": "src/"
         }
     }
 }

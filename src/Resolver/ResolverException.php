@@ -20,9 +20,9 @@
  *
  */
 
-namespace SFW2\Resolver;
+namespace SFW2\Routing\Resolver;
 
-use SFW2\SFW2Exception;
+use SFW2\Core\SFW2Exception;
 
 class ResolverException extends SFW2Exception {
     const PAGE_NOT_FOUND = 1;

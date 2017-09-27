@@ -20,9 +20,9 @@
  *
  */
 
-namespace SFW2;
+namespace SFW2\Routing;
 
-use SFW2\Resolver\ResolverException;
+use SFW2\Routing\Resolver\ResolverException;
 use Exception;
 
 class Resolver {
