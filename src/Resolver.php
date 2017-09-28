@@ -24,13 +24,21 @@ namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
 use Exception;
+use Dice\Dice;
 
 class Resolver {
 
     protected $controllers = array();
 
-    public function __construct(Array $controllers) {
+    /**
+     *
+     * @var \Dice\Dice
+     */
+    protected $container = null;
+
+    public function __construct(Array $controllers, Dice\Dice $container) {
         $this->controllers = $controllers;
+        $this->container = $container;
     }
 
     public function getContent(Request $request) {
@@ -97,10 +105,12 @@ class Resolver {
                 ResolverException::PAGE_NOT_FOUND
             );
         }
-        // FIXME DI-Container
+
         $data  = $class[2] ?? [];
         $class = $class[0];
-        return new $class($this->config, $data);
+        return $this->container->create($class);
+
+ #       return new $class($this->config, $data);
     }
 
     protected function isCallablePublicClassMethod($class, $method) {
