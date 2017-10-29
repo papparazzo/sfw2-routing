@@ -20,7 +20,7 @@
  *
  */
 
-namespace SFW2\Routing\Dispatcher;
+namespace SFW2\Routing\Dispatcher\Handler;
 
 use SFW2\Routing\Dispatcher\Handler;
 
