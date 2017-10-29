@@ -23,46 +23,46 @@
 namespace SFW2\Routing\Dispatcher;
 
 use SFW2\Routing\Dispatcher\Handler;
+use SFW2\Core\SFW2Exception;
 
 class FatalError extends Handler {
 
     public function handle() {
-        if(
-            $this->container['exception'] == null ||
-            !($this->container['exception'] instanceof Throwable)
-        ) {
-            $this->container['exception'] = new \SFW\Exception(
+        $exception = $this->container['exception'];
+
+        if($exception == null || !($exception instanceof Throwable)) {
+            $exception = new SFW2Exception(
                 'unknown exception',
-                \SFW\Exception::UNKNOWN
+                SFW2Exception::UNKNOWN
             );
-        } else if(!($this->container['exception'] instanceof \SFW\Exception)) {
-            $this->container['exception'] = new \SFW\Exception(
-                $this->container['exception']->getMessage(),
-                \SFW\Exception::UNKNOWN,
-                $this->container['exception']
+        } else if(!($exception instanceof SFW2Exception)) {
+            $exception = new SFW2Exception(
+                $exception->getMessage(),
+                SFW2Exception::UNKNOWN,
+                $exception
             );
         }
-        $this->saveError($this->container['exception']);
+        $this->saveError($exception);
         header("HTTP/1.0 500 Internal Server Error");
         $view = new \SFW\View();
         $view->assign('email',   $this->container['eMailWebMaster']);
         $view->assign('title',   $this->container['title']);
-        $view->assign('ex',      $this->container['exception']);
+        $view->assign('ex',      $exception);
         $view->assign('isDebug', $this->container['debug']);
         $view->showContent($this->config->getTemplateFile('exframe'));
     }
 
-    protected function saveError($ex) {
-        if($ex == null) {
+    protected function saveError(SFW2Exception $exception) {
+        if($exception == null) {
             return;
         }
         $fd = fopen(
             $this->container['path'] . DIRECTORY_SEPARATOR .
-            $ex->getIdentifier() . '.log',
+            $exception->getIdentifier() . '.log',
             'a'
         );
-        fwrite($fd, $ex->getTimeStamp());
-        fwrite($fd, $ex->__toString());
+        fwrite($fd, $exception->getTimeStamp());
+        fwrite($fd, $exception->__toString());
         fclose($fd);
     }
 }
