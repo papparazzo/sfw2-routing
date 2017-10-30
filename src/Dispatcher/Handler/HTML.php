@@ -24,12 +24,17 @@ namespace SFW2\Routing\Dispatcher\Handler;
 
 use SFW2\Routing\Dispatcher\Handler;
 
-class Offline extends Handler {
+class HTML extends Handler {
 
     public function handle() {
         $view = new \SFW\View();
-        $view->assign('email', $this->container['eMailWebMaster']);
-        $view->assign('title', $this->container['title']);
+        $view->appendCSSFiles($this->container['cssfiles']);
+        $view->appendJSFiles($this->container['jsfiles']);
+
+        $view->assign('content',       $this->container['content']);
+        $view->assign('title',         $this->container['title']);
+        $view->assign('menu',          $this->container['menu']);
+        $view->assign('authenticated', $this->container['authenticated']);
         $view->showContent($this->config->getTemplateFile('olframe'));
     }
 }
