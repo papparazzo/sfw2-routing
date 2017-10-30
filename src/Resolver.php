@@ -42,37 +42,11 @@ class Resolver {
     }
 
     public function getContent(Request $request) {
-        try {
-            return $this->getData(
-                $request->getModule(),
-                $request->getController(),
-                $request->getAction()
-            );
-        } catch(ResolverException $ex) {
-            switch($ex->getCode()) {
-                case ResolverException::PAGE_NOT_FOUND:
-                    $action = 'pageNotFound';
-                    break;
-
-                case ResolverException::FILE_NOT_FOUND:
-                    $action = 'fileNotFound';
-                    break;
-
-                case ResolverException::NO_DATA_FOUND:
-                    $action = 'noDataFound';
-                    break;
-
-                case ResolverException::NO_PERMISSION:
-                    $action = 'noPermission';
-                    break;
-
-                default:
-                    $action = 'index';
-                    break;
-
-            }
-            return $this->getData('sfw2', 'error', $action);
-        }
+        return $this->getData(
+            $request->getModule(),
+            $request->getController(),
+            $request->getAction()
+        );
     }
 
     protected function getData($module, $controller, $action) {
