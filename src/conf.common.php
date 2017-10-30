@@ -57,7 +57,6 @@ return [
         "keywords"       => "Tennis, Bogenschießen, Fußball, Turnen, Sportverein, Alvesrode, Springe",
         "DC.title"       => "VfV Concordia, Alvesrode",
         "DC.creator"     => "Stefan Paproth",
-        /*"DC.subject"     => "<?php echo($this->title);?>", Hier Project -> Title */
         "DC.description" => "Sportverein in Alvesrode",
         "DC.publisher"   => "VfV Concordia Alvesrode",
         "DC.description" => "Rund um den VfV Concordia, Alvesrode",
