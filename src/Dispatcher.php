@@ -30,11 +30,11 @@ class Dispatcher {
     const HTTP_STATUS_NOT_FOUND             = 1;
     const HTTP_STATUS_FORBIDDEN             = 2;
 
-    public function __construct() {
-        ;
-    }
+    public $content = '';
 
-    public function setHeader($headerType) {
+    public function __construct($content, $headerType = null) {
+        $this->content = $content;
+
         switch($headerType) {
             case self::HTTP_STATUS_INTERNAL_SERVER_ERROR:
                 header("HTTP/1.0 500 Internal Server Error");
@@ -52,13 +52,13 @@ class Dispatcher {
 
     protected function dispatchRequestType() {
 
-        if(is_file($data['content'])) {
+        if(is_file($this->content)) {
             return new Dispatcher\Handler\FileDownload();
         }
-        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && !is_array($data['content'])) {
+        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && !is_array($this->content)) {
             return new Dispatcher\Handler\XML($this->registry, $data);
         }
-        if(is_array($data['content'])) {
+        if(is_array($this->content)) {
             return new Dispatcher\Handler\Json($this->registry, $data);
         }
         return new HTML($this->registry, $data);
