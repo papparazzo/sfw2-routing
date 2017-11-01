@@ -115,6 +115,36 @@ class Response {
         return $this->handle($title, $caption, $description);
     }
 
+    public function offline() {
+        $title = 'Offline';
+        $caption = 'Seite offline';
+        $description =
+            'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
+            'Webseiten im Moment leider nicht zu erreichen. ' .
+            'Bitte versuche es später noch einmal.';
+        return $this->handle($title, $caption, $description);
+    }
+
+    public function error() {
+        $title = 'Achtung!';
+        $caption = 'Schwerwiegender Fehler';
+        $description =
+            'Es ist ein schwerwiegender interner Fehler aufgetreten. ' .
+            'Bitte wende Dich umgehend an den ' .
+            '<a href="mailto: ' . $this->email .
+            '?subject=Fehler-ID:' . $this->ex->getIdentifier() .
+            '">Webmaster</a>!';
+        return $this->handle($title, $caption, $description);
+    }
+
+    protected function handle($title, $caption, $description) {
+        return [
+            'title'       => $title,
+            'caption'     => $caption,
+            'description' => $description
+        ];
+    }
+
     /*
     protected function handle($title, $caption, $description) {
         $view = new \SFW\View();
@@ -127,8 +157,8 @@ class Response {
         return $view->getContent(
             $this->config->getTemplateFile('Error')
         );
+         *
     }
-     * 
-     */
+    */
 }
 
