@@ -31,13 +31,9 @@ class Response {
     }
 
 
-    public function doit() {
+    public function doit(Resolver $resolver, Request $request) {
         try {
-            return $this->getContent(
-                $this->module,
-                $this->controller,
-                $this->action
-            );
+            return $resolver->getContent($request);
         } catch(ResolverException $ex) {
             switch($ex->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:

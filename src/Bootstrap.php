@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Bootstrap\BootstrapException;
+use SFW2\Core\SFW2Exception;
 use Dice\Dice;
 use Throwable;
 
@@ -108,7 +109,7 @@ class Bootstrap {
         ]);
 
         if($this->isOffline()) {
-
+            $dispatcher = new Dispatcher();
 
             require 'web/templates/exframe.phtml';
 
@@ -117,6 +118,15 @@ class Bootstrap {
             #$handler->handle();
             return;
         }
+
+
+        $resolver = new Resolver([], $this->container);
+        $resolver->getContent(new Request($_SERVER));
+
+
+
+
+
 
         $ctrlConf = $configPath . 'conf.controller.php';
         if(!is_file($ctrlConf)) {
@@ -130,6 +140,7 @@ class Bootstrap {
         $ctrls += require_once $ctrlConf;
         $request = new Request($server);
 
+        /*
         $resolver = new ControllerResolver($this->config, $ctrls);
 
         $data = array();
@@ -150,7 +161,7 @@ class Bootstrap {
 
         $handler = new Response\Handler\Standard($this->config, $data);
         $handler->handle();
-
+        */
     }
 
     public function errorHandler($errno, $errstr, $errfile, $errline, $context) {
@@ -171,7 +182,7 @@ class Bootstrap {
             );
         }
         $this->saveError($exception);
-
+        $dispatch = new Dispatcher();
 #header("HTTP/1.0 500 Internal Server Error");
 
         $this->printErrorAndDie(0, $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTrace());
