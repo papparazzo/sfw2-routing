@@ -30,9 +30,12 @@ class Dispatcher {
     const HTTP_STATUS_NOT_FOUND             = 1;
     const HTTP_STATUS_FORBIDDEN             = 2;
 
+    public function __construct() {
+        ;
+    }
 
-    public function setHeader() {
-        switch($i) {
+    public function setHeader($headerType) {
+        switch($headerType) {
             case self::HTTP_STATUS_INTERNAL_SERVER_ERROR:
                 header("HTTP/1.0 500 Internal Server Error");
                 break;
