@@ -116,7 +116,7 @@ class Response {
     }
 
     public function offline() {
-        $title = 'Offline';
+        $title = 'Offline!';
         $caption = 'Seite offline';
         $description =
             'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
@@ -125,24 +125,28 @@ class Response {
         return $this->handle($title, $caption, $description);
     }
 
-    public function error() {
+    public function error($email, $identifier, $debug = null) {
         $title = 'Achtung!';
         $caption = 'Schwerwiegender Fehler';
         $description =
             'Es ist ein schwerwiegender interner Fehler aufgetreten. ' .
             'Bitte wende Dich umgehend an den ' .
-            '<a href="mailto: ' . $this->email .
-            '?subject=Fehler-ID:' . $this->ex->getIdentifier() .
+            '<a href="mailto: ' . $email .
+            '?subject=Fehler-ID:' . $identifier .
             '">Webmaster</a>!';
-        return $this->handle($title, $caption, $description);
+        return $this->handle($title, $caption, $description, $debug);
     }
 
-    protected function handle($title, $caption, $description) {
-        return [
+    protected function handle($title, $caption, $description, $debug = null) {
+        $data = [
             'title'       => $title,
             'caption'     => $caption,
-            'description' => $description
+            'description' => $description,
         ];
+        if(!is_null($debug)) {
+            $data['debug'] = $debug;
+        }
+        return $data;
     }
 
     /*
