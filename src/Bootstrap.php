@@ -108,20 +108,26 @@ class Bootstrap {
                 ]
             ]
         ]);
-
+throw new Exception('Hallo');
         if($this->isOffline()) {
-            $this->dispatch('title', 'caption', 'description');
+            $this->dispatch(
+                'Offline!',
+                'Die Seiten sind aktuell offline',
+                'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
+                'Webseiten im Moment leider nicht zu erreichen. ' .
+                'Bitte versuche es später noch einmal.'
+            );
             return;
         }
 
 
+
+
+
+
+
         $resolver = new Resolver([], $this->container);
         $resolver->getContent(new Request($_SERVER));
-
-
-
-
-
 
         $ctrlConf = $configPath . 'conf.controller.php';
         if(!is_file($ctrlConf)) {
@@ -175,13 +181,36 @@ class Bootstrap {
             );
         }
         $this->saveError($exception);
-        $this->printErrorAndDie(0, $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTrace());
+        $this->printErrorAndDie(
+            0,
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine(),
+            $exception->getTrace(),
+            $exception->getIdentifier()
+        );
     }
 
-    protected function printErrorAndDie($errno, $errstr, $errfile, $errline, $backTrace) {
+    protected function printErrorAndDie($errno, $errstr, $errfile, $errline, $backTrace, $identifier) {
+#header("HTTP/1.0 500 Internal Server Error");
+            $this->dispatch(
+                'Achtung!',
+                'Schwerwiegender Fehler',
+                'Es ist ein schwerwiegender, interner Fehler aufgetreten. ' .
+                'Bitte wende Dich umgehend an den ' .
+                '<a href="mailto: ' . $this->config->getVal('project', 'eMailWebMaster') .
+                '?subject=Fehler-ID:' . $identifier .
+                '">Webmaster</a>!'
+            );
+
+/*
+    public function error($email, $identifier, $debug = null) {
+    }
+  */
+
 
            #     $dispatch = new Dispatcher();
-#header("HTTP/1.0 500 Internal Server Error");
+
 
 
         echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
