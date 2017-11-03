@@ -49,23 +49,9 @@ class Response {
                     return $this->noPermission();
 
                 default:
-                    return $this->index();
+                    throw new SFW2Exception('Unknown Exception occured', 0, $ex);
             }
         }
-    }
-
-    public function index() {
-        header("HTTP/1.0 500 Internal Server Error");
-        $title = '500';
-        $caption = 'Unbekannter Fehler';
-        $description =
-            'Achtung, es ist ein unbekannter Fehler aufgetreten. Bitte ' .
-            'prüfe die URL auf Fehler und betätige dann den reload-Button '.
-            'in deinem Browser. Sollte der Fehler weiterhin auftreten ' .
-            'wende dich bitte an <a href="mailto: ' .
-            $this->config->getVal('project', 'eMailWebMaster') .
-            '?subject=Unbekannter Fehler am ' . date('d.m.Y') . '">Webmaster</a>!';
-        return $this->handle($title, $caption, $description);
     }
 
     public function fileNotFound() {
@@ -109,18 +95,6 @@ class Response {
             'gefunden werden. Bitte prüfe die URL auf Fehler und ' .
             'drücke dann den reload-Button in deinem Browser.';
         return $this->handle($title, $caption, $description);
-    }
-
-    public function error($email, $identifier, $debug = null) {
-        $title = 'Achtung!';
-        $caption = 'Schwerwiegender Fehler';
-        $description =
-            'Es ist ein schwerwiegender interner Fehler aufgetreten. ' .
-            'Bitte wende Dich umgehend an den ' .
-            '<a href="mailto: ' . $email .
-            '?subject=Fehler-ID:' . $identifier .
-            '">Webmaster</a>!';
-        return $this->handle($title, $caption, $description, $debug);
     }
 
     protected function handle($title, $caption, $description, $debug = null) {
