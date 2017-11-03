@@ -24,6 +24,7 @@ namespace SFW2\Routing;
 
 use SFW2\Routing\Bootstrap\BootstrapException;
 use SFW2\Core\SFW2Exception;
+use SFW2\Core\View;
 use Dice\Dice;
 use Throwable;
 
@@ -109,13 +110,7 @@ class Bootstrap {
         ]);
 
         if($this->isOffline()) {
-            $dispatcher = new Dispatcher();
-
-            require 'web/templates/exframe.phtml';
-
-
-            #$handler = new Response\Handler\Offline($this->config);
-            #$handler->handle();
+            $this->dispatch('title', 'caption', 'description');
             return;
         }
 
@@ -168,8 +163,6 @@ class Bootstrap {
         if(!$this->config->getVal('debug', 'on', false)) {
             return true;
         }
-
-
         $this->printErrorAndDie($errno, $errstr, $errfile, $errline, debug_backtrace());
     }
 
@@ -182,13 +175,14 @@ class Bootstrap {
             );
         }
         $this->saveError($exception);
-        $dispatch = new Dispatcher();
-#header("HTTP/1.0 500 Internal Server Error");
-
-        $this->printErrorAndDie(0, $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTrace());
+        $this->printErrorAndDie(0, $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTrace());
     }
 
     protected function printErrorAndDie($errno, $errstr, $errfile, $errline, $backTrace) {
+
+           #     $dispatch = new Dispatcher();
+#header("HTTP/1.0 500 Internal Server Error");
+
 
         echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
         echo '<br />';
@@ -218,6 +212,30 @@ class Bootstrap {
             return false;
         }
         return true;
+    }
+
+    protected function dispatch($title, $caption, $description) {
+        $innerView = new View();
+        $innerView->assign('title', $title);
+        $innerView->assign('caption', $caption);
+        $innerView->assign('description', $description);
+
+        $outerView = new View();
+        $outerView->assign('title', $title);
+        $outerView->appendCSSFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
+        $outerView->appendJSFiles([
+            'https://code.jquery.com/jquery-3.2.1.slim.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
+            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
+        ]);
+
+        $outerView->assign(
+            'content',
+            $innerView->getContent('web/templates/simple.phtml')
+        );
+        $outerView->showContent(
+            $this->config->getVal('path', 'template') . 'skeleton.phtml'
+        );
     }
 
     protected function saveError(SFW2Exception $exception) {
