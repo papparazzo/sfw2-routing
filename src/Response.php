@@ -111,16 +111,6 @@ class Response {
         return $this->handle($title, $caption, $description);
     }
 
-    public function offline() {
-        $title = 'Offline!';
-        $caption = 'Seite offline';
-        $description =
-            'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
-            'Webseiten im Moment leider nicht zu erreichen. ' .
-            'Bitte versuche es später noch einmal.';
-        return $this->handle($title, $caption, $description);
-    }
-
     public function error($email, $identifier, $debug = null) {
         $title = 'Achtung!';
         $caption = 'Schwerwiegender Fehler';
