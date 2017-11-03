@@ -108,7 +108,7 @@ class Bootstrap {
                 ]
             ]
         ]);
-throw new Exception('Hallo');
+throw new SFW2Exception('Hallo');
         if($this->isOffline()) {
             $this->dispatch(
                 'Offline!',
@@ -169,7 +169,7 @@ throw new Exception('Hallo');
         if(!$this->config->getVal('debug', 'on', false)) {
             return true;
         }
-        $this->printErrorAndDie($errno, $errstr, $errfile, $errline, debug_backtrace());
+        $this->printErrorAndDie($errno, $errstr, $errfile, $errline, debug_backtrace(), '');
     }
 
     public function excpetionHandler(Throwable $exception) {
@@ -192,33 +192,27 @@ throw new Exception('Hallo');
     }
 
     protected function printErrorAndDie($errno, $errstr, $errfile, $errline, $backTrace, $identifier) {
-#header("HTTP/1.0 500 Internal Server Error");
-            $this->dispatch(
-                'Achtung!',
-                'Schwerwiegender Fehler',
-                'Es ist ein schwerwiegender, interner Fehler aufgetreten. ' .
-                'Bitte wende Dich umgehend an den ' .
-                '<a href="mailto: ' . $this->config->getVal('project', 'eMailWebMaster') .
-                '?subject=Fehler-ID:' . $identifier .
-                '">Webmaster</a>!'
-            );
+        #header("HTTP/1.0 500 Internal Server Error");
 
-/*
-    public function error($email, $identifier, $debug = null) {
-    }
-  */
+        $debug =
+            '';
 
+        #echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
+        #echo '<br />';
+        #echo '<br />';
+        #foreach(array_reverse($backTrace) as $k => $v) {
+        #    echo '#' . $k . ' ' . $v['file'] . ':' . $v['line'] . '<br />';
+        #}
 
-           #     $dispatch = new Dispatcher();
-
-
-
-        echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
-        echo '<br />';
-        echo '<br />';
-        foreach(array_reverse($backTrace) as $k => $v) {
-            echo '#' . $k . ' ' . $v['file'] . ':' . $v['line'] . '<br />';
-        }
+        $this->dispatch(
+            'Achtung!',
+            'Schwerwiegender Fehler aufgetreten!',
+            'Es ist ein schwerwiegender, interner Fehler aufgetreten. ' .
+            'Bitte wende Dich umgehend an den ' .
+            '<a href="mailto: ' . $this->config->getVal('project', 'eMailWebMaster') .
+            '?subject=Fehler-ID:' . $identifier .
+            '">Webmaster</a>.'
+        );
         die();
     }
 
@@ -243,11 +237,12 @@ throw new Exception('Hallo');
         return true;
     }
 
-    protected function dispatch($title, $caption, $description) {
+    protected function dispatch($title, $caption, $description, $debug = null) {
         $innerView = new View();
         $innerView->assign('title', $title);
         $innerView->assign('caption', $caption);
         $innerView->assign('description', $description);
+        $innerView->assign('debug', $debug);
 
         $outerView = new View();
         $outerView->assign('title', $title);
