@@ -34,8 +34,8 @@ return [
         'log'        => 'weblog/',
         'data'       => 'data/',
         'gallery'    => 'public/content/',
+        'template'   => 'web/templates/',
 
-#  FIXME 'templatePath'    => 'web/templates/',
 #        'templatePathSFW' => dirname(__FILE__) . '/Templates/',
 
 #        'jsPath'          => 'public/js/',
