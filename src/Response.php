@@ -60,7 +60,7 @@ class Response {
         $caption = 'Unbekannter Fehler';
         $description =
             'Achtung, es ist ein unbekannter Fehler aufgetreten. Bitte ' .
-            'prüfe die URL auf Fehler und drücke dann den reload-Button '.
+            'prüfe die URL auf Fehler und betätige dann den reload-Button '.
             'in deinem Browser. Sollte der Fehler weiterhin auftreten ' .
             'wende dich bitte an <a href="mailto: ' .
             $this->config->getVal('project', 'eMailWebMaster') .
