@@ -36,7 +36,7 @@ class Resolver {
      */
     protected $container = null;
 
-    public function __construct(Array $controllers, Dice\Dice $container) {
+    public function __construct(Array $controllers, Dice $container) {
         $this->controllers = $controllers;
         $this->container = $container;
     }
