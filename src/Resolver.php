@@ -83,8 +83,6 @@ class Resolver {
         $data  = $class[2] ?? [];
         $class = $class[0];
         return $this->container->create($class);
-
- #       return new $class($this->config, $data);
     }
 
     protected function isCallablePublicClassMethod($class, $method) {
