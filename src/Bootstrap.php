@@ -108,7 +108,7 @@ class Bootstrap {
                 ]
             ]
         ]);
-throw new SFW2Exception('Hallo');
+
         if($this->isOffline()) {
             $this->dispatch(
                 'Offline!',
@@ -120,26 +120,23 @@ throw new SFW2Exception('Hallo');
             return;
         }
 
-
-
-
-
-
-
-        $resolver = new Resolver([], $this->container);
-        $resolver->getContent(new Request($_SERVER));
-
-        $ctrlConf = $configPath . 'conf.controller.php';
+        $ctrlConf = $configPath . DIRECTORY_SEPARATOR . 'conf.controller.php';
         if(!is_file($ctrlConf)) {
             throw new BootstrapException(
                 'File "' . $ctrlConf . '" does not exist',
                 BootstrapException::CONTROLLER_ARRAY_NOT_SET
             );
         }
+        $ctrls = require_once $ctrlConf;
 
-        $ctrls = require_once $this->rootPath . 'SFW/conf.controller.php';
-        $ctrls += require_once $ctrlConf;
-        $request = new Request($server);
+        $resolver = new Resolver($ctrls, $this->container);
+        $resolver->getContent(new Request($_SERVER));
+
+
+
+
+
+
 
         /*
         $resolver = new ControllerResolver($this->config, $ctrls);
@@ -181,6 +178,7 @@ throw new SFW2Exception('Hallo');
             );
         }
         $this->saveError($exception);
+var_dump($exception);
         $this->printErrorAndDie(
             0,
             $exception->getMessage(),
@@ -197,12 +195,12 @@ throw new SFW2Exception('Hallo');
         $debug =
             '';
 
-        #echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
-        #echo '<br />';
-        #echo '<br />';
-        #foreach(array_reverse($backTrace) as $k => $v) {
-        #    echo '#' . $k . ' ' . $v['file'] . ':' . $v['line'] . '<br />';
-        #}
+        echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
+        echo '<br />';
+        echo '<br />';
+        foreach(array_reverse($backTrace) as $k => $v) {
+            echo '#' . $k . ' ' . $v['file'] . ':' . $v['line'] . '<br />';
+        }
 
         $this->dispatch(
             'Achtung!',
