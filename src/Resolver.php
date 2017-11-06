@@ -67,15 +67,15 @@ class Resolver {
             );
         }
 
-        $class = $this->controllers[$module][$controller];
-        return $this->loadClass($class, $action);
+        $rule = $this->controllers[$module][$controller];
+        $this->container->addRules($rule);
+        return $this->loadClass(key($rule), $action);
     }
 
     protected function loadClass($class, $action) {
-
         if(!$this->isCallablePublicClassMethod($class, $action)) {
             throw new ResolverException(
-                'could not load class / method "' . $class . '/' . $action . '"',
+                'could not load class / method "' . (string)$class . '/' . $action . '"',
                 ResolverException::PAGE_NOT_FOUND
             );
         }
@@ -86,7 +86,7 @@ class Resolver {
     }
 
     protected function isCallablePublicClassMethod($class, $method) {
-        if(!class_exists($class[0]) && !$this->tryLoad($class)) {
+        if(!class_exists($class[0])) {
             return false;
         }
 
@@ -96,17 +96,5 @@ class Resolver {
         } catch(Exception $e) {
             return false;
         }
-    }
-
-    protected function tryLoad($class) {
-        $classPath = $class[1];
-        if(!is_readable($classPath)) {
-            return false;
-        }
-
-        if(!class_exists($class[0], false)) {
-            require_once($classPath);
-        }
-        return true;
     }
 }
