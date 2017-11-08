@@ -59,19 +59,14 @@ abstract class Controller {
     protected $showNewLabel = true;
     protected $pathId       = -1;
 
-
-
-
         $this->dto        = $dto;
         $this->ep         = new Error\Provider();
         $this->dispatcher = $dispatcher;
         $this->registry   = $registry;
-        $this->db         = $registry->getDatabase();
         $this->auth       = $registry->getSession()->getGlobalEntry('auth');
         $this->conf       = $registry->getConfig();
         $this->setPathId();
     }
-
 
 
 
