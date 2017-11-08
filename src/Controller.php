@@ -68,9 +68,6 @@ abstract class Controller {
         $this->setPathId();
     }
 
-
-
-
     public function updateModificationDate() {
         $stmt =
             "UPDATE `sfw_path` " .
@@ -120,10 +117,6 @@ abstract class Controller {
         return $this->auth->getUserId();
     }
 
-    public function getSession() {
-        return $this->registry->getSession();
-    }
-
     public function getModificationDate() {
         if($this->modiDate == null) {
             throw new \SFW\Controller\Exception(
@@ -156,17 +149,6 @@ abstract class Controller {
 
     public function hasDeletePermission() {
         return $this->accessAllowed(MENU::PERM_DELETE);
-    }
-
-    protected function accessAllowed($type) {
-        return $this->isAdmin();
-        # FIXME
-        #return $this->registry->getMenu()->accessAllowed(
-        #    $this->dispatcher->getCurrentModule(),
-        #    $this->dispatcher->getCurrentController(),
-        #    $this->dispatcher->getCurrentAction(),
-        #    $type
-        #);
     }
 
     protected function setPathId() {
