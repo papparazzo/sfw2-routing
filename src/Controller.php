@@ -53,9 +53,7 @@ abstract class Controller {
 
 
 /*
-    protected $cssFiles     = array();
-    protected $jsFiles      = array();
-    protected $isXtraW      = false;
+
     protected $showNewLabel = true;
     protected $pathId       = -1;
 
@@ -66,7 +64,7 @@ abstract class Controller {
         $this->auth       = $registry->getSession()->getGlobalEntry('auth');
         $this->conf       = $registry->getConfig();
         $this->setPathId();
-    }
+
 
     public function updateModificationDate() {
         $stmt =
@@ -75,14 +73,6 @@ abstract class Controller {
             "WHERE PathId = '%s'";
 
         $this->registry->getDatabase()->update($stmt, array($this->pathId));
-    }
-
-    public function addJSFile($file) {
-        $this->jsFiles[$file] = $file;
-    }
-
-    public function addCSSFile($file) {
-        $this->cssFiles[$file] = $file;
     }
 
     public function getPathId() {
@@ -95,13 +85,6 @@ abstract class Controller {
         return $this->pathId;
     }
 
-    public function getJSFiles() {
-        return $this->jsFiles;
-    }
-
-    public function getCSSFiles() {
-        return $this->cssFiles;
-    }
 
     public function showNewLabel() {
         return $this->showNewLabel;
@@ -125,30 +108,6 @@ abstract class Controller {
             );
         }
         return $this->modiDate;
-    }
-
-    public function isAdmin() {
-        return $this->auth->isAdmin();
-    }
-
-    public function isLoggedIn() {
-        return $this->auth->isAuthenticated();
-    }
-
-    public function hasReadPermission() {
-        return $this->accessAllowed(MENU::PERM_READ);
-    }
-
-    public function hasUpdatePermission() {
-        return $this->accessAllowed(MENU::PERM_UPDATE);
-    }
-
-    public function hasCreatePermission() {
-        return $this->accessAllowed(MENU::PERM_CREATE);
-    }
-
-    public function hasDeletePermission() {
-        return $this->accessAllowed(MENU::PERM_DELETE);
     }
 
     protected function setPathId() {
