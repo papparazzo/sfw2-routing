@@ -108,21 +108,5 @@ class Response {
         }
         return $data;
     }
-
-    /*
-    protected function handle($title, $caption, $description) {
-        $view = new \SFW\View();
-        $view->assign('title',       $title);
-        $view->assign('caption',     $caption);
-        $view->assign('description', $description);
-        $this->data['title'] =
-            $this->config->getVal('project', 'title') .
-            ' [' . $title . ']';
-        return $view->getContent(
-            $this->config->getTemplateFile('Error')
-        );
-         *
-    }
-    */
 }
 
