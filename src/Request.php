@@ -34,9 +34,11 @@ class Request {
 
 
     protected $server = [];
+    protected $params = [];
 
-    public function __construct(Array $server) {
+    public function __construct(Array $server, Array $params = []) {
         $this->server = $server;
+        $this->params = $params;
         $this->fillParams($server['REQUEST_URI']);
     }
 
@@ -58,6 +60,13 @@ class Request {
 
     public function isAjaxRequest() {
         return isset($this->server['HTTP_X_REQUESTED_WITH']);
+    }
+
+    public function getParam($name, $def = null) {
+        if(!isset($this->params[$name])) {
+            return $def;
+        }
+        return $this->params[$name];
     }
 
     protected function fillParams($path) {

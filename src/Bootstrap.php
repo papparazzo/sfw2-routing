@@ -131,7 +131,7 @@ class Bootstrap {
         $ctrls = require_once $ctrlConf;
 
         $resolver = new Resolver($ctrls, $this->container);
-        $resolver->getContent(new Request($_SERVER));
+        $resolver->getContent(new Request($_SERVER, $_GET));
 
 
 
