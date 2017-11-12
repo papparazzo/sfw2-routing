@@ -26,6 +26,8 @@ use SFW2\Routing\Resolver\ResolverException;
 use Exception;
 use Dice\Dice;
 
+use ReflectionMethod;
+
 class Resolver {
 
     protected $controllers = array();
@@ -75,23 +77,21 @@ class Resolver {
     protected function loadClass($class, $action) {
         if(!$this->isCallablePublicClassMethod($class, $action)) {
             throw new ResolverException(
-                'could not load class / method "' . (string)$class . '/' . $action . '"',
+                'could not load class / method "' . (string)$class . ' / ' . $action . '"',
                 ResolverException::PAGE_NOT_FOUND
             );
         }
-
-        $data  = $class[2] ?? [];
-        $class = $class[0];
         return $this->container->create($class);
     }
 
     protected function isCallablePublicClassMethod($class, $method) {
-        if(!class_exists($class[0])) {
+        if(!class_exists($class)) {
             return false;
         }
 
         try {
-            $refl = new ReflectionMethod($class[0], $method);
+            $refl = new ReflectionMethod($class, $method);
+
             return $refl->isPublic();
         } catch(Exception $e) {
             return false;
