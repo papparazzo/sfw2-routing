@@ -27,6 +27,7 @@ use SFW2\Core\SFW2Exception;
 use SFW2\Core\View;
 use Dice\Dice;
 use Throwable;
+use ErrorException;
 
 class Bootstrap {
 
@@ -162,11 +163,15 @@ class Bootstrap {
         */
     }
 
-    public function errorHandler($errno, $errstr, $errfile, $errline, $context) {
+    public function errorHandler($errno, $errstr, $errfile, $errline) {
         if(!$this->config->getVal('debug', 'on', false)) {
             return true;
         }
-        $this->printErrorAndDie($errno, $errstr, $errfile, $errline, debug_backtrace(), '');
+
+        if(!(error_reporting() & $errno)) {
+            return false;
+        }
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
     public function excpetionHandler(Throwable $exception) {
@@ -177,41 +182,26 @@ class Bootstrap {
                 $exception
             );
         }
+        if($this->config->getVal('debug', 'on', false)) {
+            $this->printError($exception, true);
+            return;
+        }
         $this->saveError($exception);
-var_dump($exception);
-        $this->printErrorAndDie(
-            0,
-            $exception->getMessage(),
-            $exception->getFile(),
-            $exception->getLine(),
-            $exception->getTrace(),
-            $exception->getIdentifier()
-        );
+        $this->printError($exception);
     }
 
-    protected function printErrorAndDie($errno, $errstr, $errfile, $errline, $backTrace, $identifier) {
-        #header("HTTP/1.0 500 Internal Server Error");
-
-        $debug =
-            '';
-
-        echo $errno . ': ', $errstr . ' in ' . $errfile . ' on line ' . $errline;
-        echo '<br />';
-        echo '<br />';
-        foreach(array_reverse($backTrace) as $k => $v) {
-            echo '#' . $k . ' ' . $v['file'] . ':' . $v['line'] . '<br />';
-        }
-
+    protected function printError(SFW2Exception $exception, $debug = false) {
+        header("HTTP/1.0 500 Internal Server Error");
         $this->dispatch(
             'Achtung!',
             'Schwerwiegender Fehler aufgetreten!',
-            'Es ist ein schwerwiegender, interner Fehler aufgetreten. ' .
-            'Bitte wende Dich umgehend an den ' .
+            'Es ist ein interner Fehler [ID: ' . $exception->getIdentifier() . '] ' .
+            'aufgetreten. ' . PHP_EOL . 'Bitte wende Dich umgehend an den ' .
             '<a href="mailto: ' . $this->config->getVal('project', 'eMailWebMaster') .
-            '?subject=Fehler-ID:' . $identifier .
-            '">Webmaster</a>.'
+            '?subject=Fehler-ID: ' . $exception->getIdentifier() .
+            '">Webmaster</a>.',
+            $debug ? $exception : null
         );
-        die();
     }
 
     protected function isOffline() {
@@ -240,11 +230,13 @@ var_dump($exception);
         $innerView->assign('title', $title);
         $innerView->assign('caption', $caption);
         $innerView->assign('description', $description);
-        $innerView->assign('debug', $debug);
+        $innerView->assign('debugData', $debug);
 
         $outerView = new View();
         $outerView->assign('title', $title);
-        $outerView->appendCSSFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
+        $outerView->appendCSSFile(
+            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'
+        );
         $outerView->appendJSFiles([
             'https://code.jquery.com/jquery-3.2.1.slim.min.js',
             'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
