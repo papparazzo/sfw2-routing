@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Dispatcher\Handler\HTML;
+use SFW2\Core\View;
 
 class Dispatcher {
 
@@ -58,7 +59,7 @@ class Dispatcher {
         if(isset($this->server['HTTP_X_REQUESTED_WITH']) && !is_array($this->content)) {
             return new Dispatcher\Handler\XML($this->registry, $data);
         }
-        if(is_array($this->content)) {
+        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && is_array($this->content)) {
             return new Dispatcher\Handler\Json($this->registry, $data);
         }
         return new HTML($this->registry, $data);
@@ -82,7 +83,7 @@ class Dispatcher {
     }
 
     public function handleHTML() {
-        $view = new \SFW\View();
+        $view = new View();
         $view->appendCSSFiles($this->container['cssfiles']);
         $view->appendJSFiles($this->container['jsfiles']);
 
