@@ -111,6 +111,7 @@ class Bootstrap {
         ]);
 
         if($this->isOffline()) {
+        /*
             $this->dispatch(
                 'Offline!',
                 'Die Seiten sind aktuell offline',
@@ -118,6 +119,8 @@ class Bootstrap {
                 'Webseiten im Moment leider nicht zu erreichen. ' .
                 'Bitte versuche es später noch einmal.'
             );
+         *
+         */
             return;
         }
 
@@ -139,28 +142,27 @@ class Bootstrap {
 
 
 
-        /*
-        $resolver = new ControllerResolver($this->config, $ctrls);
+    }
 
-        $data = array();
-        $data['content'] = $resolver->getContent($request);
-        $data['title'] = $this->config->getVal('project', 'title');
-        $data['menu'] = $this->config->menu->getMenu();
-        $data['authenticated'] = false;
-        $data['jsfiles'] = array(
-            'ttps://code.jquery.com/jquery-3.2.1.slim.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js'
-        );
-        $data['cssfiles'] = array(
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css',
-            '/public/css/common.css'
-        );
+    protected function isOffline() {
+        if(!$this->config->getVal('site', 'offline')) {
+            return false;
+        }
 
+        $session = $this->container->create('SFW2\Core\Session');
 
-        $handler = new Response\Handler\Standard($this->config, $data);
-        $handler->handle();
-        */
+        if($session->isGlobalEntrySet('bypass')) {
+            return false;
+        }
+
+        if(
+            isset($_GET['bypass']) &&
+            $_GET['bypass'] == $this->config->getVal('site', 'offlineBypassToken')
+        ) {
+            $session->setGlobalEntry('bypass', true);
+            return false;
+        }
+        return true;
     }
 
     public function errorHandler($errno, $errstr, $errfile, $errline) {
@@ -191,6 +193,7 @@ class Bootstrap {
     }
 
     protected function printError(SFW2Exception $exception, $debug = false) {
+        /*
         header("HTTP/1.0 500 Internal Server Error");
         $this->dispatch(
             'Achtung!',
@@ -202,30 +205,11 @@ class Bootstrap {
             '">Webmaster</a>.',
             $debug ? $exception : null
         );
-    }
-
-    protected function isOffline() {
-        if(!$this->config->getVal('site', 'offline')) {
-            return false;
-        }
-
-        $session = $this->container->create('SFW2\Core\Session');
-
-        if($session->isGlobalEntrySet('bypass')) {
-            return false;
-        }
-
-        if(
-            isset($_GET['bypass']) &&
-            $_GET['bypass'] == $this->config->getVal('site', 'offlineBypassToken')
-        ) {
-            $session->setGlobalEntry('bypass', true);
-            return false;
-        }
-        return true;
+         */
     }
 
     protected function dispatch($title, $caption, $description, $debug = null) {
+        /*
         $innerView = new View();
         $innerView->assign('title', $title);
         $innerView->assign('caption', $caption);
@@ -250,6 +234,8 @@ class Bootstrap {
         $outerView->showContent(
             $this->config->getVal('path', 'template') . 'skeleton.phtml'
         );
+         *
+         */
     }
 
     protected function saveError(SFW2Exception $exception) {
