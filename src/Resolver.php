@@ -44,23 +44,19 @@ class Resolver {
     }
 
     public function getContent(Request $request) {
-        return $this->getData(
+        $data = $this->getData(
             $request->getModule(),
             $request->getController(),
             $request->getAction()
         );
-    }
-
-    protected function getData($module, $controller, $action) {
-        $ctrl = $this->getCtrlInstance($module, $controller, $action);
-        $data = $ctrl->{$action}();
+        
         if($data == '') {
             throw new ResolverException('no data', ResolverException::NO_DATA_FOUND);
         }
         return $data;
     }
 
-    protected function getCtrlInstance($module, $controller, $action) {
+    protected function getData($module, $controller, $action) {
         $msg = $module . '/' . $controller . '/' . $action;
         if(!isset($this->controllers[$module][$controller])) {
             throw new ResolverException(
@@ -71,30 +67,63 @@ class Resolver {
 
         $rule = $this->controllers[$module][$controller];
         $this->container->addRules($rule);
-        return $this->loadClass(key($rule), $action);
+        return $this->callMethode(key($rule), $action);
     }
 
-    protected function loadClass($class, $action) {
-        if(!$this->isCallablePublicClassMethod($class, $action)) {
-            throw new ResolverException(
-                'could not load class / method "' . (string)$class . ' / ' . $action . '"',
-                ResolverException::PAGE_NOT_FOUND
-            );
-        }
-        return $this->container->create($class);
-    }
-
-    protected function isCallablePublicClassMethod($class, $method) {
-        if(!class_exists($class)) {
-            return false;
-        }
-
+    protected function callMethode($class, $method) {
         try {
+            if(!class_exists($class)) {
+                throw new ResolverException(
+                    'class "' . (string)$class . '" does not exists',
+                    ResolverException::PAGE_NOT_FOUND
+                );
+            }
+
             $refl = new ReflectionMethod($class, $method);
 
-            return $refl->isPublic();
-        } catch(Exception $e) {
-            return false;
+            if(!$refl->isPublic()) {
+                throw new ResolverException(
+                    'method "' . $method . '" is not public',
+                    ResolverException::PAGE_NOT_FOUND
+                );
+            }
+
+            $args = $this->getArguments($refl);
+
+            $ctrl = $this->container->create($class);
+            return call_user_func_array(array($ctrl, $action), $args);
+        } catch(Throwable $ex) {
+            throw new ResolverException(
+                $ex->getMessage(),
+                ResolverException::PAGE_NOT_FOUND,
+                $ex
+            );
         }
+    }
+
+    protected function getArguments(ReflectionMethod $methode, Array $args = []) : Array {
+        $params = [];
+
+        foreach($methode->getParameters() as $param) {
+
+            /* @var $param \ReflectionParameter */
+            if(!isset($args[$param->getName()]) && $param->isDefaultValueAvailable()) {
+                $params[] = $param->getDefaultValue();
+                continue;
+            }
+
+            switch((string)$param->getType()) {
+                case 'int':
+                    $params[] = (int)$args[$param->getName()];
+                    break;
+
+                case 'string':
+                default:
+                    $params[] = (string)$args[$param->getName()];
+                    break;
+            }
+
+        }
+        return $params;
     }
 }
