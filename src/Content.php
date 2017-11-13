@@ -24,8 +24,14 @@ namespace SFW2;
 
 class Content {
 
-    protected $cssFiles     = array();
-    protected $jsFiles      = array();
+    protected $jsFiles     = [];
+    protected $cssFiles    = [];
+
+
+    public function __construct(Core\View $view) {
+        ;
+    }
+
 
 
     public function addJSFile($file) {
@@ -36,14 +42,61 @@ class Content {
         $this->cssFiles[$file] = $file;
     }
 
-
-    public function getJSFiles() {
+    public function getJSFiles() : Array {
         return $this->jsFiles;
     }
 
-    public function getCSSFiles() {
+    public function getCSSFiles() : Array {
         return $this->cssFiles;
     }
+
+    public function appendJSFiles(Array $files) {
+        $this->jsFiles = array_merge($this->jsFiles, $files);
+    }
+
+    public function appendJSFile(string $file) {
+        $this->jsFiles[] = $file;
+    }
+
+    public function appendCSSFiles(Array $files) {
+        $this->cssFiles = array_merge($this->cssFiles, $files);
+    }
+
+    public function appendCSSFile(string $file) {
+        $this->cssFiles[] = $file;
+    }
+
+    public function getContent() : string {
+
+    }
+
+
+
+
+            /*
+        $resolver = new ControllerResolver($this->config, $ctrls);
+
+        $data = array();
+        $data['content'] = $resolver->getContent($request);
+        $data['title'] = $this->config->getVal('project', 'title');
+        $data['menu'] = $this->config->menu->getMenu();
+        $data['authenticated'] = false;
+        $data['jsfiles'] = array(
+            'ttps://code.jquery.com/jquery-3.2.1.slim.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',
+            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js'
+        );
+        $data['cssfiles'] = array(
+            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css',
+            '/public/css/common.css'
+        );
+
+
+        $handler = new Response\Handler\Standard($this->config, $data);
+        $handler->handle();
+        */
+
+
 
 
 
