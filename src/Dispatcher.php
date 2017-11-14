@@ -27,28 +27,13 @@ use SFW2\Core\View;
 
 class Dispatcher {
 
-    const HTTP_STATUS_INTERNAL_SERVER_ERROR = 0;
-    const HTTP_STATUS_NOT_FOUND             = 1;
-    const HTTP_STATUS_FORBIDDEN             = 2;
-
+    /**
+     * @var Content
+     */
     public $content = '';
 
-    public function __construct($content, $headerType = null) {
+    public function __construct(Content $content) {
         $this->content = $content;
-
-        switch($headerType) {
-            case self::HTTP_STATUS_INTERNAL_SERVER_ERROR:
-                header("HTTP/1.0 500 Internal Server Error");
-                break;
-
-            case self::HTTP_STATUS_FORBIDDEN:
-                header("HTTP/1.0 403 Forbidden");
-                break;
-
-            case self::HTTP_STATUS_NOT_FOUND:
-                header("HTTP/1.0 404 Not Found");
-                break;
-        }
     }
 
     protected function dispatchRequestType() {
@@ -73,10 +58,7 @@ class Dispatcher {
 
     public function handleJSON() {
         if(!isset($this->container['content']['error'])) {
-            $this->container['content'] = [
-                "error"    => true,
-                "errormsg" => 'Es ist ein interner Fehler aufgetreten.'
-            ];
+            $this->container['content'] = ['error' => false];
         }
         header('Content-type: application/json');
         echo json_encode($this->container['content']);
@@ -118,9 +100,4 @@ class Dispatcher {
             unlink($file);
         }
     }
-
-
 }
-
-
-
