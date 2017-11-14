@@ -23,7 +23,6 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
-use Exception;
 use Dice\Dice;
 
 use ReflectionMethod;
@@ -49,7 +48,7 @@ class Resolver {
             $request->getController(),
             $request->getAction()
         );
-        
+
         if($data == '') {
             throw new ResolverException('no data', ResolverException::NO_DATA_FOUND);
         }
