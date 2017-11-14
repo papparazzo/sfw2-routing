@@ -25,6 +25,8 @@ namespace SFW2\Routing;
 use SFW2\Routing\Bootstrap\BootstrapException;
 use SFW2\Core\SFW2Exception;
 use SFW2\Core\View;
+use SFW2\Routing\Content;
+
 use Dice\Dice;
 use Throwable;
 use ErrorException;
@@ -111,7 +113,6 @@ class Bootstrap {
         ]);
 
         if($this->isOffline()) {
-        /*
             $this->dispatch(
                 'Offline!',
                 'Die Seiten sind aktuell offline',
@@ -119,8 +120,6 @@ class Bootstrap {
                 'Webseiten im Moment leider nicht zu erreichen. ' .
                 'Bitte versuche es später noch einmal.'
             );
-         *
-         */
             return;
         }
 
@@ -136,7 +135,33 @@ class Bootstrap {
         $resolver = new Resolver($ctrls, $this->container);
         $resolver->getContent(new Request($_SERVER, $_GET));
 
+/*
+        $outerView = new View();
+        $outerView->assign('title', $title);
 
+        $outerView->appendCSSFile(
+            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'
+        );
+        $outerView->appendJSFiles([
+            'https://code.jquery.com/jquery-3.2.1.slim.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
+            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
+        ]);
+        $outerView->showContent(
+            $this->config->getVal('path', 'template') . 'skeleton.phtml'
+        );
+*/
+
+
+        /*
+        $resolver = new ControllerResolver($this->config, $ctrls);
+
+        $data = array();
+        $data['content'] = $resolver->getContent($request);
+        $data['title'] = $this->config->getVal('project', 'title');
+        $data['menu'] = $this->config->menu->getMenu();
+        $data['authenticated'] = false;
+        */
 
 
 
@@ -193,7 +218,6 @@ class Bootstrap {
     }
 
     protected function printError(SFW2Exception $exception, $debug = false) {
-        /*
         header("HTTP/1.0 500 Internal Server Error");
         $this->dispatch(
             'Achtung!',
@@ -205,37 +229,20 @@ class Bootstrap {
             '">Webmaster</a>.',
             $debug ? $exception : null
         );
-         */
     }
 
     protected function dispatch($title, $caption, $description, $debug = null) {
-        /*
-        $innerView = new View();
-        $innerView->assign('title', $title);
-        $innerView->assign('caption', $caption);
-        $innerView->assign('description', $description);
-        $innerView->assign('debugData', $debug);
+        $view = new View($this->config->getVal('path', 'template') . 'simple.phtml');
+        $view->assign('title', $title);
+        $view->assign('caption', $caption);
+        $view->assign('description', $description);
+        $view->assign('debugData', $debug);
 
-        $outerView = new View();
-        $outerView->assign('title', $title);
-        $outerView->appendCSSFile(
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'
-        );
-        $outerView->appendJSFiles([
-            'https://code.jquery.com/jquery-3.2.1.slim.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
-        ]);
+        $content = new Content();
+        $content->getTitle($title);
+        $content->appendView($view);
 
-        $outerView->assign(
-            'content',
-            $innerView->getContent('web/templates/simple.phtml')
-        );
-        $outerView->showContent(
-            $this->config->getVal('path', 'template') . 'skeleton.phtml'
-        );
-         *
-         */
+        return $content;
     }
 
     protected function saveError(SFW2Exception $exception) {
