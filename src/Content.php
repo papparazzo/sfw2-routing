@@ -20,84 +20,70 @@
  *
  */
 
-namespace SFW2;
+namespace SFW2\Routing;
+
+use SFW2\Core\View;
 
 class Content {
 
-    protected $jsFiles     = [];
-    protected $cssFiles    = [];
+    const HTTP_STATUS_INTERNAL_SERVER_ERROR = 0;
+    const HTTP_STATUS_NOT_FOUND             = 1;
+    const HTTP_STATUS_FORBIDDEN             = 2;
 
+    protected $jsFiles  = [];
+    protected $cssFiles = [];
+    protected $view     = null;
 
-    public function __construct(Core\View $view) {
-        ;
+    protected $title    = '';
+
+    public function setTitle(string $title) {
+        $this->title = $title;
     }
 
-
-
-    public function addJSFile($file) {
-        $this->jsFiles[$file] = $file;
+    public function appendView(View $view) {
+        $this->view = $view;
     }
 
-    public function addCSSFile($file) {
-        $this->cssFiles[$file] = $file;
-    }
-
-    public function getJSFiles() : Array {
-        return $this->jsFiles;
-    }
-
-    public function getCSSFiles() : Array {
-        return $this->cssFiles;
-    }
-
-    public function appendJSFiles(Array $files) {
-        $this->jsFiles = array_merge($this->jsFiles, $files);
-    }
-
-    public function appendJSFile(string $file) {
+    public function appendJSFile($file) {
         $this->jsFiles[] = $file;
     }
 
-    public function appendCSSFiles(Array $files) {
-        $this->cssFiles = array_merge($this->cssFiles, $files);
-    }
-
-    public function appendCSSFile(string $file) {
+    public function appendCSSFile($file) {
         $this->cssFiles[] = $file;
     }
 
-    public function getContent() : string {
-
+    public function getJSFiles() : array {
+        return $this->jsFiles;
     }
 
+    public function getCSSFiles() : array {
+        return $this->cssFiles;
+    }
 
+    public function getTitle() : string {
+        return $this->title;
+    }
 
+    public function getContent() : string {
+        $this->view->getContent();
+    }
 
-            /*
-        $resolver = new ControllerResolver($this->config, $ctrls);
+    public function setHeader($header) {
+        /*
+        switch($headerType) {
+            case self::HTTP_STATUS_INTERNAL_SERVER_ERROR:
+                header("HTTP/1.0 500 Internal Server Error");
+                break;
 
-        $data = array();
-        $data['content'] = $resolver->getContent($request);
-        $data['title'] = $this->config->getVal('project', 'title');
-        $data['menu'] = $this->config->menu->getMenu();
-        $data['authenticated'] = false;
-        $data['jsfiles'] = array(
-            'ttps://code.jquery.com/jquery-3.2.1.slim.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js'
-        );
-        $data['cssfiles'] = array(
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css',
-            '/public/css/common.css'
-        );
+            case self::HTTP_STATUS_FORBIDDEN:
+                header("HTTP/1.0 403 Forbidden");
+                break;
 
-
-        $handler = new Response\Handler\Standard($this->config, $data);
-        $handler->handle();
-        */
-
-
-
-
-
+            case self::HTTP_STATUS_NOT_FOUND:
+                header("HTTP/1.0 404 Not Found");
+                break;
+        }
+         *
+         */
+    }
 }
