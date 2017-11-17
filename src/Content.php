@@ -65,7 +65,7 @@ class Content {
     }
 
     public function getContent() {
-        $this->view->getContent();
+        return $this->view->getContent();
     }
 
     public function setHeader($header) {
