@@ -113,13 +113,13 @@ class Bootstrap {
         ]);
 
         if($this->isOffline()) {
-            $this->dispatch(
+            $this->dispatch($this->createContent(
                 'Offline!',
                 'Die Seiten sind aktuell offline',
                 'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
                 'Webseiten im Moment leider nicht zu erreichen. ' .
                 'Bitte versuche es später noch einmal.'
-            );
+            ));
             return;
         }
 
@@ -133,8 +133,8 @@ class Bootstrap {
         $ctrls = require_once $ctrlConf;
 
         $resolver = new Resolver($ctrls, $this->container);
-        $resolver->getContent(new Request($_SERVER, $_GET));
-
+        $content = $resolver->getContent(new Request($_SERVER, $_GET));
+        echo $content->getContent();
 /*
         $outerView = new View();
         $outerView->assign('title', $title);
@@ -218,8 +218,7 @@ class Bootstrap {
     }
 
     protected function printError(SFW2Exception $exception, $debug = false) {
-        header("HTTP/1.0 500 Internal Server Error");
-        $this->dispatch(
+        $this->dispatch($this->createContent(
             'Achtung!',
             'Schwerwiegender Fehler aufgetreten!',
             'Es ist ein interner Fehler [ID: ' . $exception->getIdentifier() . '] ' .
@@ -228,11 +227,11 @@ class Bootstrap {
             '?subject=Fehler-ID: ' . $exception->getIdentifier() .
             '">Webmaster</a>.',
             $debug ? $exception : null
-        );
+        ));
     }
 
-    protected function dispatch($title, $caption, $description, $debug = null) {
-        $view = new View($this->config->getVal('path', 'template') . 'simple.phtml');
+    protected function createContent($title, $caption, $description, $debug = null) {
+        $view = new View(0, $this->config->getVal('path', 'template') . 'simple.phtml');
         $view->assign('title', $title);
         $view->assign('caption', $caption);
         $view->assign('description', $description);
@@ -243,6 +242,10 @@ class Bootstrap {
         $content->appendView($view);
 
         return $content;
+    }
+
+    protected function dispatch(Content $content) {
+        echo $content->getContent();
     }
 
     protected function saveError(SFW2Exception $exception) {
