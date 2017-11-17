@@ -64,7 +64,7 @@ class Content {
         return $this->title;
     }
 
-    public function getContent() : string {
+    public function getContent() {
         $this->view->getContent();
     }
 
