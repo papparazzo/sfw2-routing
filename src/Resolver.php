@@ -63,32 +63,37 @@ class Resolver {
             );
         }
 
-        $rule = $this->controllers[$module][$controller];
+        $params = $this->controllers[$module][$controller];
+        $class = key($params);
+        $rule = [
+            $class => [
+                'constructParams' => current($params)
+            ]
+        ];
         $this->container->addRules($rule);
-        return $this->callMethode(key($rule), $action);
+        return $this->callMethode($class, $action);
     }
 
-    protected function callMethode($class, $method) {
+    protected function callMethode(string $class, string $action) {
         try {
             if(!class_exists($class)) {
                 throw new ResolverException(
-                    'class "' . (string)$class . '" does not exists',
+                    'class "' . $class . '" does not exists',
                     ResolverException::PAGE_NOT_FOUND
                 );
             }
 
-            $refl = new ReflectionMethod($class, $method);
+            $refl = new ReflectionMethod($class, $action);
 
             if(!$refl->isPublic()) {
                 throw new ResolverException(
-                    'method "' . $method . '" is not public',
+                    'method "' . $action . '" is not public',
                     ResolverException::PAGE_NOT_FOUND
                 );
             }
 
-            $args = $this->getArguments($refl);
-
             $ctrl = $this->container->create($class);
+            $args = $this->getArguments($refl);
             return call_user_func_array(array($ctrl, $action), $args);
         } catch(Throwable $ex) {
             throw new ResolverException(
