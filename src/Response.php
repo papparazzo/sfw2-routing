@@ -31,7 +31,7 @@ class Response {
     }
 
 
-    public function doit(Resolver $resolver, Request $request) {
+    public function doit(Resolver $resolver, Request $request) : Content {
         try {
             return $resolver->getContent($request);
         } catch(ResolverException $ex) {
