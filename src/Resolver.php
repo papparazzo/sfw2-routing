@@ -42,15 +42,14 @@ class Resolver {
         $this->container = $container;
     }
 
-    public function getContent(Request $request) {
+    public function getContent(Request $request) : Content {
         $data = $this->getData(
             $request->getModule(),
             $request->getController(),
             $request->getAction()
         );
-
-        if($data == '') {
-            throw new ResolverException('no data', ResolverException::NO_DATA_FOUND);
+        if(!($data instanceof Content)) {
+            throw new ResolverException('invalid data', ResolverException::UNKNOWN_ERROR);
         }
         return $data;
     }
