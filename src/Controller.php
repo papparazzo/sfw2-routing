@@ -27,11 +27,6 @@ use Dice\Dice;
 abstract class Controller {
 
     /**
-     * @var string
-     */
-    protected $title = '';
-
-    /**
      * @var \Dice\Dice
      */
     protected $container;
@@ -45,11 +40,20 @@ abstract class Controller {
         $this->title = $title;
     }
 
-    public function getTitle() {
-        return $this->title;
+    abstract function index();
+
+
+    public function create() {
+
     }
 
-    abstract function index();
+    public function delete() {
+
+    }
+
+    public function update() {
+
+    }
 
 
 /*
