@@ -48,7 +48,28 @@ class Bootstrap {
      */
     protected $rootPath;
 
-    public function __construct() {
+    /**
+     * @var array
+     */
+    protected $server;
+
+    /**
+     * @var array
+     */
+    protected $get;
+
+    /**
+     * @var array
+     */
+    protected $post;
+
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @throws BootstrapException
+     */
+    public function __construct(array $server, array $get, array $post) {
         if(defined('SFW2')) {
             throw new BootstrapException(
                 'Framework allready launched',
@@ -56,45 +77,23 @@ class Bootstrap {
             );
         }
         define('SFW2', true);
+        $this->container = new Dice;
         $this->rootPath = __DIR__;
+        $this->server   = $server;
+        $this->get      = $get;
+        $this->post     = $post;
     }
 
     public function run(string $configPath) {
-        $this->container = new Dice;
-        $this->container->addRules([
-            'SFW2\Core\Config' =>
-            [
-                'shared' => true,
-                'constructParams' => [
-                    $configPath . DIRECTORY_SEPARATOR . 'conf.common.php',
-                    $this->rootPath . DIRECTORY_SEPARATOR . 'conf.common.php'
-                ]
-            ]
-        ]);
-        $this->config = $this->container->create('SFW2\Core\Config');
-
-        if($this->config->getVal('debug', 'on', false)) {
-            error_reporting(E_ALL);
-            ini_set('display_errors', true);
-        } else {
-            error_reporting(0);
-            ini_set('display_errors', false);
-        }
-
-        set_error_handler([$this, 'errorHandler']);
-        set_exception_handler([$this, 'excpetionHandler']);
-        mb_internal_encoding('UTF-8');
-        ini_set('memory_limit', $this->config->getVal('misc', 'memoryLimit'));
-        ini_set(LC_ALL, $this->config->getVal('misc', 'locale'));
-        setlocale(LC_TIME, $this->config->getVal('misc', 'locale') . ".UTF-8");
-        date_default_timezone_set($this->config->getVal('misc', 'timeZone'));
+        $this->loadConfig($configPath);
+        $this->setUpEnvironment();
 
         $this->container->addRules([
             'SFW2\Core\Session' =>
             [
                 'shared' => true,
                 'constructParams' => [
-                    $_SERVER['SERVER_NAME']
+                    $this->server['SERVER_NAME']
                 ]
             ]
         ]);
@@ -133,39 +132,40 @@ class Bootstrap {
         $ctrls = require_once $ctrlConf;
 
         $resolver = new Resolver($ctrls, $this->container);
-        $content = $resolver->getContent(new Request($_SERVER, $_GET));
-        echo $content->getContent();
-/*
-        $outerView = new View();
-        $outerView->assign('title', $title);
+        $content = $resolver->getContent(new Request($this->server, $this->get));
+        $this->dispatch($content);
+    }
 
-        $outerView->appendCSSFile(
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'
-        );
-        $outerView->appendJSFiles([
-            'https://code.jquery.com/jquery-3.2.1.slim.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
-            'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
+    protected function loadConfig(string $configPath) {
+        $this->container->addRules([
+            'SFW2\Core\Config' =>
+            [
+                'shared' => true,
+                'constructParams' => [
+                    $configPath . DIRECTORY_SEPARATOR . 'conf.common.php',
+                    $this->rootPath . DIRECTORY_SEPARATOR . 'conf.common.php'
+                ]
+            ]
         ]);
-        $outerView->showContent(
-            $this->config->getVal('path', 'template') . 'skeleton.phtml'
-        );
-*/
+        $this->config = $this->container->create('SFW2\Core\Config');
+    }
 
+    protected function setUpEnvironment() {
+        if($this->config->getVal('debug', 'on', false)) {
+            error_reporting(E_ALL);
+            ini_set('display_errors', true);
+        } else {
+            error_reporting(0);
+            ini_set('display_errors', false);
+        }
 
-        /*
-        $resolver = new ControllerResolver($this->config, $ctrls);
-
-        $data = array();
-        $data['content'] = $resolver->getContent($request);
-        $data['title'] = $this->config->getVal('project', 'title');
-        $data['menu'] = $this->config->menu->getMenu();
-        $data['authenticated'] = false;
-        */
-
-
-
-
+        set_error_handler([$this, 'errorHandler']);
+        set_exception_handler([$this, 'excpetionHandler']);
+        mb_internal_encoding('UTF-8');
+        ini_set('memory_limit', $this->config->getVal('misc', 'memoryLimit'));
+        ini_set(LC_ALL, $this->config->getVal('misc', 'locale'));
+        setlocale(LC_TIME, $this->config->getVal('misc', 'locale') . ".UTF-8");
+        date_default_timezone_set($this->config->getVal('misc', 'timeZone'));
 
     }
 
@@ -181,8 +181,8 @@ class Bootstrap {
         }
 
         if(
-            isset($_GET['bypass']) &&
-            $_GET['bypass'] == $this->config->getVal('site', 'offlineBypassToken')
+            isset($this->get['bypass']) &&
+            $this->get['bypass'] == $this->config->getVal('site', 'offlineBypassToken')
         ) {
             $session->setGlobalEntry('bypass', true);
             return false;
@@ -231,7 +231,7 @@ class Bootstrap {
     }
 
     protected function createContent($title, $caption, $description, $debug = null) {
-        $view = new View(0, $this->config->getVal('path', 'template') . 'simple.phtml');
+        $view = new View($this->config->getVal('path', 'template') . 'simple.phtml');
         $view->assign('title', $title);
         $view->assign('caption', $caption);
         $view->assign('description', $description);
@@ -245,7 +245,8 @@ class Bootstrap {
     }
 
     protected function dispatch(Content $content) {
-        echo $content->getContent();
+        $dispatcher = new Dispatcher();
+        $dispatcher->dispatch($content);
     }
 
     protected function saveError(SFW2Exception $exception) {
