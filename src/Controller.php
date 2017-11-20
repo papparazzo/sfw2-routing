@@ -36,19 +36,9 @@ abstract class Controller {
      */
     protected $controllerId;
 
-    /**
-     * @var string
-     */
-    protected $title;
-
-    public function __construct(Dice $container, int $controllerId, string $title = null) {
+    public function __construct(Dice $container, int $controllerId) {
         $this->container = $container;
         $this->controllerId = $controllerId;
-
-        if(is_null($title)) {
-            $title =  $this->conf->getVal('project', 'title');
-        }
-        $this->title = $title;
     }
 
     abstract function index();
