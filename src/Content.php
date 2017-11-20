@@ -36,12 +36,12 @@ class Content {
 
     protected $title    = '';
 
-    public function setTitle(string $title) {
-        $this->title = $title;
+    public function __construct(View $view = null) {
+        $this->view = $view;
     }
 
-    public function appendView(View $view) {
-        $this->view = $view;
+    public function setTitle(string $title) {
+        $this->title = $title;
     }
 
     public function appendJSFile($file) {
@@ -65,7 +65,10 @@ class Content {
     }
 
     public function getContent() {
-        return $this->view->getContent();
+        if(!is_null($this->view)) {
+            return $this->view->getContent();
+        }
+        return '';
     }
 
     public function setHeader($header) {
