@@ -24,11 +24,29 @@ namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
 
-class Response {
+class ResponseHandler {
 
     public function __construct() {
         ;
     }
+
+    public function getResponse() {
+        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && !is_array($this->content)) {
+            return new Dispatcher\Handler\XML($this->registry, $data);
+        }
+        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && is_array($this->content)) {
+            return new Dispatcher\Handler\Json($this->registry, $data);
+        }
+        return new HTML($this->registry, $data);
+    }
+
+    /*
+        $this->content = $content;
+
+return $this->handleHTML();
+
+*/
+
 
 
     public function doit(Resolver $resolver, Request $request) : Content {
