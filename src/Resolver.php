@@ -43,18 +43,18 @@ class Resolver {
     }
 
     public function getContent(Request $request) : Content {
-        $data = $this->getData(
-            $request->getModule(),
-            $request->getController(),
-            $request->getAction()
-        );
+        $data = $this->getData($request);
         if(!($data instanceof Content)) {
             throw new ResolverException('invalid data', ResolverException::UNKNOWN_ERROR);
         }
         return $data;
     }
 
-    protected function getData($module, $controller, $action) {
+    protected function getData(Request $request) {
+        $module = $request->getModule();
+        $controller = $request->getController();
+        $action = $request->getAction();
+
         $msg = $module . '/' . $controller . '/' . $action;
         if(!isset($this->controllers[$module][$controller])) {
             throw new ResolverException(
@@ -71,10 +71,10 @@ class Resolver {
             ]
         ];
         $this->container->addRules($rule);
-        return $this->callMethode($class, $action);
+        return $this->callMethode($class, $action, $request);
     }
 
-    protected function callMethode(string $class, string $action) {
+    protected function callMethode(string $class, string $action, Request $request) {
         try {
             if(!class_exists($class)) {
                 throw new ResolverException(
@@ -93,7 +93,7 @@ class Resolver {
             }
 
             $ctrl = $this->container->create($class);
-            $args = $this->getArguments($refl);
+            $args = $this->getArguments($refl, $request);
             return call_user_func_array(array($ctrl, $action), $args);
         } catch(Throwable $ex) {
             throw new ResolverException(
@@ -104,25 +104,27 @@ class Resolver {
         }
     }
 
-    protected function getArguments(ReflectionMethod $methode, Array $args = []) : Array {
+    protected function getArguments(ReflectionMethod $methode, Request $request) : Array {
         $params = [];
 
         foreach($methode->getParameters() as $param) {
 
             /* @var $param \ReflectionParameter */
-            if(!isset($args[$param->getName()]) && $param->isDefaultValueAvailable()) {
+            $gParam = $request->getParam($param->getName());
+
+            if(is_null($gParam) && $param->isDefaultValueAvailable()) {
                 $params[] = $param->getDefaultValue();
                 continue;
             }
 
             switch((string)$param->getType()) {
                 case 'int':
-                    $params[] = (int)$args[$param->getName()];
+                    $params[] = (int)$gParam;
                     break;
 
                 case 'string':
                 default:
-                    $params[] = (string)$args[$param->getName()];
+                    $params[] = (string)$gParam;
                     break;
             }
 
