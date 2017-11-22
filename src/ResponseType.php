@@ -24,10 +24,10 @@ namespace SFW2\Routing;
 
 abstract class ResponseType {
 
-    protected $content;
+    protected $result;
 
-    public function __construct(Content $content) {
-        $this->content = $content;
+    public function __construct(Result $result) {
+        $this->result = $result;
     }
 
     abstract function getContent();
