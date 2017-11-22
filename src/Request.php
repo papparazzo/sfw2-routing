@@ -24,79 +24,49 @@ namespace SFW2\Routing;
 
 class Request {
 
-    const DEFAULT_MODULE     = 'home';
-    const DEFAULT_CONTROLLER = 'start';
-    const DEFAULT_ACTION     = 'index';
-
-    protected $module     = self::DEFAULT_MODULE;
-    protected $controller = self::DEFAULT_CONTROLLER;
-    protected $action     = self::DEFAULT_ACTION;
-
-
     protected $server = [];
-    protected $params = [];
+    protected $get    = [];
+    protected $post   = [];
 
-    public function __construct(Array $server, Array $params = []) {
+    protected $path = '';
+
+    public function __construct(array $server, array $get = [], array $post = []) {
         $this->server = $server;
-        $this->params = $params;
-        $this->fillParams($server['REQUEST_URI']);
-    }
-
-    public function getModule() {
-        return $this->module;
-    }
-
-    public function getController() {
-        return $this->controller;
-    }
-
-    public function getAction() {
-        return $this->action;
+        $this->get    = $get;
+        $this->post   = $post;
+        $this->path   = $this->checkPath($server['REQUEST_URI']);
     }
 
     public function getPath() {
-        return $this->module . '/' . $this->controller . '/' . $this->action;
+        return $this->path;
     }
 
     public function isAjaxRequest() {
         return isset($this->server['HTTP_X_REQUESTED_WITH']);
     }
 
-    public function getParam($name, $def = null) {
-        if(!isset($this->params[$name])) {
+    public function getGetParam($name, $def = null) {
+        if(!isset($this->get[$name])) {
             return $def;
         }
-        return $this->params[$name];
+        return $this->get[$name];
     }
 
-    protected function fillParams($path) {
+    public function getPostParam($name, $def = null) {
+        if(!isset($this->post[$name])) {
+            return $def;
+        }
+        return $this->post[$name];
+    }
+
+    protected function checkPath($path) {
         $pos = strpos($path, '?');
         if($pos !== false) {
             $path = mb_substr($path, 0, $pos);
         }
-        $path =  mb_substr($path, 1);
-
-        $x = explode("/", $path);
-        $x[0] = $x[0] ?? null;
-        $x[1] = $x[1] ?? null;
-        $x[2] = $x[2] ?? null;
-
-        $this->module     = $this->chkParam($x[0], $this->module    );
-        $this->controller = $this->chkParam($x[1], $this->controller);
-        $this->action     = $this->chkParam($x[2], $this->action    );
-    }
-
-    protected function chkParam($x, $default) {
-        if(empty($x)) {
-            return $default;
-        }
-
-        $x = strtolower($x);
-        $rv = preg_replace('/[^A-Za-z0-9]/', '', $x);
-
-        if($rv != $x) {
-            return $default;
-        }
-        return $rv;
+        $path = mb_substr($path, 1);
+        $path = strtolower($path);
+        $path = preg_replace('#[^A-Za-z0-9/]#', '', $path);
+        return $path;
     }
 }
