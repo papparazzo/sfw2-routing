@@ -24,6 +24,10 @@ namespace SFW2\Routing;
 
 class Request {
 
+    const DEFAULT_ACTION = 'index';
+
+    protected $action = self::DEFAULT_ACTION;
+
     protected $server = [];
     protected $get    = [];
     protected $post   = [];
@@ -35,6 +39,11 @@ class Request {
         $this->get    = $get;
         $this->post   = $post;
         $this->path   = $this->checkPath($server['REQUEST_URI']);
+        $this->action = $this->getGetParam('do', self::DEFAULT_ACTION);
+    }
+
+    public function getAction() {
+        return $this->action;
     }
 
     public function getPath() {
