@@ -36,7 +36,7 @@ class HTML extends Result {
         $this->view = $view;
     }
 
-    public function getContent() {
+    public function getData() {
         return $this->view->getContent();
     }
 }

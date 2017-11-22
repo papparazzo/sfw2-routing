@@ -24,5 +24,5 @@ namespace SFW2\Routing;
 
 abstract class Result {
 
-    abstract public function getContent();
+    abstract public function getData();
 }

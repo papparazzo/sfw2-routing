@@ -27,7 +27,7 @@ use SFW2\Routing\Result;
 class Data extends Result {
 
 
-    public function getContent() {
+    public function getData() {
 
     }
 

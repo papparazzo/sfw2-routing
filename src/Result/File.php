@@ -30,7 +30,7 @@ class File extends Result {
         ;
     }
 
-    public function getContent() {
+    public function getData() {
 
     }
 
