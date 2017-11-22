@@ -24,6 +24,9 @@ namespace SFW2\Routing;
 
 abstract class ResponseType {
 
+    /**
+     * @var \SFW2\Routing\Result
+     */
     protected $result;
 
     public function __construct(Result $result) {
