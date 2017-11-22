@@ -32,7 +32,6 @@ class Resolver {
     protected $controllers = array();
 
     /**
-     *
      * @var \Dice\Dice
      */
     protected $container = null;
@@ -42,9 +41,9 @@ class Resolver {
         $this->container = $container;
     }
 
-    public function getContent(Request $request) : Content {
+    public function getResult(Request $request) : Result {
         $data = $this->getData($request);
-        if(!($data instanceof Content)) {
+        if(!($data instanceof Result)) {
             throw new ResolverException('invalid data', ResolverException::UNKNOWN_ERROR);
         }
         return $data;

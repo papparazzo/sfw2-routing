@@ -25,7 +25,7 @@ namespace SFW2\Routing;
 use SFW2\Routing\Bootstrap\BootstrapException;
 use SFW2\Core\SFW2Exception;
 use SFW2\Core\View;
-use SFW2\Routing\Content;
+use SFW2\Routing\Result\HTML;
 
 use Dice\Dice;
 use Throwable;
@@ -112,7 +112,7 @@ class Bootstrap {
         ]);
 
         if($this->isOffline()) {
-            $this->dispatch($this->createContent(
+            $this->dispatch($this->createResult(
                 'Offline!',
                 'Die Seiten sind aktuell offline',
                 'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
@@ -132,7 +132,7 @@ class Bootstrap {
         $ctrls = require_once $ctrlConf;
 
         $resolver = new Resolver($ctrls, $this->container);
-        $content = $resolver->getContent(new Request($this->server, $this->get, $this->post));
+        $content = $resolver->getResult(new Request($this->server, $this->get, $this->post));
         $this->dispatch($content);
     }
 
@@ -218,7 +218,7 @@ class Bootstrap {
     }
 
     protected function printError(SFW2Exception $exception, $debug = false) {
-        $this->dispatch($this->createContent(
+        $this->dispatch($this->createResult(
             'Achtung!',
             'Schwerwiegender Fehler aufgetreten!',
             'Es ist ein interner Fehler [ID: ' . $exception->getIdentifier() . '] ' .
@@ -230,21 +230,17 @@ class Bootstrap {
         ));
     }
 
-    protected function createContent($title, $caption, $description, $debug = null) {
+    protected function createResult($title, $caption, $description, $debug = null) {
         $view = new View($this->config->getVal('path', 'template') . 'simple.phtml');
         $view->assign('title', $title);
         $view->assign('caption', $caption);
         $view->assign('description', $description);
         $view->assign('debugData', $debug);
 
-        $content = new Content();
-        $content->getTitle($title);
-        $content->appendView($view);
-
-        return $content;
+        return new HTML($view);
     }
 
-    protected function dispatch(Content $content) {
+    protected function dispatch(HTML $content) {
         $dispatcher = new Dispatcher();
         $dispatcher->dispatch($content);
     }
