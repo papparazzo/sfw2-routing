@@ -51,19 +51,18 @@ class Resolver {
     }
 
     protected function getData(Request $request) {
-        $module = $request->getModule();
-        $controller = $request->getController();
+        $path = $request->getPath();
         $action = $request->getAction();
 
-        $msg = $module . '/' . $controller . '/' . $action;
-        if(!isset($this->controllers[$module][$controller])) {
+        $msg = $path . '-' . $action;
+        if(!isset($this->controllers[$path])) {
             throw new ResolverException(
                 'could not load "' . $msg . '"',
                 ResolverException::PAGE_NOT_FOUND
             );
         }
 
-        $params = $this->controllers[$module][$controller];
+        $params = $this->controllers[$path];
         $class = key($params);
         $rule = [
             $class => [
@@ -110,7 +109,7 @@ class Resolver {
         foreach($methode->getParameters() as $param) {
 
             /* @var $param \ReflectionParameter */
-            $gParam = $request->getParam($param->getName());
+            $gParam = $request->getGetParam($param->getName());
 
             if(is_null($gParam) && $param->isDefaultValueAvailable()) {
                 $params[] = $param->getDefaultValue();
