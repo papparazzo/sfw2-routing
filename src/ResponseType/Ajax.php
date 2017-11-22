@@ -24,10 +24,25 @@ namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
 
-class Json extends ResponseType {
-    
+class Ajax extends ResponseType {
+
     public function getContent() : string {
+        if($this->result instanceof \SFW2\Routing\Result\Data) {
+            $this->sendJson();
+        } else {
+            $this->sendXML();
+        }
+    }
+
+    protected function sendJson() {
         header('Content-type: application/json');
-        return json_encode($this->container['content']);
+        return json_encode($this->result->getData());
+    }
+
+    protected function sendXML() {
+        header('Content-type: text/xml');
+        return
+            '<?xml version="1.0" encoding="utf-8"?>' .
+            $this->result->getData();
     }
 }
