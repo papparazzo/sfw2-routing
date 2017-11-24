@@ -26,7 +26,7 @@ use SFW2\Routing\ResponseType;
 
 class Ajax extends ResponseType {
 
-    public function getContent() : string {
+    public function dispatch() : string {
         if($this->result instanceof \SFW2\Routing\Result\Data) {
             $this->sendJson();
         } else {
@@ -36,12 +36,12 @@ class Ajax extends ResponseType {
 
     protected function sendJson() {
         header('Content-type: application/json');
-        return json_encode($this->result->getData());
+        echo json_encode($this->result->getData());
     }
 
     protected function sendXML() {
         header('Content-type: text/xml');
-        return
+        echo
             '<?xml version="1.0" encoding="utf-8"?>' .
             $this->result->getData();
     }
