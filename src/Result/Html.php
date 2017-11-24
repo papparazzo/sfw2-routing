@@ -32,6 +32,9 @@ class HTML extends Result {
      */
     protected $view = null;
 
+    protected $jsFiles  = [];
+    protected $cssFiles = [];
+
     public function __construct(View $view) {
         $this->view = $view;
     }
@@ -39,4 +42,21 @@ class HTML extends Result {
     public function getData() {
         return $this->view->getContent();
     }
+
+    public function appendJSFile($file) {
+        $this->jsFiles[] = $file;
+    }
+
+    public function appendCSSFile($file) {
+        $this->cssFiles[] = $file;
+    }
+
+    public function getJSFiles() : array {
+        return $this->jsFiles;
+    }
+
+    public function getCSSFiles() : array {
+        return $this->cssFiles;
+    }
+
 }
