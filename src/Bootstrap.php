@@ -122,17 +122,11 @@ class Bootstrap {
             return;
         }
 
-        $ctrlConf = $configPath . DIRECTORY_SEPARATOR . 'conf.controller.php';
-        if(!is_file($ctrlConf)) {
-            throw new BootstrapException(
-                'File "' . $ctrlConf . '" does not exist',
-                BootstrapException::CONTROLLER_ARRAY_NOT_SET
-            );
-        }
-        $ctrls = require_once $ctrlConf;
+        $ctrls = $this->loadController($configPath);
 
         $resolver = new Resolver($ctrls, $this->container);
-        $content = $resolver->getResult(new Request($this->server, $this->get, $this->post));
+        $response = new ResponseHandler($resolver);
+        $content = $response->getContent(new Request($this->server, $this->get, $this->post));
         $this->dispatch($content);
     }
 
@@ -148,6 +142,17 @@ class Bootstrap {
             ]
         ]);
         $this->config = $this->container->create('SFW2\Core\Config');
+    }
+
+    protected function loadController(string $configPath) {
+        $ctrlConf = $configPath . DIRECTORY_SEPARATOR . 'conf.controller.php';
+        if(!is_file($ctrlConf)) {
+            throw new BootstrapException(
+                'File "' . $ctrlConf . '" does not exist',
+                BootstrapException::CONTROLLER_ARRAY_NOT_SET
+            );
+        }
+        return require_once $ctrlConf;
     }
 
     protected function setUpEnvironment() {
