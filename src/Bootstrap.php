@@ -231,7 +231,7 @@ class Bootstrap {
     }
 
     protected function createResult($title, $caption, $description, $debug = null) {
-        $view = new View($this->config->getVal('path', 'template') . 'simple.phtml');
+        $view = new View($this->config->getVal('path', 'template') . 'plain.phtml');
         $view->assign('title', $title);
         $view->assign('caption', $caption);
         $view->assign('description', $description);
