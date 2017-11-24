@@ -26,19 +26,26 @@ use SFW2\Routing\Resolver\ResolverException;
 
 class ResponseHandler {
 
-    public function __construct() {
-        ;
+    /**
+     * @var Resolver
+     */
+    protected $resolver;
+
+    public function __construct(Resolver $resolver) {
+        $this->resolver = $resolver;
     }
 
-    public function getResponse() {
-        if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-            return new Dispatcher\Handler\XML($this->registry, $data);
-        }
-        if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-            return new Dispatcher\Handler\Json($this->registry, $data);
-        }
-        return new HTML($this->registry, $data);
-    }
+    public function getContent(Request $request) : Result {
+
+
+       # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
+       #     return new Dispatcher\Handler\XML($this->registry, $data);
+       # }
+       # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
+       #     return new Dispatcher\Handler\Json($this->registry, $data);
+       # }
+       # return new Html($this->registry, $data);
+
 
     /*
         $this->content = $content;
@@ -49,9 +56,9 @@ return $this->handleHTML();
 
 
 
-    public function doit(Resolver $resolver, Request $request) : Result {
+
         try {
-            return $resolver->getResult($request);
+            return $this->resolver->getResult($request);
         } catch(ResolverException $ex) {
             switch($ex->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:
@@ -67,7 +74,7 @@ return $this->handleHTML();
                     return $this->noPermission();
 
                 default:
-                    throw new SFW2Exception('Unknown Exception occured', 0, $ex);
+                    return $this->error($ex);
             }
         }
     }
@@ -113,6 +120,29 @@ return $this->handleHTML();
             'gefunden werden. Bitte prüfe die URL auf Fehler und ' .
             'drücke dann den reload-Button in deinem Browser.';
         return $this->handle($title, $caption, $description);
+    }
+
+    public function offline() {
+        $title = 'Offline!';
+        $caption = 'Die Seiten sind aktuell offline';
+        $description =
+            'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
+            'Webseiten im Moment leider nicht zu erreichen. ' .
+            'Bitte versuche es später noch einmal.';
+        return $this->handle($title, $caption, $description);
+    }
+
+    public function error(SFW2Exception $exception, $debug = false) {
+        $title = 'Achtung!';
+        $caption = 'Schwerwiegender Fehler aufgetreten!';
+        $description =
+            'Es ist ein interner Fehler [ID: ' . $exception->getIdentifier() . '] ' .
+            'aufgetreten. ' . PHP_EOL . 'Bitte wende Dich umgehend an den ' .
+            '<a href="mailto: ' . $this->config->getVal('project', 'eMailWebMaster') .
+            '?subject=Fehler-ID: ' . $exception->getIdentifier() .
+            '">Webmaster</a>.';
+
+        return $this->handle($title, $caption, $description, $debug ? $exception : null);
     }
 
     protected function handle($title, $caption, $description, $debug = null) {
