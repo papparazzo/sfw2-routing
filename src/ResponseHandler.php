@@ -31,10 +31,10 @@ class ResponseHandler {
     }
 
     public function getResponse() {
-        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && !is_array($this->content)) {
+        if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return new Dispatcher\Handler\XML($this->registry, $data);
         }
-        if(isset($this->server['HTTP_X_REQUESTED_WITH']) && is_array($this->content)) {
+        if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return new Dispatcher\Handler\Json($this->registry, $data);
         }
         return new HTML($this->registry, $data);
@@ -49,9 +49,9 @@ return $this->handleHTML();
 
 
 
-    public function doit(Resolver $resolver, Request $request) : Content {
+    public function doit(Resolver $resolver, Request $request) : Result {
         try {
-            return $resolver->getContent($request);
+            return $resolver->getResult($request);
         } catch(ResolverException $ex) {
             switch($ex->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:
