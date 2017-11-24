@@ -33,5 +33,5 @@ abstract class ResponseType {
         $this->result = $result;
     }
 
-    abstract function getContent();
+    abstract function dispatch();
 }
