@@ -25,7 +25,7 @@ namespace SFW2\Routing\Result;
 use SFW2\Routing\Result;
 use SFW2\Core\View;
 
-class HTML extends Result {
+class Html extends Result {
 
     /**
      * @var \SFW2\Core\View
