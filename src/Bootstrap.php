@@ -39,7 +39,7 @@ class Bootstrap {
     protected $container;
 
     /**
-     * @var \SFW\Config
+     * @var \SFW2\Core\Config
      */
     protected $config;
 
@@ -111,23 +111,19 @@ class Bootstrap {
             ]
         ]);
 
+        $response = new ResponseHandler($this->config);
+        $request = new Request($this->server, $this->get, $this->post);
+
         if($this->isOffline()) {
-            $this->dispatch($this->createResult(
-                'Offline!',
-                'Die Seiten sind aktuell offline',
-                'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
-                'Webseiten im Moment leider nicht zu erreichen. ' .
-                'Bitte versuche es später noch einmal.'
-            ));
-            return;
+            $result = $response->getOffline();
+        } else {
+            $ctrls = $this->loadController($configPath);
+            $resolver = new Resolver($ctrls, $this->container);
+            $result = $response->getContent($request, $resolver);
         }
 
-        $ctrls = $this->loadController($configPath);
-
-        $resolver = new Resolver($ctrls, $this->container);
-        $response = new ResponseHandler($resolver);
-        $content = $response->getContent(new Request($this->server, $this->get, $this->post));
-        $this->dispatch($content);
+        $dispatcher = new Dispatcher($request);
+        $dispatcher->dispatch($result);
     }
 
     protected function loadConfig(string $configPath) {
@@ -165,13 +161,11 @@ class Bootstrap {
         }
 
         set_error_handler([$this, 'errorHandler']);
-        set_exception_handler([$this, 'excpetionHandler']);
         mb_internal_encoding('UTF-8');
         ini_set('memory_limit', $this->config->getVal('misc', 'memoryLimit'));
         ini_set(LC_ALL, $this->config->getVal('misc', 'locale'));
         setlocale(LC_TIME, $this->config->getVal('misc', 'locale') . ".UTF-8");
         date_default_timezone_set($this->config->getVal('misc', 'timeZone'));
-
     }
 
     protected function isOffline() {
@@ -204,64 +198,5 @@ class Bootstrap {
             return false;
         }
         throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-    }
-
-    public function excpetionHandler(Throwable $exception) {
-        if(!($exception instanceof SFW2Exception)) {
-            $exception = new SFW2Exception(
-                $exception->getMessage(),
-                SFW2Exception::UNKNOWN,
-                $exception
-            );
-        }
-        if($this->config->getVal('debug', 'on', false)) {
-            $this->printError($exception, true);
-            return;
-        }
-        $this->saveError($exception);
-        $this->printError($exception);
-    }
-
-    protected function printError(SFW2Exception $exception, $debug = false) {
-        $this->dispatch($this->createResult(
-            'Achtung!',
-            'Schwerwiegender Fehler aufgetreten!',
-            'Es ist ein interner Fehler [ID: ' . $exception->getIdentifier() . '] ' .
-            'aufgetreten. ' . PHP_EOL . 'Bitte wende Dich umgehend an den ' .
-            '<a href="mailto: ' . $this->config->getVal('project', 'eMailWebMaster') .
-            '?subject=Fehler-ID: ' . $exception->getIdentifier() .
-            '">Webmaster</a>.',
-            $debug ? $exception : null
-        ));
-    }
-
-    protected function createResult($title, $caption, $description, $debug = null) {
-        $view = new View($this->config->getVal('path', 'template') . 'plain.phtml');
-        $view->assign('title', $title);
-        $view->assign('caption', $caption);
-        $view->assign('description', $description);
-        $view->assign('debugData', $debug);
-
-        return new HTML($view);
-    }
-
-    protected function dispatch(HTML $content) {
-        $dispatcher = new Dispatcher();
-        $dispatcher->dispatch($content);
-    }
-
-    protected function saveError(SFW2Exception $exception) {
-        $path = $this->config->getVal('path', 'log');
-
-        if($path == '') {
-            return;
-        }
-        $fd = fopen(
-            $path . DIRECTORY_SEPARATOR . $exception->getIdentifier() . '.log',
-            'a'
-        );
-        fwrite($fd, $exception->getTimeStamp());
-        fwrite($fd, $exception->__toString());
-        fclose($fd);
     }
 }
