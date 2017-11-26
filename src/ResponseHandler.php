@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
+use SFW2\Routing\Result\Content;
 use SFW2\Core\Config;
 
 class ResponseHandler {
@@ -140,27 +141,15 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description, $debug);
     }
 
-    protected function handle($title, $caption, $description, $debug = null) {
-
-/*
-        $view = new View($this->config->getVal('path', 'template') . 'plain.phtml');
-        $view->assign('title', $title);
-        $view->assign('caption', $caption);
-        $view->assign('description', $description);
-        $view->assign('debugData', $debug);
-
-        return new HTML($view);
-*/
-
-        $data = [
+    protected function handle($title, $caption, $description, $debug = null) : Result {
+        $result = new Content('plain.phtml');
+        $result->assignArray([
             'title'       => $title,
             'caption'     => $caption,
             'description' => $description,
-        ];
-        if(!is_null($debug)) {
-            $data['debug'] = $debug;
-        }
-        return $data;
+            'debug'       => $debug
+        ]);
+        return $result;
     }
 
     protected function saveError(SFW2Exception $exception) {
