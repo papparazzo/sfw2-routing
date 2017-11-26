@@ -32,6 +32,31 @@ class Html extends ResponseType {
 
 
     public function dispatch() {
+        /*
+        if(is_null($title)) {
+            $title =  $this->conf->getVal('project', 'title');
+        }
+        $this->title = $title;
+        */
+
+        $view = new View('web/templates/skeleton.phtml');
+        #$view = new View($this->config->getVal('path', 'template') . 'skeleton.phtml');
+        #$view->assign('cssFiles', $this->content->getCSSFiles());
+        $view->append('cssFiles', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
+        #$view->assign('jsFiles', $this->content->getJSFiles());
+        $view->appendArray(
+            'jsFiles', [
+                'https://code.jquery.com/jquery-3.2.1.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
+                'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
+            ]
+        );
+        $view->assign('title', 'sdf');#$this->content->getTitle());
+        $view->assign('content', $this->result->getData());
+        echo $view->getContent();
+
+        #$view->assign('menu',          $this->container['menu']);
+        #$view->assign('authenticated', $this->container['authenticated']);
 
     }
 
@@ -64,31 +89,4 @@ class Html extends ResponseType {
          */
     }
 
-    public function handleHTML() {
-        /*
-        if(is_null($title)) {
-            $title =  $this->conf->getVal('project', 'title');
-        }
-        $this->title = $title;
-        */
-
-        $view = new View('web/templates/skeleton.phtml');
-        #$view = new View($this->config->getVal('path', 'template') . 'skeleton.phtml');
-        #$view->assign('cssFiles', $this->content->getCSSFiles());
-        $view->append('cssFiles', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
-        #$view->assign('jsFiles', $this->content->getJSFiles());
-        $view->appendArray(
-            'jsFiles', [
-                'https://code.jquery.com/jquery-3.2.1.min.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
-                'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
-            ]
-        );
-        $view->assign('title', 'sdf');#$this->content->getTitle());
-        $view->assign('content', $this->result->getData());
-        echo $view->getContent();
-
-        #$view->assign('menu',          $this->container['menu']);
-        #$view->assign('authenticated', $this->container['authenticated']);
-    }
 }
