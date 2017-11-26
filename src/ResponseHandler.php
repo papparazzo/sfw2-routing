@@ -27,37 +27,25 @@ use SFW2\Routing\Resolver\ResolverException;
 class ResponseHandler {
 
     /**
-     * @var Resolver
+     * @var Request
      */
-    protected $resolver;
+    protected $request;
 
-    public function __construct(Resolver $resolver) {
-        $this->resolver = $resolver;
+    public function __construct(Request $request) {
+        $this->request = $request;
     }
 
-    public function getContent(Request $request) : Result {
-
-
-       # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-       #     return new Dispatcher\Handler\XML($this->registry, $data);
-       # }
-       # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-       #     return new Dispatcher\Handler\Json($this->registry, $data);
-       # }
-       # return new Html($this->registry, $data);
-
-
-    /*
-        $this->content = $content;
-
-return $this->handleHTML();
-
-*/
-
-
-
+    public function getContent(Resolver $resolver) : Result {
 
         try {
+            # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
+            #     return new Dispatcher\Handler\XML($this->registry, $data);
+            # }
+            # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
+            #     return new Dispatcher\Handler\Json($this->registry, $data);
+            # }
+            # return new Html($this->registry, $data);
+
             return $this->resolver->getResult($request);
         } catch(ResolverException $ex) {
             switch($ex->getCode()) {
