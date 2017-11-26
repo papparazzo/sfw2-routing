@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
+use SFW2\Core\Config;
 
 class ResponseHandler {
 
@@ -31,8 +32,14 @@ class ResponseHandler {
      */
     protected $request;
 
-    public function __construct(Request $request) {
+    /**
+     * @var \SFW2\Core\Config
+     */
+    protected $config;
+
+    public function __construct(Request $request, Config $config) {
         $this->request = $request;
+        $this->config = $config;
     }
 
     public function getContent(Resolver $resolver) : Result {
@@ -46,28 +53,28 @@ class ResponseHandler {
             # }
             # return new Html($this->registry, $data);
 
-            return $this->resolver->getResult($request);
+            return $this->resolver->getResult($this->request);
         } catch(ResolverException $ex) {
             switch($ex->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:
-                    return $this->pageNotFound();
+                    return $this->getPageNotFound();
 
                 case ResolverException::FILE_NOT_FOUND:
-                    return $this->fileNotFound();
+                    return $this->getFileNotFound();
 
                 case ResolverException::NO_DATA_FOUND:
-                    return $this->noDataFound();
+                    return $this->getNoDataFound();
 
                 case ResolverException::NO_PERMISSION:
-                    return $this->noPermission();
+                    return $this->getNoPermission();
 
                 default:
-                    return $this->error($ex);
+                    return $this->getError($ex);
             }
         }
     }
 
-    public function fileNotFound() {
+    public function getFileNotFound() {
         header("HTTP/1.0 404 Not Found");
         $title = '404';
         $caption = 'Datei nicht vorhanden';
@@ -78,7 +85,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description);
     }
 
-    public function noDataFound() {
+    public function getNoDataFound() {
         header("HTTP/1.0 404 Not Found");
         $title = '404';
         $caption = 'Daten nicht vorhanden';
@@ -89,7 +96,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description);
     }
 
-    public function noPermission() {
+    public function getNoPermission() {
         header("HTTP/1.0 403 Forbidden");
         $title = '403';
         $caption = 'Keine Berechtigung';
@@ -99,7 +106,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description);
     }
 
-    public function pageNotFound() {
+    public function getPageNotFound() {
         header("HTTP/1.0 404 Not Found");
         $title = '404';
         $caption = 'Seite nicht vorhanden';
@@ -110,7 +117,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description);
     }
 
-    public function offline() {
+    public function getOffline() {
         $title = 'Offline!';
         $caption = 'Die Seiten sind aktuell offline';
         $description =
@@ -120,7 +127,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description);
     }
 
-    public function error(SFW2Exception $exception, $debug = false) {
+    public function getError(SFW2Exception $exception, $debug = false) {
         $title = 'Achtung!';
         $caption = 'Schwerwiegender Fehler aufgetreten!';
         $description =
