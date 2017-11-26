@@ -26,12 +26,45 @@ use SFW2\Routing\Result;
 
 class File extends Result {
 
-    public function __construct() {
-        ;
+    protected $path = '';
+
+    protected $file = '';
+
+    protected $alias = '';
+
+    protected $isTemp = false;
+
+    public function __construct(string $path, string $file, string $alias = '', bool $isTemp = false) {
+        if($alias == '') {
+            $alias = $file;
+        }
+        $this->alias = $alias;
+        $this->path = $path . DIRECTORY_SEPARATOR;
+        $this->file = $file;
+        $this->isTemp = $isTemp;
     }
 
     public function getData() {
 
     }
+
+     protected $isTempFile = false;
+
+    #$file = $this->data['path'] . $this->data['fileName'];
+
+    public function __destruct() {
+        if($this->isTemp) {
+            unlink($this->path . $this->file);
+        }
+    }
+
+    public function getAliasName() : string {
+        return $this->alias;
+    }
+
+    public function isTempFile() : bool {
+        return $this->isTempFile();
+    }
+
 
 }

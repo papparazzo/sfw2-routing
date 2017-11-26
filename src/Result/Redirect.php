@@ -24,8 +24,7 @@ namespace SFW2\Routing\Result;
 
 use SFW2\Routing\Result;
 
-class Data extends Result {
-
+class Redirect extends Result {
 
     public function getData() {
 

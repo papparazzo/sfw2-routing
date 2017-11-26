@@ -25,9 +25,9 @@ namespace SFW2\Routing\Result;
 use SFW2\Routing\Result;
 use SFW2\Core\View;
 
-class Html extends Result {
+class Content extends Result {
 
-    /**
+  /**
      * @var \SFW2\Core\View
      */
     protected $view = null;
@@ -58,5 +58,8 @@ class Html extends Result {
     public function getCSSFiles() : array {
         return $this->cssFiles;
     }
+
+
+
 
 }
