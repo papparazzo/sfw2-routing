@@ -28,32 +28,17 @@ use SFW2\Core\Config;
 class ResponseHandler {
 
     /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
      * @var \SFW2\Core\Config
      */
     protected $config;
 
-    public function __construct(Request $request, Config $config) {
-        $this->request = $request;
+    public function __construct(Config $config) {
         $this->config = $config;
     }
 
-    public function getContent(Resolver $resolver) : Result {
-
+    public function getContent(Request $request, Resolver $resolver) : Result {
         try {
-            # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-            #     return new Dispatcher\Handler\XML($this->registry, $data);
-            # }
-            # if(isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-            #     return new Dispatcher\Handler\Json($this->registry, $data);
-            # }
-            # return new Html($this->registry, $data);
-
-            return $this->resolver->getResult($this->request);
+            return $resolver->getResult($request);
         } catch(ResolverException $ex) {
             switch($ex->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:
@@ -156,6 +141,17 @@ class ResponseHandler {
     }
 
     protected function handle($title, $caption, $description, $debug = null) {
+
+/*
+        $view = new View($this->config->getVal('path', 'template') . 'plain.phtml');
+        $view->assign('title', $title);
+        $view->assign('caption', $caption);
+        $view->assign('description', $description);
+        $view->assign('debugData', $debug);
+
+        return new HTML($view);
+*/
+
         $data = [
             'title'       => $title,
             'caption'     => $caption,
@@ -165,6 +161,21 @@ class ResponseHandler {
             $data['debug'] = $debug;
         }
         return $data;
+    }
+
+    protected function saveError(SFW2Exception $exception) {
+        $path = $this->config->getVal('path', 'log');
+
+        if($path == '') {
+            return;
+        }
+        $fd = fopen(
+            $path . DIRECTORY_SEPARATOR . $exception->getIdentifier() . '.log',
+            'a'
+        );
+        fwrite($fd, $exception->getTimeStamp());
+        fwrite($fd, $exception->__toString());
+        fclose($fd);
     }
 }
 
