@@ -71,6 +71,15 @@ class ResponseHandler {
                 default:
                     return $this->getError($ex);
             }
+        } catch(Throwable $exception) {
+            if(!($exception instanceof SFW2Exception)) {
+                $exception = new SFW2Exception(
+                    $exception->getMessage(),
+                    SFW2Exception::UNKNOWN,
+                    $exception
+                );
+            }
+            return $this->getError($ex);
         }
     }
 
@@ -127,7 +136,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description);
     }
 
-    public function getError(SFW2Exception $exception, $debug = false) {
+    public function getError(SFW2Exception $exception) {
         $title = 'Achtung!';
         $caption = 'Schwerwiegender Fehler aufgetreten!';
         $description =
@@ -137,7 +146,13 @@ class ResponseHandler {
             '?subject=Fehler-ID: ' . $exception->getIdentifier() .
             '">Webmaster</a>.';
 
-        return $this->handle($title, $caption, $description, $debug ? $exception : null);
+        $debug = null;
+        if($this->config->getVal('debug', 'on', false)) {
+            $debug = $exception;
+        } else {
+            $this->saveError($exception);
+        }
+        return $this->handle($title, $caption, $description, $debug);
     }
 
     protected function handle($title, $caption, $description, $debug = null) {
