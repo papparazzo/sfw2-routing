@@ -23,24 +23,17 @@
 namespace SFW2\Routing\Result;
 
 use SFW2\Routing\Result;
-use SFW2\Core\View;
 
 class Content extends Result {
 
-  /**
-     * @var \SFW2\Core\View
-     */
-    protected $view = null;
+    protected $templateFile = null;
 
     protected $jsFiles  = [];
     protected $cssFiles = [];
+    protected $vars     = [];
 
-    public function __construct(View $view) {
-        $this->view = $view;
-    }
-
-    public function getData() {
-        return $this->view->getContent();
+    public function __construct($templateFile = null) {
+        $this->templateFile = $templateFile;
     }
 
     public function appendJSFile($file) {
@@ -59,7 +52,29 @@ class Content extends Result {
         return $this->cssFiles;
     }
 
+    public function assign(string $name, $val) {
+        $this->vars[$name] = $val;
+    }
 
+    public function assignArray(array $values) {
+        $this->vars = array_merge($this->vars, $values);
+    }
 
+    public function append(string $name, $val) {
+        if(!isset($this->vars[$name])) {
+            $this->vars[$name] = [];
+        }
+        $this->vars[$name][] = $val;
+    }
 
+    public function appendArray(string $name, array $values) {
+        if(!isset($this->vars[$name])) {
+            $this->vars[$name] = [];
+        }
+        $this->vars[$name] = array_merge($this->vars[$name], $values);
+    }
+
+    public function getData() {
+        return $this->vars;
+    }
 }

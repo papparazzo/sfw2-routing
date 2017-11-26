@@ -44,10 +44,6 @@ class File extends Result {
         $this->isTemp = $isTemp;
     }
 
-    public function getData() {
-
-    }
-
      protected $isTempFile = false;
 
     #$file = $this->data['path'] . $this->data['fileName'];

@@ -26,8 +26,5 @@ use SFW2\Routing\Result;
 
 class Redirect extends Result {
 
-    public function getData() {
-
-    }
 
 }
