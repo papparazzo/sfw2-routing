@@ -23,6 +23,7 @@
 namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
+use SFW2\Core\View;
 
 class Html extends ResponseType {
 
@@ -32,15 +33,9 @@ class Html extends ResponseType {
 
 
     public function dispatch() {
-        /*
-        if(is_null($title)) {
-            $title =  $this->conf->getVal('project', 'title');
-        }
-        $this->title = $title;
-        */
-
         $view = new View('web/templates/skeleton.phtml');
-        #$view = new View($this->config->getVal('path', 'template') . 'skeleton.phtml');
+
+
         #$view->assign('cssFiles', $this->content->getCSSFiles());
         $view->append('cssFiles', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
         #$view->assign('jsFiles', $this->content->getJSFiles());
@@ -51,14 +46,31 @@ class Html extends ResponseType {
                 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
             ]
         );
+
+        /*
+        if(is_null($title)) {
+            $title =  $this->conf->getVal('project', 'title');
+        }
+        $this->title = $title;
+        */
+
+
+
         $view->assign('title', 'sdf');#$this->content->getTitle());
-        $view->assign('content', $this->result->getData());
+        $view->assign('content', $this->getInnerContent());
         echo $view->getContent();
 
         #$view->assign('menu',          $this->container['menu']);
         #$view->assign('authenticated', $this->container['authenticated']);
 
     }
+
+    protected function getInnerContent( ) {
+        $view = new View('web/templates/' . $this->result->getTemplateFile() . '.phtml');
+        $view->assignArray($this->result->getData());
+        return $view->getContent();
+    }
+
 
     protected $title    = '';
 

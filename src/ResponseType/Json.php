@@ -27,7 +27,13 @@ use SFW2\Routing\ResponseType;
 class Json extends ResponseType {
 
     public function dispatch() {
+        $data = [
+            'jsFiles' => $this->result->getJSFiles(),
+            'cssFiles' => $this->result->getCSSFiles(),
+            'data' => $this->result->getData()
+        ];
+
         header('Content-type: application/json');
-        echo json_encode($this->result->getData());
+        echo json_encode($data);
     }
 }

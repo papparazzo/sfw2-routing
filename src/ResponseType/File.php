@@ -23,30 +23,29 @@
 namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
+use SFW2\Routing\Result\File as FileContent;
 
 class File extends ResponseType {
 
- public function dispatch(File $file) {
+    public function dispatch(FileContent $file) {
+
         $file = $this->data['path'] . $this->data['fileName'];
 
         if(!file_exists($file)) {
             return false;
         }
 
-        $finfo = finfo_open(FILEINFO_MIME);
-        $mimetype = finfo_file($finfo, $file);
-        finfo_close($finfo);
         header('Pragma: public');
         header('Expires: 0');
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
-        header('Content-Type: ' . $mimetype);
-        header('Content-Disposition: attachment; filename="' . $this->data['Name'] . '";');
+        header('Content-Type: ' . $file->getMimeType());
+        header('Content-Disposition: attachment; filename="' . $file->getAliasName() . '";');
         header('Content-Transfer-Encoding: binary');
-        header('Content-Length: ' . filesize($file));
+        header('Content-Length: ' . $file->getFileSize());
         readfile($file);
 
-        if($this->data['unlink']) {
+        if($file->isTempFile()) {
             unlink($file);
         }
     }
