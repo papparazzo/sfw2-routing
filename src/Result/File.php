@@ -65,4 +65,11 @@ class File extends Result {
     public function getFileSize() : int {
         #filesize($file)
     }
+
+    public function getMimeType() : string {
+        $finfo = finfo_open(FILEINFO_MIME);
+        $mimetype = finfo_file($finfo, $file);
+        finfo_close($finfo);
+        return $mimetype;
+    }
 }

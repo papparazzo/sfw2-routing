@@ -77,4 +77,8 @@ class Content extends Result {
     public function getData() {
         return $this->vars;
     }
+
+    public function getTemplateFile() {
+        return $this->templateFile;
+    }
 }
