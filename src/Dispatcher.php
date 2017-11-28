@@ -37,7 +37,7 @@ class Dispatcher {
         if($result instanceof Result\File) {
 
         }
-        
+
 
 
 
@@ -53,9 +53,7 @@ class Dispatcher {
         }
 
 
-
-
         $this->result = $result;
-var_dump($result);
+
     }
 }
