@@ -22,6 +22,10 @@
 
 namespace SFW2\Routing;
 
+use SFW2\Routing\Result\File;
+use SFW2\Routing\Result\Content;
+use SFW2\Routing\Result\Redirect;
+
 class Dispatcher {
 
     /**
@@ -34,26 +38,27 @@ class Dispatcher {
     }
 
     public function dispatch(Result $result) {
-        if($result instanceof Result\File) {
+        if($result instanceof File) {
 
         }
 
+        if($result instanceof Redirect) {
 
-
+        }
 
         switch($this->request->getRequestType()) {
             case Request::REQUEST_TYPE_AJAX_JSON:
-                return new ResponseType\Json();
+                $response = new ResponseType\Json($result);
+                break;
 
             case Request::REQUEST_TYPE_AJAX_XML:
-                return new ResponseType\Xml();
+                $response = new ResponseType\Xml($result);
+                break;
 
             case Request::REQUEST_TYPE_HTML:
-                return new ResponseType\Html();
+                $response = new ResponseType\Html($result);
+                break;
         }
-
-
-        $this->result = $result;
-
+        $response->dispatch();
     }
 }
