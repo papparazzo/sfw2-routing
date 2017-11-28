@@ -62,7 +62,7 @@ class File extends Result {
         return $this->isTempFile();
     }
 
-    public function fileSize() : int {
-
+    public function getFileSize() : int {
+        #filesize($file)
     }
 }
