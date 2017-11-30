@@ -37,24 +37,48 @@ class Permission {
     protected $permission = [];
 
     /**
-     * @var Database
+     * @var \SFW2\Core\Database
      */
     protected $database = null;
 
-    public function __construct(Database $database, $userId = 0) {
+    /**
+     * @var \SFW2\Routing\User
+     */
+    protected $user = null;
+
+    /**
+     * @var Array
+     */
+    protected $permissions = [];
+
+    public function __construct(Database $database, User $user) {
+        $this->user = $user;
         $this->database = $database;
-        $this->loadPermissions($userId);
+        $this->loadPermissions();
     }
 
     public function loadPermissions($userId) {
+        if($this->user->isAdmin()) {
+            return;
+        }
+
+
         $stmt =
-            "SELECT `Permissions` " .
-            "FROM `Permissions` ";
+            'SELECT * ' .
+            'FROM `sfw2_login_role` ' .
+            'LEFT JOIN `sfw2_role_permission` ' .
+            'ON `sfw2_login_role`.`RoleId` = `sfw2_role_permission`.`RoleId` ' .
+            'LEFT JOIN `sfw2_permission`.`Id` = `sfw2_role_permission`.`PermissionId`' .
+            'WHERE ';
 
         $this->permission = $this->database->select($stmt, [$userId]);
     }
 
     public function getActionPermission($path, $action) {
+        if($this->user->isAdmin()) {
+            return true;
+        }
+
         switch($action) {
             case 'create':
                 return (bool)$this->getPermission($path) & self::CREATE;
@@ -73,6 +97,13 @@ class Permission {
 
 
     public function getPermission($path) {
+        if($this->user->isAdmin()) {
+            return
+                self::READ_OWN | self::READ_ALL | self::CREATE | self::UPDATE_OWN |
+                self::UPDATE_ALL | self::DELETE_OWN | self::DELETE_ALL;
+        }
+
+
         $chunks = explode('/', $path);
     }
 
