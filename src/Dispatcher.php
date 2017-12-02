@@ -23,7 +23,6 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Result\File;
-use SFW2\Routing\Result\Content;
 use SFW2\Routing\Result\Redirect;
 
 class Dispatcher {
