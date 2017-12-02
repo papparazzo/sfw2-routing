@@ -78,6 +78,13 @@ class Content extends Result {
         return $this->vars;
     }
 
+    public function getValue($name, $def = null) {
+        if(isset($this->vars[$name])) {
+            return $this->vars[$name];
+        }
+        return $def;
+    }
+
     public function getTemplateFile() {
         return $this->templateFile;
     }
