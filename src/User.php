@@ -44,6 +44,17 @@ class User {
         $this->database = $database;
     }
 
+    public function loadUser(int $userId) {
+        $stmt =
+            "SELECT `Id`, `FirstName`, `LastName`, `Email`, `Password`, `Admin` " .
+            "FROM `sfw2_user` " .
+            "WHERE `Id` = '%s' " .
+            "AND `Active` = '1'";
+
+        $rv = $this->database->select($stmt, array($userId));
+    }
+
+
     public function reset() {
         $this->authenticated = false;
         $this->firstName     = '';
