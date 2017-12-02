@@ -31,10 +31,12 @@ class Html extends ResponseType {
     const HTTP_STATUS_NOT_FOUND             = 1;
     const HTTP_STATUS_FORBIDDEN             = 2;
 
+#    public function __construct(Result $result) {
+#       parent::__construct($result);
+#    }
 
     public function dispatch() {
         $view = new View('web/templates/skeleton.phtml');
-
 
         #$view->assign('cssFiles', $this->content->getCSSFiles());
         $view->append('cssFiles', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
@@ -47,16 +49,7 @@ class Html extends ResponseType {
             ]
         );
 
-        /*
-        if(is_null($title)) {
-            $title =  $this->conf->getVal('project', 'title');
-        }
-        $this->title = $title;
-        */
-
-
-
-        $view->assign('title', 'sdf');#$this->content->getTitle());
+        $view->assign('title', $this->result->getValue('title', '' /*$this->conf->getVal('project', 'title')*/));
         $view->assign('content', $this->getInnerContent());
         echo $view->getContent();
 
@@ -69,17 +62,6 @@ class Html extends ResponseType {
         $view = new View('web/templates/' . $this->result->getTemplateFile() . '.phtml');
         $view->assignArray($this->result->getData());
         return $view->getContent();
-    }
-
-
-    protected $title    = '';
-
-    public function setTitle(string $title) {
-        $this->title = $title;
-    }
-
-    public function getTitle() : string {
-        return $this->title;
     }
 
     public function setHeader($header) {
