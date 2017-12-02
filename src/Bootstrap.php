@@ -23,12 +23,8 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Bootstrap\BootstrapException;
-use SFW2\Core\SFW2Exception;
-use SFW2\Core\View;
-use SFW2\Routing\Result\HTML;
 
 use Dice\Dice;
-use Throwable;
 use ErrorException;
 
 class Bootstrap {
