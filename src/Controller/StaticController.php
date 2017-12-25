@@ -24,6 +24,7 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use Dice\Dice;
+use \SFW2\Routing\Result\Content;
 
 class StaticController extends Controller {
 
@@ -35,7 +36,8 @@ class StaticController extends Controller {
     }
 
     public function index() {
-        $content = new \SFW2\Routing\Result\Content($this->template);
+        $content = new Content($this->template);
+        #$content->appendCSSFile($file);
         #$content->assign('title', 'Hallod');
         return $content;
     }
