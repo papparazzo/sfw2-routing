@@ -36,9 +36,7 @@ class StaticController extends Controller {
 
     public function index() {
         $content = new \SFW2\Routing\Result\Content($this->template);
-        $content->assign('title', 'Hallod');
-        $content->assign('caption', 'Hallo Caption');
-        $content->assign('description', 'Hallo Des');
+        #$content->assign('title', 'Hallod');
         return $content;
     }
 }
