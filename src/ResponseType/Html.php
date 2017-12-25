@@ -38,8 +38,15 @@ class Html extends ResponseType {
     public function dispatch() {
         $view = new View('web/templates/skeleton.phtml');
 
+        $css = 'public/css/' . $this->result->getTemplateFile() . '.css';
+        if(is_file($css)) {
+            $view->append('cssFiles', $css);
+        }
+
         #$view->assign('cssFiles', $this->content->getCSSFiles());
         $view->append('cssFiles', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
+        $view->append('cssFiles', 'https://fonts.googleapis.com/css?family=Montserrat');
+        $view->append('cssFiles', 'public/css/base.css');
         #$view->assign('jsFiles', $this->content->getJSFiles());
         $view->appendArray(
             'jsFiles', [
@@ -48,6 +55,18 @@ class Html extends ResponseType {
                 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
             ]
         );
+
+
+/*
+        <a class="nav-link active" href="/verein">Verein</a>
+        <a class="nav-link" href="#">Fußball</a>
+        <a class="nav-link" href="#">Tischtennis</a>
+        <a class="nav-link" href="#">Turnen</a>
+        <a class="nav-link" href="#">Bogenschießen</a>
+        <a class="nav-link" href="#">Laufen<span class="badge badge-secondary">neu!</span></a>
+*/
+
+
 
         $view->assign('title', $this->result->getValue('title', '' /*$this->conf->getVal('project', 'title')*/));
         $view->assign('content', $this->getInnerContent());
