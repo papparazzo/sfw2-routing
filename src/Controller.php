@@ -36,7 +36,7 @@ abstract class Controller {
      */
     protected $controllerId;
 
-    public function __construct(Dice $container, int $controllerId) {
+    public function __construct(Dice $container, int $controllerId = null) {
         $this->container = $container;
         $this->controllerId = $controllerId;
     }
