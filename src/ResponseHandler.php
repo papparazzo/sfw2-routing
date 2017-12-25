@@ -142,7 +142,7 @@ class ResponseHandler {
     }
 
     protected function handle($title, $caption, $description, $debug = null) : Result {
-        $result = new Content('plain.phtml');
+        $result = new Content('plain');
         $result->assignArray([
             'title'       => $title,
             'caption'     => $caption,
