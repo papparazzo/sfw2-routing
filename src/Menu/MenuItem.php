@@ -24,43 +24,27 @@ namespace SFW2\Routing\Menu;
 
 class MenuItem {
 
-/*
+/**/
     const TIME_DIFF = 7; // in days
 
-    protected $title;
     protected $url;
     protected $displayname;
     protected $checked;
-    protected $submen       = array();
-    protected $subActive    = false;
+    protected $submen       = [];
     protected $lastModified = null;
-    protected $showItem     = false;
-    protected $topMostMenu  = false;
 
-    public function __construct(
-        $displayname, $title, $url, $lastModified = null, $topMostMenu = false
-    ) {
-        $this->title        = $title;
+    public function __construct($displayname, $url, $lastModified = null) {
         $this->lastModified = $lastModified;
         $this->displayname  = $displayname;
-        $this->topMostMenu  = $topMostMenu;
         $this->url          = $url;
     }
 
-    public function addSubMenuItem(Item $menuitem) {
+    public function addSubMenuItem(MenuItem $menuitem) {
         $this->submen[] = $menuitem;
-    }
-
-    public function subMenuActive($isActive) {
-        $this->subActive = $isActive;
     }
 
     public function setMenuChecked() {
         $this->checked = true;
-    }
-
-    public function getTitle() {
-        return $this->title;
     }
 
     public function getURL() {
@@ -73,10 +57,6 @@ class MenuItem {
 
     public function getDisplayName() {
         return $this->displayname;
-    }
-
-    public function hasSubMenu() {
-        return !empty($this->submen);
     }
 
     public function getSubMenu() {
@@ -128,6 +108,6 @@ class MenuItem {
         }
         return false;
     }
- * 
- */
+
+ //*/
 }
