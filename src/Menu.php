@@ -63,17 +63,13 @@ class Menu5 {
     protected function createMenu() {
         $this->createMenuRecursive();
     }
-/*
+
     protected function createMenuRecursive($pid = 0, $level = 0) {
         $stmt =
             "SELECT `sfw2_menu`.`Id`, `sfw2_menu`.`Displayname`, " .
-                   "`sfw2_path`.`Module`, `sfw2_path`.`Controller`, " .
-                   "`sfw2_path`.`Action`, `sfw2_menu`.`Description`, " .
                    "UNIX_TIMESTAMP(`sfw2_path`.`LastModified`) AS " .
                    "`LastModified` " .
             "FROM `sfw2_menu` " .
-            "LEFT JOIN `sfw2_permission_path` AS `sfw2_path` " .
-            "ON `sfw2_path`.`PathId` = `sfw2_menu`.`PathId` " .
             "WHERE `sfw2_menu`.`PId` = '%s' " .
             "ORDER BY `sfw2_menu`.`Pos` ASC";
         $res = $this->db->select($stmt, array($pid));
