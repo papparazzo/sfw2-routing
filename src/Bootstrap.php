@@ -100,7 +100,7 @@ class Bootstrap {
                 'shared' => true,
                 'constructParams' => [
                     $this->config->getVal('database', 'host'),
-                    $this->config->getVal('database', 'usr'),
+                    $this->config->getVal('database', 'user'),
                     $this->config->getVal('database', 'pwd'),
                     $this->config->getVal('database', 'db'),
                 ]
@@ -113,7 +113,7 @@ class Bootstrap {
         if($this->isOffline()) {
             $result = $response->getOffline();
         } else {
-            $ctrls = $this->loadController($configPath);
+            $ctrls = new ControllerMap($this->container->create('SFW2\Core\Database'));
             $resolver = new Resolver($ctrls, $this->container);
             $result = $response->getContent($request, $resolver);
         }
@@ -134,17 +134,6 @@ class Bootstrap {
             ]
         ]);
         $this->config = $this->container->create('SFW2\Core\Config');
-    }
-
-    protected function loadController(string $configPath) {
-        $ctrlConf = $configPath . DIRECTORY_SEPARATOR . 'conf.controller.php';
-        if(!is_file($ctrlConf)) {
-            throw new BootstrapException(
-                'File "' . $ctrlConf . '" does not exist',
-                BootstrapException::CONTROLLER_ARRAY_NOT_SET
-            );
-        }
-        return require_once $ctrlConf;
     }
 
     protected function setUpEnvironment() {

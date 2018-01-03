@@ -31,8 +31,41 @@ class ControllerMap {
      */
     protected $database = null;
 
+    /**
+     * @var array
+     */
+    protected $map = [];
+
     public function __construct(Database $database) {
         $this->database = $database;
+
+        $this->map = [
+            '' => [
+                'class' => 'SFW2\Routing\Controller\StaticController',
+                'params' => [
+                    'home'
+                ]
+            ],
+            'verein' => [
+                'class' => 'SFW2\Routing\Controller\BaseController',
+                'params' => [
+                    150,
+                    'Hallddo'
+                ]
+            ]
+        ];
+    }
+
+    public function isPath($path) {
+        return isset($this->map[$path]);
+    }
+
+    public function getClassByPath($path) {
+        return $this->map[$path]['class'];
+    }
+
+    public function getParamsByPath($path) {
+        return $this->map[$path]['params'];
     }
 
     protected function loadController() {

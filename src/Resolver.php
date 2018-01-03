@@ -29,14 +29,17 @@ use ReflectionMethod;
 
 class Resolver {
 
-    protected $controllers = array();
+    /**
+     * @var ControllerMap
+     */
+    protected $controllers = null;
 
     /**
      * @var \Dice\Dice
      */
     protected $container = null;
 
-    public function __construct(Array $controllers, Dice $container) {
+    public function __construct(ControllerMap $controllers, Dice $container) {
         $this->controllers = $controllers;
         $this->container = $container;
     }
@@ -54,18 +57,17 @@ class Resolver {
         $action = $request->getAction();
 
         $msg = $path . '-' . $action;
-        if(!isset($this->controllers[$path])) {
+        if(!$this->controllers->isPath($path)) {
             throw new ResolverException(
                 'could not load "' . $msg . '"',
                 ResolverException::PAGE_NOT_FOUND
             );
         }
 
-        $params = $this->controllers[$path];
-        $class = key($params);
+        $class = $this->controllers->getClassByPath($path);
         $rule = [
             $class => [
-                'constructParams' => current($params)
+                'constructParams' => $this->controllers->getParamsByPath($path)
             ]
         ];
         $this->container->addRules($rule);
