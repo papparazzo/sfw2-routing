@@ -22,38 +22,37 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Core\Database;
-
 class User {
 
-    /**
-     * @var \SFW2\Core\Database
-     */
-    protected $database = null;
+    const SEX_MALE    = 'MALE';
+    const SEX_FEMAL   = 'FEMALE';
+    const SEX_UNKNOWN = 'UNKNOWN';
 
-    protected $authenticated = false;
-    protected $firstName     = '';
-    protected $lastName      = '';
-    protected $mailAddr      = '';
     protected $userid        = -1;
     protected $isAdmin       = false;
+    protected $firstName     = '';
+    protected $lastName      = '';
+    protected $sex           = self::SEX_UNKNOWN;
+    protected $birthday      = null;
+    protected $mailAddr      = '';
 
-    const MAX_RETRIES = 100;
+    protected $phone        = '';
+    protected $mobile       = '';
 
-    public function __construct(Database $database) {
-        $this->database = $database;
+    protected $loginName = '';
+
+    public function __construct(int $userId = -1, $isAdmin = false, string $firstName = '') {
+        $this->userid        = $userId;
+        $this->isAdmin       = $isAdmin;
+        $this->firstName     = $firstName;
+        $this->lastName      = '';
+        $this->sex           = self::SEX_UNKNOWN;
+        $this->birthday      = null;
+        $this->mailAddr      = '';
+        $this->phone        = '';
+        $this->mobile       = '';
+        $this->loginName = '';
     }
-
-    public function loadUser(int $userId) {
-        $stmt =
-            "SELECT `Id`, `FirstName`, `LastName`, `Email`, `Password`, `Admin` " .
-            "FROM `sfw2_user` " .
-            "WHERE `Id` = '%s' " .
-            "AND `Active` = '1'";
-
-        $rv = $this->database->select($stmt, array($userId));
-    }
-
 
     public function reset() {
         $this->authenticated = false;
@@ -62,83 +61,6 @@ class User {
         $this->mailAddr      = '';
         $this->userid        = -1;
         $this->isAdmin       = false;
-    }
-
-    public function authenticateUser($user, $pwd) {
-        $this->reset();
-        $stmt =
-            "SELECT `Id`, `FirstName`, `LastName`, `Email`, `Password`, `Admin`, " .
-            "IF(CURRENT_TIMESTAMP > `LastTry` + POW(2, `Retries`) - 1, 1, 0) " .
-            "AS `OnTime` " .
-            "FROM `sfw2_user` " .
-            "WHERE `LoginName` LIKE '%s' " .
-            "AND `Active` = '1'";
-
-        $rv = $this->database->select($stmt, array($user));
-
-        if(count($rv) != 1) {
-            return false;
-        }
-
-        $rv = $rv[0];
-        if($rv['OnTime'] == 0) {
-            return false;
-        }
-
-        if(!$this->checkPassword($rv['Id'], $rv['Password'], $pwd)) {
-            $this->updateRetries($user, false);
-            return false;
-        }
-
-        $this->updateRetries($user, true);
-
-        $this->firstName = $rv['FirstName'];
-        $this->lastName  = $rv['LastName'];
-        $this->mailAddr  = $rv['Email'];
-        $this->userid    = $rv['Id'];
-        $this->isAdmin   = $rv['Admin'] == '1' ? true : false;
-
-        return $this->authenticated = true;
-    }
-
-    public function setPassword($userId, $password) {
-        $stmt =
-            "UPDATE `sfw2_user` " .
-            "SET `Password` = '%s' " .
-            "WHERE `Id` = '%s' ";
-
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $this->database->update($stmt, array($hash, $userId));
-    }
-
-    protected function checkPassword($userId, $hash, $password) {
-        if(!password_verify($password, $hash)) {
-            return false;
-        }
-
-        if(!password_needs_rehash($hash, PASSWORD_DEFAULT)) {
-            $this->setPassword($userId, $password);
-        }
-        return true;
-    }
-
-    protected function updateRetries($user, $sucess) {
-        $stmt = "UPDATE `sfw2_user` ";
-        if($sucess) {
-            $stmt .= "SET `Retries` = 0 ";
-        } else {
-            $stmt .=
-                "SET `Active` = IF(`Retries` + 1 < " .
-                self::MAX_RETRIES .  ", 1, 0), " .
-                "`Retries` = IF(`Retries` + 1 < " .
-                self::MAX_RETRIES .  ", `Retries` + 1, 0) ";
-        }
-        $stmt .=
-            "WHERE `LoginName` = '%s' " .
-            "AND `Active` = 1 " .
-            "AND CURRENT_TIMESTAMP > `LastTry` +  POW(2, `Retries`) - 1";
-
-        $this->database->update($stmt, array($user));
     }
 
     public function isAuthenticated() {
@@ -165,3 +87,4 @@ class User {
         return $this->isAdmin;
     }
 }
+
