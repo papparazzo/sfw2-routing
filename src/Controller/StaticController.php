@@ -30,8 +30,8 @@ class StaticController extends Controller {
 
     protected $template;
 
-    public function __construct(Dice $container, string $template) {
-        parent::__construct($container);
+    public function __construct(Dice $container, int $controllerId, string $template) {
+        parent::__construct($container, $controllerId);
         $this->template = $template;
     }
 
