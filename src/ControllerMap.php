@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Core\Database;
+use SFW2\Routing\ControllerMap\ControllerMapException;
 
 class ControllerMap {
 
@@ -31,49 +32,43 @@ class ControllerMap {
      */
     protected $database = null;
 
-    /**
-     * @var array
-     */
-    protected $map = [];
-
     public function __construct(Database $database) {
         $this->database = $database;
+    }
 
-        $this->map = [
-            '' => [
-                'class' => 'SFW2\Routing\Controller\StaticController',
-                'params' => [
-                    'home'
-                ]
-            ],
-            'verein' => [
-                'class' => 'SFW2\Routing\Controller\BaseController',
-                'params' => [
-                    150,
-                    'Hallddo'
-                ]
+    public function getRulsetByPathId($pathId) {
+        $stmt =
+            "SELECT `ClassName`, `JsonData` " .
+            "FROM `sfw2_path` AS `ctrlMap` " .
+            "LEFT JOIN `sfw2_controller_template` AS `ctrlTempl` " .
+            "ON `ctrlMap`.`ControllerTemplateId` = `ctrlTempl`.`ControllerTemplateId` " .
+            "WHERE `ctrlMap`.`PathId` = '%s' ";
+
+        $res = $this->database->selectRow($stmt, [$pathId]);
+
+        if(empty($res)) {
+            throw new ControllerMapException(
+                'found no entry for <' . $pathId . '>',
+                ControllerMapException::NO_RESULTSET_GIVEN
+            );
+        }
+
+        $params = json_decode($res['JsonData']);
+
+        if(!is_array($params)) {
+            throw new ControllerMapException(
+                'invalid params given <' . $res['JsonData'] . '>',
+                ControllerMapException::INVALID_PARAMS_GIVEN
+            );
+        }
+
+        array_unshift($params, $pathId);
+
+        return [
+            $res['ClassName'] => [
+                'constructParams' => $params
             ]
         ];
-    }
 
-    public function isPath($path) {
-        return isset($this->map[$path]);
-    }
-
-    public function getClassByPath($path) {
-        return $this->map[$path]['class'];
-    }
-
-    public function getParamsByPath($path) {
-        return $this->map[$path]['params'];
-    }
-
-    protected function loadController() {
-        $stmt =
-            'SELECT * ' .
-            'FROM `sfw2_controller_map` ' .
-            '';
-
-        $res = $this->database->select($stmt);
     }
 }
