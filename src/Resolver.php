@@ -35,12 +35,18 @@ class Resolver {
     protected $controllers = null;
 
     /**
+     * @var Path
+     */
+    protected $path;
+
+    /**
      * @var \Dice\Dice
      */
     protected $container = null;
 
-    public function __construct(ControllerMap $controllers, Dice $container) {
+    public function __construct(ControllerMap $controllers, Path $path, Dice $container) {
         $this->controllers = $controllers;
+        $this->path = $path;
         $this->container = $container;
     }
 
@@ -57,21 +63,16 @@ class Resolver {
         $action = $request->getAction();
 
         $msg = $path . '-' . $action;
-        if(!$this->controllers->isPath($path)) {
+        if(!$this->path->isValidPath($path)) {
             throw new ResolverException(
                 'could not load "' . $msg . '"',
                 ResolverException::PAGE_NOT_FOUND
             );
         }
 
-        $class = $this->controllers->getClassByPath($path);
-        $rule = [
-            $class => [
-                'constructParams' => $this->controllers->getParamsByPath($path)
-            ]
-        ];
+        $rule = $this->controllers->getRulsetByPathId($this->path->getPathId($path));
         $this->container->addRules($rule);
-        return $this->callMethode($class, $action, $request);
+        return $this->callMethode(key($rule), $action, $request);
     }
 
     protected function callMethode(string $class, string $action, Request $request) {
@@ -104,7 +105,7 @@ class Resolver {
         }
     }
 
-    protected function getArguments(ReflectionMethod $methode, Request $request) : Array {
+    protected function getArguments(ReflectionMethod $methode, Request $request) : array {
         $params = [];
 
         foreach($methode->getParameters() as $param) {

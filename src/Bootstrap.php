@@ -114,7 +114,8 @@ class Bootstrap {
             $result = $response->getOffline();
         } else {
             $ctrls = new ControllerMap($this->container->create('SFW2\Core\Database'));
-            $resolver = new Resolver($ctrls, $this->container);
+            $path = new Path($this->container->create('SFW2\Core\Database'));
+            $resolver = new Resolver($ctrls, $path, $this->container);
             $result = $response->getContent($request, $resolver);
         }
 
