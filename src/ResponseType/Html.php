@@ -46,7 +46,7 @@ class Html extends ResponseType {
         #$view->assign('cssFiles', $this->content->getCSSFiles());
         $view->append('cssFiles', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css');
         $view->append('cssFiles', 'https://fonts.googleapis.com/css?family=Montserrat');
-        $view->append('cssFiles', 'public/css/base.css');
+        $view->append('cssFiles', '/public/css/base.css');
         #$view->assign('jsFiles', $this->content->getJSFiles());
         $view->appendArray(
             'jsFiles', [
