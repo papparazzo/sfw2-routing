@@ -90,7 +90,7 @@ class Request {
         $path = mb_substr($path, 1);
         $path = strtolower($path);
         $path = preg_replace('#[^A-Za-z0-9/]#', '', $path);
-        $path = rtrim($path, '/');
+        $path = '/' . trim($path, '/');
         return $path;
     }
 }
