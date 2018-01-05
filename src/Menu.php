@@ -44,14 +44,32 @@ class Menu {
         $this->permission = $permission;
     }
 
+    public function loadMenu(array &$map, int $parentId = 0) {
+        $stmt =
+            "SELECT `PathId`, `ParentPathId`, `menu`.`Name`, `Position` " .
+            "FROM  `sfw2_menu` AS `menu` " .
+            "LEFT JOIN `sfw2_path` " .
+            "ON `PathId` " .
+            "WHERE `ParentPathId` = '%s'";
+
+        $res = $this->database->select($stmt);
+
+        foreach($res as $item) {
+            $map[$item['PathId']] = [
+                'Name' => $item['Name'],
+                'Items' => []
+            ];
+            $this->loadTree($map[$item['PathId']]['Items'], $item['PathId']);
+        }
+
+    }
+
+
     public function getMenu() {
         return $this->menu;
     }
 
 }
-
-/*
- */
 
 class Menu5 {
 
