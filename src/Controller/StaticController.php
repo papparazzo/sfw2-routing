@@ -37,6 +37,9 @@ class StaticController extends Controller {
 
     public function index() {
         $content = new Content($this->template);
+        # FIXME Adressen ändern!!!
+        $content->assign('chairman', 'Herr Bla');
+        $content->assign('mailaddr', 'ddd');
         #$content->appendCSSFile($file);
         #$content->assign('title', 'Hallod');
         return $content;
