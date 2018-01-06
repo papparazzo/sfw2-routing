@@ -24,7 +24,11 @@ namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
 use SFW2\Routing\Result\Content;
+
 use SFW2\Core\Config;
+use SFW2\Core\SFW2Exception;
+
+use Throwable;
 
 class ResponseHandler {
 
@@ -40,8 +44,8 @@ class ResponseHandler {
     public function getContent(Request $request, Resolver $resolver) : Result {
         try {
             return $resolver->getResult($request);
-        } catch(ResolverException $ex) {
-            switch($ex->getCode()) {
+        } catch(ResolverException $exception) {
+            switch($exception->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:
                     return $this->getPageNotFound();
 
@@ -55,7 +59,7 @@ class ResponseHandler {
                     return $this->getNoPermission();
 
                 default:
-                    return $this->getError($ex);
+                    return $this->getError($exception);
             }
         } catch(Throwable $exception) {
             if(!($exception instanceof SFW2Exception)) {
@@ -65,7 +69,7 @@ class ResponseHandler {
                     $exception
                 );
             }
-            return $this->getError($ex);
+            return $this->getError($exception);
         }
     }
 
@@ -141,13 +145,13 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description, $debug);
     }
 
-    protected function handle($title, $caption, $description, $debug = null) : Result {
+    protected function handle($title, $caption, $description, $debugData = null) : Result {
         $result = new Content('plain');
         $result->assignArray([
             'title'       => $title,
             'caption'     => $caption,
             'description' => $description,
-            'debug'       => $debug
+            'debugData'   => $debugData
         ]);
         return $result;
     }
