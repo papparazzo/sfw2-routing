@@ -39,7 +39,7 @@ class Path {
         $this->loadPath($this->pathMap);
     }
 
-    public function loadPath(array &$map, int $parentId = 0, $prefix = '/') {
+    public function loadPath(array &$map, int $parentId = 0, string $prefix = '/') {
         $stmt =
             "SELECT `PathId`, `ParentPathId`, `Name` " .
             "FROM `sfw2_path` " .
@@ -53,14 +53,24 @@ class Path {
         }
     }
 
-    public function isValidPath($path) {
+    public function isValidPath(string $path) : int {
         return isset($this->pathMap[$path]);
     }
 
-    public function getPathId($path) {
+    public function getPathId(string $path) : int {
         if(!$this->isValidPath($path)) {
+            // TODO: Implement Exception
             throw new Exception();
         }
         return $this->pathMap[$path];
+    }
+
+    public function getPath(int $pathId) : string {
+        $res = array_search($pathId, $this->pathMap);
+        if($res === false) {
+            // TODO: Implement Exception
+            throw new Exception();
+        }
+        return $res;
     }
 }
