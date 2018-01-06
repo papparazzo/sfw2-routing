@@ -57,17 +57,6 @@ class Html extends ResponseType {
         );
 
 
-/*
-        <a class="nav-link active" href="/verein">Verein</a>
-        <a class="nav-link" href="#">Fußball</a>
-        <a class="nav-link" href="#">Tischtennis</a>
-        <a class="nav-link" href="#">Turnen</a>
-        <a class="nav-link" href="#">Bogenschießen</a>
-        <a class="nav-link" href="#">Laufen<span class="badge badge-secondary">neu!</span></a>
-*/
-
-
-
         $view->assign('title', $this->result->getValue('title', '' /*$this->conf->getVal('project', 'title')*/));
         $view->assign('content', $this->getInnerContent());
         echo $view->getContent();
@@ -80,7 +69,9 @@ class Html extends ResponseType {
     protected function getInnerContent( ) {
         $view = new View('web/templates/' . $this->result->getTemplateFile() . '.phtml');
         $view->assignArray($this->result->getData());
-        return $view->getContent();
+        $view0 = new View('web/templates/decorate.phtml');
+        $view0->assign('content', $view->getContent());
+        return $view0->getContent();
     }
 
     public function setHeader($header) {
