@@ -25,6 +25,8 @@ namespace SFW2\Routing;
 use SFW2\Core\Database;
 use SFW2\Routing\Permission;
 
+use SFW2\Routing\Menu\MenuItem;
+
 class Menu {
 
     protected $menu = [];
@@ -39,8 +41,14 @@ class Menu {
      */
     protected $database = null;
 
-    public function __construct(Database $database, Permission $permission) {
+    /**
+     * @var \SFW2\Routing\Path
+     */
+    protected $path;
+
+    public function __construct(Database $database, Path $path, Permission $permission) {
         $this->database = $database;
+        $this->path = $path;
         $this->permission = $permission;
     }
 
@@ -50,7 +58,8 @@ class Menu {
             "FROM  `sfw2_menu` AS `menu` " .
             "LEFT JOIN `sfw2_path` " .
             "ON `PathId` " .
-            "WHERE `ParentPathId` = '%s'";
+            "WHERE `ParentPathId` = '%s' " .
+            "ORDER BY `Position`";
 
         $res = $this->database->select($stmt);
 
@@ -61,6 +70,12 @@ class Menu {
             ];
             $this->loadTree($map[$item['PathId']]['Items'], $item['PathId']);
         }
+
+        $this->path->getPath($item['PathId']);
+
+        $item = new MenuItem($displayname, $url, $lastModified);
+
+
 
     }
 
