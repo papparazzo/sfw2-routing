@@ -107,6 +107,12 @@ class Bootstrap {
             ]
         ]);
 
+        $this->container->addRules([
+            'SFW2\Routing\Path' => [
+                'shared' => true
+            ]
+        ]);
+
         $response = new ResponseHandler($this->config);
         $request = new Request($this->server, $this->get, $this->post);
 
@@ -114,13 +120,13 @@ class Bootstrap {
             $result = $response->getOffline();
         } else {
             $ctrls = new ControllerMap($this->container->create('SFW2\Core\Database'));
-            $path = new Path($this->container->create('SFW2\Core\Database'));
+            $path = $this->container->create('SFW2\Routing\Path');
             $resolver = new Resolver($ctrls, $path, $this->container);
             $result = $response->getContent($request, $resolver);
         }
 
         $dispatcher = new Dispatcher($request);
-        $dispatcher->dispatch($result);
+        $dispatcher->dispatch($result, $this->container);
     }
 
     protected function loadConfig(string $configPath) {

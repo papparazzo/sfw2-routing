@@ -23,7 +23,9 @@
 namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
+use SFW2\Routing\Result;
 use SFW2\Core\View;
+use Dice\Dice;
 
 class Html extends ResponseType {
 
@@ -31,9 +33,15 @@ class Html extends ResponseType {
     const HTTP_STATUS_NOT_FOUND             = 1;
     const HTTP_STATUS_FORBIDDEN             = 2;
 
-#    public function __construct(Result $result) {
-#       parent::__construct($result);
-#    }
+    /**
+     * @var \Dice\Dice
+     */
+    protected $dice = null;
+
+    public function __construct(Result $result, Dice $dice) {
+       parent::__construct($result);
+       $this->dice = $dice;
+    }
 
     public function dispatch() {
         $view = new View('web/templates/skeleton.phtml');
@@ -55,6 +63,8 @@ class Html extends ResponseType {
                 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js'
             ]
         );
+
+
 
 
         $view->assign('title', $this->result->getValue('title', '' /*$this->conf->getVal('project', 'title')*/));

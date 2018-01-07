@@ -25,6 +25,8 @@ namespace SFW2\Routing;
 use SFW2\Routing\Result\File;
 use SFW2\Routing\Result\Redirect;
 
+use Dice\Dice;
+
 class Dispatcher {
 
     /**
@@ -36,7 +38,7 @@ class Dispatcher {
         $this->request = $request;
     }
 
-    public function dispatch(Result $result) {
+    public function dispatch(Result $result, Dice $dice) {
         if($result instanceof File) {
 
         }
@@ -55,7 +57,7 @@ class Dispatcher {
                 break;
 
             case Request::REQUEST_TYPE_HTML:
-                $response = new ResponseType\Html($result);
+                $response = new ResponseType\Html($result, $dice);
                 break;
         }
         $response->dispatch();
