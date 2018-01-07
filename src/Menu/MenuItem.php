@@ -24,7 +24,6 @@ namespace SFW2\Routing\Menu;
 
 class MenuItem {
 
-/**/
     const TIME_DIFF = 7; // in days
 
     protected $url;
@@ -39,8 +38,12 @@ class MenuItem {
         $this->url          = $url;
     }
 
-    public function addSubMenuItem(MenuItem $menuitem) {
-        $this->submen[] = $menuitem;
+    public function addSubMenuItem(MenuItem $menuItem) {
+        $this->submen[] = $menuItem;
+    }
+
+    public function addSubMenuItems(array $menuItems) {
+        $this->submen = array_merge($this->submen, $menuItems);
     }
 
     public function setMenuChecked() {
@@ -61,17 +64,6 @@ class MenuItem {
 
     public function getSubMenu() {
         return $this->submen;
-    }
-
-    public function getSubmenuItem($key) {
-        if(!isset($this->submen[$key])) {
-            return null;
-        }
-        return $this->submen[$key];
-    }
-
-    public function isSubmenuActive() {
-        return $this->subActive;
     }
 
     public function isRrecentlyModified() {
@@ -102,12 +94,10 @@ class MenuItem {
     protected function hasNewContent() {
         if(
             $this->lastModified &&
-            \time() - $this->lastModified < (self::TIME_DIFF * 60 * 60 * 24)
+            time() - $this->lastModified < (self::TIME_DIFF * 60 * 60 * 24)
         ) {
             return true;
         }
         return false;
     }
-
- //*/
 }

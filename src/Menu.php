@@ -29,8 +29,6 @@ use SFW2\Routing\Menu\MenuItem;
 
 class Menu {
 
-    protected $menu = [];
-
     /**
      * @var \SFW2\Routing\Permission
      */
@@ -46,172 +44,34 @@ class Menu {
      */
     protected $path;
 
-    public function __construct(Database $database, Path $path, Permission $permission) {
+    public function __construct(Database $database, Path $path/*, Permission $permission*/) {
         $this->database = $database;
         $this->path = $path;
-        $this->permission = $permission;
+        #$this->permission = $permission;
     }
 
-    public function loadMenu(array &$map, int $parentId = 0) {
+    public function getMenu(int $parentId = 0, $depth = 1) {
         $stmt =
             "SELECT `PathId`, `ParentPathId`, `menu`.`Name`, `Position` " .
             "FROM  `sfw2_menu` AS `menu` " .
             "LEFT JOIN `sfw2_path` " .
             "ON `PathId` " .
             "WHERE `ParentPathId` = '%s' " .
-            "ORDER BY `Position`";
+            "ORDER BY `Position` ASC";
 
-        $res = $this->database->select($stmt);
+        $res = $this->database->select($stmt, [$parentId]);
+
+        $map = [];
 
         foreach($res as $item) {
-            $map[$item['PathId']] = [
-                'Name' => $item['Name'],
-                'Items' => []
-            ];
-            $this->loadTree($map[$item['PathId']]['Items'], $item['PathId']);
-        }
-
-        $this->path->getPath($item['PathId']);
-
-        $item = new MenuItem($displayname, $url, $lastModified);
-
-
-
-    }
-
-
-    public function getMenu() {
-        return $this->menu;
-    }
-
-}
-
-class Menu5 {
-
-    public function __construct(Database $db) {
-        $this->db     = $db;
-        $this->createMenu();
-    }
-
-    protected function createMenu() {
-        $this->createMenuRecursive();
-    }
-
-    protected function createMenuRecursive($pid = 0, $level = 0) {
-        $stmt =
-            "SELECT `sfw2_menu`.`Id`, `sfw2_menu`.`Displayname`, " .
-                   "UNIX_TIMESTAMP(`sfw2_path`.`LastModified`) AS " .
-                   "`LastModified` " .
-            "FROM `sfw2_menu` " .
-            "WHERE `sfw2_menu`.`PId` = '%s' " .
-            "ORDER BY `sfw2_menu`.`Pos` ASC";
-        $res = $this->db->select($stmt, array($pid));
-
-        foreach($res as $v) {
-            $this->createMenuItem(
-                $level,
-                $v['Displayname'],
-                $v['Module'],
-                $v['Controller'],
-                $v['Action'],
-                $v['Description'],
-                $v['LastModified']
-            );
-            $this->createMenuRecursive($v['Id'], $level + 1);
-        }
-    }
-
-    protected function createMenuItem(
-        $level, $displayname, $module, $controller, $action, $title,
-        $lastModified
-    ) {
-        $menuitem = new Menu\Item(
-            $displayname,
-            $title,
-            $this->generateURL($module, $controller, $action),
-            $lastModified,
-            $level == 0
-        );
-        switch($level) {
-            case 0:
-                if(!isset($this->menu[$module])) {
-                    $this->menu[$module] = $menuitem;
-                }
-                break;
-
-            case 1:
-                $this->menu[$module]->addSubMenuItem($menuitem);
-                break;
-        }
-    }
-
-    protected function generateURL($module, $controller, $action) {
-        $rv = '/' . $module;
-
-        if($controller == null) {
-            return $rv;
-        }
-
-        $rv .= '/' . $controller;
-
-        if($action == null) {
-            return $rv;
-        }
-
-        return $rv . '/' . $action;
-    }
-
-
-
-
-
-
-
-/*
-    public function getMenuArray() {
-        $rv = array();
-
-        foreach($this->menu as $menuitem) {
-            $rv[$menuitem->getDisplayName()] = array();
-            $rv[$menuitem->getDisplayName()][$menuitem->getURL()] =
-                $menuitem->getDisplayName();
-
-            $sub1 = $menuitem->getSubMenu();
-
-            foreach($sub1 as $menuItem1) {
-                $rv[$menuitem->getDisplayName()][$menuItem1->getURL()] =
-                    $menuItem1->getDisplayName();
-
-                $sub2 = $menuItem1->getSubMenu();
-                foreach($sub2 as $menuItem2) {
-                    $rv[$menuitem->getDisplayName()][$menuItem2->getURL()] =
-                        $menuItem2->getDisplayName();
-                }
+            $item = new MenuItem($item['Name'], $this->path->getPath($item['PathId']));
+            if($depth > 1) {
+                $item->addSubMenuItems($this->loadTree($item['PathId'], $depth - 1));
+            } else if($depth == -1) {
+                $item->addSubMenuItems($this->loadTree($item['PathId'], $depth));
             }
+            $map[] = $item;
         }
-        return $rv;
+        return $map;
     }
-
-    protected function markMenuItem($module, $controller, $action) {
-        if(!isset($this->menu[$module])){
-            return;
-        }
-
-        $this->menu[$module]->setMenuChecked();
-        $sub = $this->menu[$module]->getSubmenuItem($controller);
-        if(!($sub instanceof Menu\Item)) {
-            return;
-        }
-
-        if($action == 'index') {
-            $sub->setMenuChecked();
-            return;
-        }
-        $sub = $sub->getSubmenuItem($action);
-        if(!($sub instanceof Menu\Item)) {
-            return;
-        }
-        $sub->setMenuChecked();
-    }
- */
 }
