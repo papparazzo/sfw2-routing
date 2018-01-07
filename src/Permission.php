@@ -62,7 +62,6 @@ class Permission {
             return;
         }
 
-
         $stmt =
             'SELECT * ' .
             'FROM `sfw2_login_role` ' .
