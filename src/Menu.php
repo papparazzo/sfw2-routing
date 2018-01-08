@@ -52,10 +52,10 @@ class Menu {
 
     public function getMenu(int $parentId = 0, $depth = 1) {
         $stmt =
-            "SELECT `PathId`, `ParentPathId`, `menu`.`Name`, `Position` " .
+            "SELECT `menu`.`PathId`, `ParentPathId`, `menu`.`Name`, `Position` " .
             "FROM  `sfw2_menu` AS `menu` " .
             "LEFT JOIN `sfw2_path` " .
-            "ON `PathId` " .
+            "ON `menu`.`PathId` = `sfw2_path`.`PathId` " .
             "WHERE `ParentPathId` = '%s' " .
             "ORDER BY `Position` ASC";
 
@@ -63,12 +63,12 @@ class Menu {
 
         $map = [];
 
-        foreach($res as $item) {
-            $item = new MenuItem($item['Name'], $this->path->getPath($item['PathId']));
+        foreach($res as $row) {
+            $item = new MenuItem($row['Name'], $this->path->getPath($row['PathId']));
             if($depth > 1) {
-                $item->addSubMenuItems($this->loadTree($item['PathId'], $depth - 1));
+                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth - 1));
             } else if($depth == -1) {
-                $item->addSubMenuItems($this->loadTree($item['PathId'], $depth));
+                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth));
             }
             $map[] = $item;
         }
