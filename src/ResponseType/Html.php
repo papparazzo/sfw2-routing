@@ -64,16 +64,11 @@ class Html extends ResponseType {
             ]
         );
 
-
-
-
-        $view->assign('title', $this->result->getValue('title', '' /*$this->conf->getVal('project', 'title')*/));
-        $view->assign('content', $this->getInnerContent());
-        echo $view->getContent();
-
-        #$view->assign('menu',          $this->container['menu']);
         #$view->assign('authenticated', $this->container['authenticated']);
 
+        $view->assign('title', $this->result->getValue('title', $this->dice->create('SFW2\Core\Config')->getVal('project', 'title')));
+        $view->assign('content', $this->getInnerContent());
+        echo $view->getContent();
     }
 
     protected function getInnerContent( ) {
@@ -81,6 +76,8 @@ class Html extends ResponseType {
         $view->assignArray($this->result->getData());
         $view0 = new View('web/templates/decorate.phtml');
         $view0->assign('content', $view->getContent());
+        $view0->assign('mainMenu', $this->dice->create('SFW2\Routing\Menu')->getMenu());
+        $view0->assign('sideMenu', $this->dice->create('SFW2\Routing\Menu')->getMenu(1, 2));
         return $view0->getContent();
     }
 
