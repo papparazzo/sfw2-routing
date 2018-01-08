@@ -26,6 +26,7 @@ use SFW2\Routing\Resolver\ResolverException;
 use Dice\Dice;
 
 use ReflectionMethod;
+use Throwable;
 
 class Resolver {
 
@@ -70,32 +71,10 @@ class Resolver {
             );
         }
 
-        $rule = $this->controllers->getRulsetByPathId($this->path->getPathId($path));
-        $this->container->addRules($rule);
-        return $this->callMethode(key($rule), $action, $request);
-    }
-
-    protected function callMethode(string $class, string $action, Request $request) {
         try {
-            if(!class_exists($class)) {
-                throw new ResolverException(
-                    'class "' . $class . '" does not exists',
-                    ResolverException::PAGE_NOT_FOUND
-                );
-            }
-
-            $refl = new ReflectionMethod($class, $action);
-
-            if(!$refl->isPublic()) {
-                throw new ResolverException(
-                    'method "' . $action . '" is not public',
-                    ResolverException::PAGE_NOT_FOUND
-                );
-            }
-
-            $ctrl = $this->container->create($class);
-            $args = $this->getArguments($refl, $request);
-            return call_user_func_array(array($ctrl, $action), $args);
+            $rule = $this->controllers->getRulsetByPathId($this->path->getPathId($path));
+            $this->container->addRules($rule);
+            return $this->callMethode(key($rule), $action, $request);
         } catch(Throwable $ex) {
             throw new ResolverException(
                 $ex->getMessage(),
@@ -103,6 +82,28 @@ class Resolver {
                 $ex
             );
         }
+    }
+
+    protected function callMethode(string $class, string $action, Request $request) {
+        if(!class_exists($class)) {
+            throw new ResolverException(
+                'class "' . $class . '" does not exists',
+                ResolverException::PAGE_NOT_FOUND
+            );
+        }
+
+        $refl = new ReflectionMethod($class, $action);
+
+        if(!$refl->isPublic()) {
+            throw new ResolverException(
+                'method "' . $action . '" is not public',
+                ResolverException::PAGE_NOT_FOUND
+            );
+        }
+
+        $ctrl = $this->container->create($class);
+        $args = $this->getArguments($refl, $request);
+        return call_user_func_array(array($ctrl, $action), $args);
     }
 
     protected function getArguments(ReflectionMethod $methode, Request $request) : array {
