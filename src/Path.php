@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Core\Database;
+use SFW2\Routing\Request;
 
 class Path {
 
@@ -31,10 +32,19 @@ class Path {
      */
     protected $database = null;
 
+    /**
+     * @var string
+     */
+    protected $currentPath = '';
+
+    /**
+     * @var array
+     */
     protected $pathMap = [];
 
-    public function __construct(Database $database) {
+    public function __construct(Database $database, Request $request) {
         $this->database = $database;
+        $this->currentPath = $request->getPath();
         $this->pathMap['/'] = 0;
         $this->loadPath($this->pathMap);
     }
@@ -60,7 +70,7 @@ class Path {
     public function getPathId(string $path) : int {
         if(!$this->isValidPath($path)) {
             // TODO: Implement Exception
-            throw new Exception();
+            throw new \Exception('// TODO: Implement Exception');
         }
         return $this->pathMap[$path];
     }
@@ -69,8 +79,20 @@ class Path {
         $res = array_search($pathId, $this->pathMap);
         if($res === false) {
             // TODO: Implement Exception
-            throw new Exception();
+            throw new \Exception();
         }
         return $res;
+    }
+
+    public function getPathIdOfCurrentTopPath() {
+        $chunks =  explode('/', $this->currentPath);
+        if($chunks[1] != '') {
+            return $this->getPathId('/' . $chunks[1]);
+        }
+        return -1;
+    }
+
+    public function getPathIdOfCurrentPath() {
+        return $this->getPathId($this->currentPath);
     }
 }

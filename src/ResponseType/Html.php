@@ -76,8 +76,8 @@ class Html extends ResponseType {
         $view->assignArray($this->result->getData());
         $view0 = new View('web/templates/decorate.phtml');
         $view0->assign('content', $view->getContent());
-        $view0->assign('mainMenu', $this->dice->create('SFW2\Routing\Menu')->getMenu());
-        $view0->assign('sideMenu', $this->dice->create('SFW2\Routing\Menu')->getMenu(1, 2));
+        $view0->assign('mainMenu', $this->dice->create('SFW2\Routing\Menu')->getMainMenu());
+        $view0->assign('sideMenu', $this->dice->create('SFW2\Routing\Menu')->getSideMenu());
         return $view0->getContent();
     }
 

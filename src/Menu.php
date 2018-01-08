@@ -50,7 +50,23 @@ class Menu {
         #$this->permission = $permission;
     }
 
-    public function getMenu(int $parentId = 0, $depth = 1) {
+    public function getMainMenu() {
+        return $this->getMenu(0, 1, $this->path->getPathIdOfCurrentTopPath());
+    }
+
+    public function getSideMenu() {
+        return $this->getMenu(
+            $this->path->getPathIdOfCurrentTopPath(),
+            2,
+            $this->path->getPathIdOfCurrentPath()
+        );
+    }
+
+    public function getFullMenu() {
+        return $this->getMenu(0, -1);
+    }
+
+    protected function getMenu(int $parentId, $depth, $checked = 0) {
         $stmt =
             "SELECT `menu`.`PathId`, `ParentPathId`, `menu`.`Name`, `Position` " .
             "FROM  `sfw2_menu` AS `menu` " .
@@ -64,11 +80,11 @@ class Menu {
         $map = [];
 
         foreach($res as $row) {
-            $item = new MenuItem($row['Name'], $this->path->getPath($row['PathId']));
+            $item = new MenuItem($row['Name'], $this->path->getPath($row['PathId']), $row['PathId'] == $checked);
             if($depth > 1) {
-                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth - 1));
+                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth - 1, $checked));
             } else if($depth == -1) {
-                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth));
+                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth, $checked));
             }
             $map[] = $item;
         }
