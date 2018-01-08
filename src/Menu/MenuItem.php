@@ -32,10 +32,13 @@ class MenuItem {
     protected $submen       = [];
     protected $lastModified = null;
 
-    public function __construct($displayname, $url, $lastModified = null) {
+    public function __construct(
+        string $displayname, string $url, bool $isChecked = false, $lastModified = null
+    ) {
         $this->lastModified = $lastModified;
         $this->displayname  = $displayname;
         $this->url          = $url;
+        $this->checked      = $isChecked;
     }
 
     public function addSubMenuItem(MenuItem $menuItem) {
@@ -44,10 +47,6 @@ class MenuItem {
 
     public function addSubMenuItems(array $menuItems) {
         $this->submen = array_merge($this->submen, $menuItems);
-    }
-
-    public function setMenuChecked() {
-        $this->checked = true;
     }
 
     public function getURL() {
