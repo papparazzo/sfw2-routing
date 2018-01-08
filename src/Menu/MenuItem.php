@@ -68,14 +68,14 @@ class MenuItem {
 
     public function isRrecentlyModified() {
         return
-            $this->hasNewContent() ||
-            $this->hasNewContentSubMenu($this->submen);
+            $this->hasNewContent(); #||
+            #$this->hasNewContentSubMenu($this->submen);
     }
 
     protected function hasNewContentSubMenu(Array $items) {
-        if(!$this->topMostMenu) {
-            return false;
-        }
+        #if(!$this->topMostMenu) {
+        #    return false;
+        #}
         foreach($items as $item) {
             if($item->hasNewContent()) {
                 return true;
