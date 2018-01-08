@@ -83,49 +83,19 @@ class Bootstrap {
     public function run(string $configPath) {
         $this->loadConfig($configPath);
         $this->setUpEnvironment();
+        $this->setUpContainer();
 
-        $this->container->addRules([
-            'SFW2\Core\Session' =>
-            [
-                'shared' => true,
-                'constructParams' => [
-                    $this->server['SERVER_NAME']
-                ]
-            ]
-        ]);
-
-        $this->container->addRules([
-            'SFW2\Core\Database' =>
-            [
-                'shared' => true,
-                'constructParams' => [
-                    $this->config->getVal('database', 'host'),
-                    $this->config->getVal('database', 'user'),
-                    $this->config->getVal('database', 'pwd'),
-                    $this->config->getVal('database', 'db'),
-                ]
-            ]
-        ]);
-
-        $this->container->addRules([
-            'SFW2\Routing\Path' => [
-                'shared' => true
-            ]
-        ]);
-
-        $response = new ResponseHandler($this->config);
-        $request = new Request($this->server, $this->get, $this->post);
+        $response = $this->container->create('SFW2\Routing\ResponseHandler');
+        $request = $this->container->create('SFW2\Routing\Request');
 
         if($this->isOffline()) {
             $result = $response->getOffline();
         } else {
-            $ctrls = new ControllerMap($this->container->create('SFW2\Core\Database'));
-            $path = $this->container->create('SFW2\Routing\Path');
-            $resolver = new Resolver($ctrls, $path, $this->container);
+            $resolver = $this->container->create('SFW2\Routing\Resolver');
             $result = $response->getContent($request, $resolver);
         }
 
-        $dispatcher = new Dispatcher($request);
+        $dispatcher = $this->container->create('SFW2\Routing\Dispatcher');;
         $dispatcher->dispatch($result, $this->container);
     }
 
@@ -158,6 +128,51 @@ class Bootstrap {
         ini_set(LC_ALL, $this->config->getVal('misc', 'locale'));
         setlocale(LC_TIME, $this->config->getVal('misc', 'locale') . ".UTF-8");
         date_default_timezone_set($this->config->getVal('misc', 'timeZone'));
+    }
+
+    protected function setUpContainer() {
+        $this->container->addRules([
+            'SFW2\Core\Session' =>
+            [
+                'shared' => true,
+                'constructParams' => [
+                    $this->server['SERVER_NAME']
+                ]
+            ]
+        ]);
+
+        $this->container->addRules([
+            'SFW2\Core\Database' =>
+            [
+                'shared' => true,
+                'constructParams' => [
+                    $this->config->getVal('database', 'host'),
+                    $this->config->getVal('database', 'user'),
+                    $this->config->getVal('database', 'pwd'),
+                    $this->config->getVal('database', 'db'),
+                ]
+            ]
+        ]);
+
+        $this->container->addRules([
+            'SFW2\Routing\Path' => ['shared' => true]
+        ]);
+
+        $this->container->addRules([
+            'SFW2\Routing\Menu' => ['shared' => true]
+        ]);
+
+        $this->container->addRules([
+            'SFW2\Routing\Request' =>
+            [
+                'shared' => true,
+                'constructParams' => [
+                    $this->server,
+                    $this->get,
+                    $this->post
+                ]
+            ]
+        ]);
     }
 
     protected function isOffline() {
