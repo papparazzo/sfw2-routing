@@ -87,7 +87,6 @@ class Request {
         if($pos !== false) {
             $path = mb_substr($path, 0, $pos);
         }
-        $path = mb_substr($path, 1);
         $path = strtolower($path);
         $path = preg_replace('#[^A-Za-z0-9/]#', '', $path);
         $path = '/' . trim($path, '/');
