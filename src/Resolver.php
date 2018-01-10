@@ -23,10 +23,10 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
+use SFW2\Routing\ControllerMap\ControllerMapException;
 use Dice\Dice;
 
 use ReflectionMethod;
-use Throwable;
 
 class Resolver {
 
@@ -75,7 +75,7 @@ class Resolver {
             $rule = $this->controllers->getRulsetByPathId($this->path->getPathId($path));
             $this->container->addRules($rule);
             return $this->callMethode(key($rule), $action, $request);
-        } catch(Throwable $ex) {
+        } catch(ControllerMapException $ex) {
             throw new ResolverException(
                 $ex->getMessage(),
                 ResolverException::PAGE_NOT_FOUND,
