@@ -73,6 +73,7 @@ class Resolver {
 
         try {
             $rule = $this->controllers->getRulsetByPathId($this->path->getPathId($path));
+            // FIXME: https://github.com/Level-2/Dice/issues/99
             $this->container->addRules($rule);
             return $this->callMethode(key($rule), $action, $request);
         } catch(ControllerMapException $ex) {
