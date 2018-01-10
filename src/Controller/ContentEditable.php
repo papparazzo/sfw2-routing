@@ -26,8 +26,10 @@ use SFW2\Routing\Controller;
 
 class ContentEditable extends Controller {
 
-
     public function index() {
+        $stmt =
+            "SELECT ";
+
 
         $page = 0;
 /*
