@@ -91,7 +91,13 @@ class Bootstrap {
         if($this->isOffline()) {
             $result = $response->getOffline();
         } else {
-            $resolver = $this->container->create('SFW2\Routing\Resolver');
+            // FIXME
+            $resolver = new Resolver(
+                $this->container->create('SFW2\Routing\ControllerMap'),
+                $this->container->create('SFW2\Routing\Path'),
+                $this->container
+            );
+            #$resolver = $this->container->create('SFW2\Routing\Resolver');
             $result = $response->getContent($request, $resolver);
         }
 
@@ -132,8 +138,7 @@ class Bootstrap {
 
     protected function setUpContainer() {
         $this->container->addRules([
-            'SFW2\Core\Session' =>
-            [
+            'SFW2\Core\Session' => [
                 'shared' => true,
                 'constructParams' => [
                     $this->server['SERVER_NAME']
@@ -142,8 +147,7 @@ class Bootstrap {
         ]);
 
         $this->container->addRules([
-            'SFW2\Core\Database' =>
-            [
+            'SFW2\Core\Database' => [
                 'shared' => true,
                 'constructParams' => [
                     $this->config->getVal('database', 'host'),
@@ -163,8 +167,7 @@ class Bootstrap {
         ]);
 
         $this->container->addRules([
-            'SFW2\Routing\Request' =>
-            [
+            'SFW2\Routing\Request' => [
                 'shared' => true,
                 'constructParams' => [
                     $this->server,
@@ -173,6 +176,18 @@ class Bootstrap {
                 ]
             ]
         ]);
+        /* FIXME https://github.com/Level-2/Dice/issues/99
+        $di = $this->container;
+        $this->container->addRules([
+            'SFW2\Routing\Resolver' => [
+                'shared' => true,
+                'substitutions' => [
+                    Dice::class => $this->container
+                ]
+            ]
+        ]);
+         *
+         */
     }
 
     protected function isOffline() {
