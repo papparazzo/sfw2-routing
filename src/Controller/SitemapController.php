@@ -31,7 +31,9 @@ class SitemapController extends Controller {
         $content = new Content('content/sitemap');
         # FIXME Adressen ändern!!!
         #$content->appendCSSFile($file);
-        $content->assign('title', 'Hallod');
+        #$content->assign('title', 'Hallod');
+        $this->container->create('SFW2\Core\Database');
+        $content->assign('sitemap', $this->container->create('SFW2\Routing\Menu')->getFullMenu());
         return $content;
     }
 }
