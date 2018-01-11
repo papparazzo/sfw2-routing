@@ -23,15 +23,14 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
-use Dice\Dice;
 use \SFW2\Routing\Result\Content;
 
 class StaticController extends Controller {
 
     protected $template;
 
-    public function __construct(Dice $container, int $controllerId, string $template) {
-        parent::__construct($container, $controllerId);
+    public function __construct(int $controllerId, string $template) {
+        parent::__construct($controllerId);
         $this->template = $template;
     }
 

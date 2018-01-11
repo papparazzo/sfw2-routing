@@ -23,17 +23,27 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
-use \SFW2\Routing\Result\Content;
+use SFW2\Routing\Result\Content;
+use SFW2\Routing\Menu;
 
 class SitemapController extends Controller {
+
+    /**
+     * @var \SFW2\Routing\Menu
+     */
+    protected $menu = null;
+
+    public function __construct(int $controllerId, Menu $menu) {
+        $this->menu = $menu;
+        parent::__construct($controllerId);
+    }
 
     public function index() {
         $content = new Content('content/sitemap');
         # FIXME Adressen ändern!!!
         #$content->appendCSSFile($file);
         #$content->assign('title', 'Hallod');
-        $this->container->create('SFW2\Core\Database');
-        $content->assign('sitemapdata', $this->container->create('SFW2\Routing\Menu')->getFullMenu());
+        $content->assign('sitemapdata', $this->menu->getFullMenu());
         return $content;
     }
 }

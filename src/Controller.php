@@ -22,22 +22,14 @@
 
 namespace SFW2\Routing;
 
-use Dice\Dice;
-
 abstract class Controller {
-
-    /**
-     * @var \Dice\Dice
-     */
-    protected $container;
 
     /**
      * @var int
      */
     protected $controllerId;
 
-    public function __construct(Dice $container, int $controllerId) {
-        $this->container = $container;
+    public function __construct(int $controllerId) {
         $this->controllerId = $controllerId;
     }
 
