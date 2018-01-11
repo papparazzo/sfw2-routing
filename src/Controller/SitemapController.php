@@ -33,7 +33,7 @@ class SitemapController extends Controller {
         #$content->appendCSSFile($file);
         #$content->assign('title', 'Hallod');
         $this->container->create('SFW2\Core\Database');
-        $content->assign('sitemap', $this->container->create('SFW2\Routing\Menu')->getFullMenu());
+        $content->assign('sitemapdata', $this->container->create('SFW2\Routing\Menu')->getFullMenu());
         return $content;
     }
 }
