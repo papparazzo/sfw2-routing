@@ -91,13 +91,7 @@ class Bootstrap {
         if($this->isOffline()) {
             $result = $response->getOffline();
         } else {
-            // FIXME
-            $resolver = new Resolver(
-                $this->container->create('SFW2\Routing\ControllerMap'),
-                $this->container->create('SFW2\Routing\Path'),
-                $this->container
-            );
-            #$resolver = $this->container->create('SFW2\Routing\Resolver');
+            $resolver = $this->container->create('SFW2\Routing\Resolver');
             $result = $response->getContent($request, $resolver);
         }
 
@@ -176,8 +170,6 @@ class Bootstrap {
                 ]
             ]
         ]);
-        /* FIXME https://github.com/Level-2/Dice/issues/99
-        $di = $this->container;
         $this->container->addRules([
             'SFW2\Routing\Resolver' => [
                 'shared' => true,
@@ -186,8 +178,6 @@ class Bootstrap {
                 ]
             ]
         ]);
-         *
-         */
     }
 
     protected function isOffline() {
