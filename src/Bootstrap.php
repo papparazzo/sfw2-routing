@@ -24,6 +24,10 @@ namespace SFW2\Routing;
 
 use SFW2\Routing\Bootstrap\BootstrapException;
 
+use SFW2\Core\Database;
+use SFW2\Core\Session;
+use SFW2\Core\Config;
+
 use Dice\Dice;
 use ErrorException;
 
@@ -85,24 +89,23 @@ class Bootstrap {
         $this->setUpEnvironment();
         $this->setUpContainer();
 
-        $response = $this->container->create('SFW2\Routing\ResponseHandler');
-        $request = $this->container->create('SFW2\Routing\Request');
+        $response = $this->container->create(ResponseHandler::class);
+        $request = $this->container->create(Request::class);
 
         if($this->isOffline()) {
             $result = $response->getOffline();
         } else {
-            $resolver = $this->container->create('SFW2\Routing\Resolver');
+            $resolver = $this->container->create(Resolver::class);
             $result = $response->getContent($request, $resolver);
         }
 
-        $dispatcher = $this->container->create('SFW2\Routing\Dispatcher');;
+        $dispatcher = $this->container->create(Dispatcher::class);;
         $dispatcher->dispatch($result, $this->container);
     }
 
     protected function loadConfig(string $configPath) {
         $this->container->addRules([
-            'SFW2\Core\Config' =>
-            [
+            Config::class => [
                 'shared' => true,
                 'constructParams' => [
                     $configPath . DIRECTORY_SEPARATOR . 'conf.common.php',
@@ -110,7 +113,7 @@ class Bootstrap {
                 ]
             ]
         ]);
-        $this->config = $this->container->create('SFW2\Core\Config');
+        $this->config = $this->container->create(Config::class);
     }
 
     protected function setUpEnvironment() {
@@ -132,16 +135,13 @@ class Bootstrap {
 
     protected function setUpContainer() {
         $this->container->addRules([
-            'SFW2\Core\Session' => [
+            Session::class => [
                 'shared' => true,
                 'constructParams' => [
                     $this->server['SERVER_NAME']
                 ]
-            ]
-        ]);
-
-        $this->container->addRules([
-            'SFW2\Core\Database' => [
+            ],
+            Database::class => [
                 'shared' => true,
                 'constructParams' => [
                     $this->config->getVal('database', 'host'),
@@ -149,29 +149,18 @@ class Bootstrap {
                     $this->config->getVal('database', 'pwd'),
                     $this->config->getVal('database', 'db'),
                 ]
-            ]
-        ]);
-
-        $this->container->addRules([
-            'SFW2\Routing\Path' => ['shared' => true]
-        ]);
-
-        $this->container->addRules([
-            'SFW2\Routing\Menu' => ['shared' => true]
-        ]);
-
-        $this->container->addRules([
-            'SFW2\Routing\Request' => [
+            ],
+            Path::class => ['shared' => true],
+            Menu::class => ['shared' => true],
+            Request::class => [
                 'shared' => true,
                 'constructParams' => [
                     $this->server,
                     $this->get,
                     $this->post
                 ]
-            ]
-        ]);
-        $this->container->addRules([
-            'SFW2\Routing\Resolver' => [
+            ],
+            Resolver::class => [
                 'shared' => true,
                 'substitutions' => [
                     Dice::class => $this->container
@@ -185,7 +174,7 @@ class Bootstrap {
             return false;
         }
 
-        $session = $this->container->create('SFW2\Core\Session');
+        $session = $this->container->create(Session::class);
 
         if($session->isGlobalEntrySet('bypass')) {
             return false;
