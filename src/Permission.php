@@ -57,7 +57,7 @@ class Permission {
         $this->loadPermissions();
     }
 
-    public function loadPermissions($userId) {
+    public function loadPermissions() {
         if($this->user->isAdmin()) {
             return;
         }
@@ -70,7 +70,7 @@ class Permission {
             'LEFT JOIN `sfw2_permission`.`Id` = `sfw2_role_permission`.`PermissionId`' .
             'WHERE ';
 
-        $this->permission = $this->database->select($stmt, [$userId]);
+        $this->permission = $this->database->select($stmt, [$this->user->getUserId()]);
     }
 
     public function getActionPermission($path, $action) {
