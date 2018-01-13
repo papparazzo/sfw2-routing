@@ -28,13 +28,14 @@ use Exception;
 
 class Permission {
 
-    const READ_OWN   = 1;
-    const READ_ALL   = 2;
-    const CREATE     = 4;
-    const UPDATE_OWN = 8;
-    const UPDATE_ALL = 16;
-    const DELETE_OWN = 32;
-    const DELETE_ALL = 64;
+    const NO_PERMISSION = 0;
+    const READ_OWN      = 1;
+    const READ_ALL      = 2;
+    const CREATE        = 4;
+    const UPDATE_OWN    = 8;
+    const UPDATE_ALL    = 16;
+    const DELETE_OWN    = 32;
+    const DELETE_ALL    = 64;
 
     protected $permission = [];
 
@@ -122,7 +123,7 @@ class Permission {
         }
 
         if(!isset($this->permissions[$pathId])) {
-            throw new Exception(); // TODO: Permission-Exception
+            return self::NO_PERMISSION;
         }
         return $this->permissions[$pathId];
     }
