@@ -24,6 +24,7 @@ namespace SFW2\Routing;
 
 use SFW2\Core\Database;
 use SFW2\Routing\Request;
+use SFW2\Routing\Path\PathException;
 
 class Path {
 
@@ -69,8 +70,7 @@ class Path {
 
     public function getPathId(string $path) : int {
         if(!$this->isValidPath($path)) {
-            // TODO: Implement Exception
-            throw new \Exception('// TODO: Implement Exception');
+            throw new PathException('pathId for path <' . $path . '> does not exists');
         }
         return $this->pathMap[$path];
     }
@@ -78,8 +78,7 @@ class Path {
     public function getPath(int $pathId) : string {
         $res = array_search($pathId, $this->pathMap);
         if($res === false) {
-            // TODO: Implement Exception
-            throw new \Exception();
+            throw new PathException('path for id <' . $pathId . '> does not exists');
         }
         return $res;
     }
