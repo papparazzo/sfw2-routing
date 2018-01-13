@@ -72,14 +72,15 @@ class UserModel {
             return false;
         }
 
-        $this->updateRetries($user, true);
+        $this->updateRetries($loginName, true);
 
+        /*
         $this->firstName = $rv['FirstName'];
         $this->lastName  = $rv['LastName'];
         $this->mailAddr  = $rv['Email'];
         $this->userid    = $rv['Id'];
         $this->isAdmin   = $rv['Admin'] == '1' ? true : false;
-
+        */
         return $this->authenticated = true;
     }
 
@@ -115,7 +116,7 @@ class UserModel {
         $rv = $this->database->select($stmt, array($userId));
     }
 
-    protected function updateRetries($user, $sucess) {
+    protected function updateRetries($loginName, $sucess) {
         $stmt = "UPDATE `sfw2_user` ";
         if($sucess) {
             $stmt .= "SET `Retries` = 0 ";
@@ -131,9 +132,6 @@ class UserModel {
             "AND `Active` = 1 " .
             "AND CURRENT_TIMESTAMP > `LastTry` +  POW(2, `Retries`) - 1";
 
-        $this->database->update($stmt, array($user));
+        $this->database->update($stmt, array($loginName));
     }
-
-
-
 }
