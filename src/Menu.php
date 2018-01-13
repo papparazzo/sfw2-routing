@@ -80,6 +80,9 @@ class Menu {
         $map = [];
 
         foreach($res as $row) {
+            if(!$this->permission->readOwnAllowed($row['PathId'])) {
+                continue;
+            }
             $item = new MenuItem($row['Name'], $this->path->getPath($row['PathId']), $row['PathId'] == $checked);
             if($depth > 1) {
                 $item->addSubMenuItems($this->getMenu($row['PathId'], $depth - 1, $checked));
