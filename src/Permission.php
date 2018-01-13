@@ -54,7 +54,7 @@ class Permission {
     public function __construct(Database $database, User $user) {
         $this->user = $user;
         $this->database = $database;
-        $this->loadPermissions();
+        #$this->loadPermissions();
     }
 
     public function loadPermissions() {
@@ -92,6 +92,10 @@ class Permission {
             default:
                 return (bool)$this->getPermission($path) & self::READ_OWN;
         }
+    }
+
+    public function getPermissionByPathId($pathId) {
+
     }
 
 

@@ -44,10 +44,10 @@ class Menu {
      */
     protected $path;
 
-    public function __construct(Database $database, Path $path/*, Permission $permission*/) {
+    public function __construct(Database $database, Path $path, Permission $permission) {
         $this->database = $database;
         $this->path = $path;
-        #$this->permission = $permission;
+        $this->permission = $permission;
     }
 
     public function getMainMenu() {
