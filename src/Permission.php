@@ -24,6 +24,8 @@ namespace SFW2\Routing;
 
 use SFW2\Core\Database;
 
+use Exception;
+
 class Permission {
 
     const READ_OWN   = 1;
@@ -54,7 +56,7 @@ class Permission {
     public function __construct(Database $database, User $user) {
         $this->user = $user;
         $this->database = $database;
-        #$this->loadPermissions();
+        $this->loadPermissions();
     }
 
     public function loadPermissions() {
@@ -63,78 +65,93 @@ class Permission {
         }
 
         $stmt =
-            'SELECT * ' .
-            'FROM `sfw2_login_role` ' .
-            'LEFT JOIN `sfw2_role_permission` ' .
-            'ON `sfw2_login_role`.`RoleId` = `sfw2_role_permission`.`RoleId` ' .
-            'LEFT JOIN `sfw2_permission`.`Id` = `sfw2_role_permission`.`PermissionId`' .
-            'WHERE ';
+            'SELECT `PathId`, `Permission` ' .
+            'FROM `sfw2_permission` ';# .
+#            'LEFT JOIN `sfw2_role` ' .
+#            'ON `sfw2_permission`.`RoleId` = `sfw2_role`.`Id` ' .
+#            'LEFT '
+#            'WHERE ';
 
-        $this->permission = $this->database->select($stmt, [$this->user->getUserId()]);
-    }
+        $rows = $this->database->select($stmt, [$this->user->getUserId()]);
 
-    public function getActionPermission($path, $action) {
-        if($this->user->isAdmin()) {
-            return true;
+        foreach($rows as $row) {
+            $perm = 0;
+            foreach(explode(',', $row['Permission']) as $permission) {
+                switch($permission) {
+                    case 'READ_OWN':
+                        $perm &= self::READ_OWN;
+                        break;
+
+                    case 'READ_ALL':
+                        $perm |= self::READ_ALL;
+                        break;
+
+                    case 'CREATE':
+                        $perm |= self::CREATE;
+                        break;
+
+                    case 'UPDATE_OWN':
+                        $perm |= self::UPDATE_OWN;
+                        break;
+
+                    case 'UPDATE_ALL':
+                        $perm |= self::UPDATE_ALL;
+                        break;
+
+                    case 'DELETE_OWN':
+                        $perm |= self::UPDATE_OWN;
+                        break;
+
+                    case 'DELETE_ALL':
+                        $perm |= self::DELETE_ALL;
+                        break;
+
+                    default:
+                        throw new Exception(); // TODO: Permission-Exception
+                }
+            }
+            $this->permissions[$row['PathId']] = $perm;
         }
-
-        switch($action) {
-            case 'create':
-                return (bool)$this->getPermission($path) & self::CREATE;
-
-            case 'update':
-                return (bool)$this->getPermission($path) & self::UPDATE_OWN;
-
-            case 'delete':
-                return (bool)$this->getPermission($path) & self::DELETE_OWN;
-
-            case 'index':
-            default:
-                return (bool)$this->getPermission($path) & self::READ_OWN;
-        }
     }
 
-    public function getPermissionByPathId($pathId) {
-
-    }
-
-
-    public function getPermission($path) {
+    public function getPermission($pathId) {
         if($this->user->isAdmin()) {
             return
                 self::READ_OWN | self::READ_ALL | self::CREATE | self::UPDATE_OWN |
                 self::UPDATE_ALL | self::DELETE_OWN | self::DELETE_ALL;
         }
 
-
-        $chunks = explode('/', $path);
+        if(!isset($this->permissions[$pathId])) {
+            throw new Exception(); // TODO: Permission-Exception
+        }
+        return $this->permissions[$pathId];
     }
 
-    public function readOwnAllowed($path) {
-        return (bool)$this->getPermission($path) & self::READ_OWN;
+    public function readOwnAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::READ_OWN;
     }
 
-    public function readAllAllowed($path) {
-        return (bool)$this->getPermission($path) & self::READ_ALL;
+    public function readAllAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::READ_ALL;
     }
 
-    public function createAllowed($path) {
-        return (bool)$this->getPermission($path) & self::CREATE;
+    public function createAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::CREATE;
     }
 
-    public function updateOwnAllowed($path) {
-        return (bool)$this->getPermission($path) & self::UPDATE_OWN;
+    public function updateOwnAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::UPDATE_OWN;
     }
 
-    public function updateAllAllowed($path) {
-        return (bool)$this->getPermission($path) & self::UPDATE_ALL;
+    public function updateAllAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::UPDATE_ALL;
     }
 
-    public function deleteOwnAllowed($path) {
-        return (bool)$this->getPermission($path) & self::DELETE_OWN;
+    public function deleteOwnAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::DELETE_OWN;
     }
 
-    public function deleteAllAllowed($path) {
-        return (bool)$this->getPermission($path) & self::DELETE_ALL;
+    public function deleteAllAllowed($pathId) {
+        return (bool)$this->getPermission($pathId) & self::DELETE_ALL;
     }
 }
