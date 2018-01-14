@@ -74,7 +74,7 @@ class ManagementController extends Controller {
                 $row['Email']
             );*/
             $user['image'    ] = strtolower('/public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
-;
+
                     /*
  # FIXME: _No hardcoded path
                 '/public/content/users/' .
@@ -98,120 +98,5 @@ class ManagementController extends Controller {
 
         $content->assign('description', 'Hallo Des');
         return $content;
-
-
-
-        $stmt =
-            "SELECT ";
-
-
-        $page = 0;
-/*
-#        if($this->ctrl->hasCreatePermission()) {
-#            $this->ctrl->addJSFile('ckeditor/ckeditor');
-#            $this->ctrl->addJSFile('contenteditable');
-#        }
-
-        $view = new \SFW\View();
-        $view->assign('editable',   $this->ctrl->hasCreatePermission());
-        $view->assign('content',    $tmp);
-        $view->assign('isAdmin',    $this->ctrl->isAdmin());
-        $view->assignTpl(
-            $this->conf->getTemplateFile('PageContent/ContentEditable')
-        );
-
-        return $view->getResult();
- */
     }
-/*
-    protected function loadContent($page = 0) {
-        $stmt =
-            "SELECT `sfw_contenteditable`.`Id`, `CreationDate`, `Title`, " .
-            "`sfw_users`.`FirstName`, `sfw_users`.`LastName`, `Email`, " .
-            "`Content` " .
-            "FROM `sfw_contenteditable` " .
-            "LEFT JOIN `sfw_users` " .
-            "ON `sfw_users`.`Id` = `sfw_contenteditable`.`UserId` " .
-            "WHERE `sfw_contenteditable`.`PathId` = '%s' " .
-            "ORDER BY `Id` DESC ";
-
-        $row = $this->db->selectRow(
-            $stmt,
-            array($this->ctrl->getPathId()),
-            $page
-        );
-
-        if(empty($row)) {
-            $entry['content'  ] = '';
-            $entry['name'     ] = '';
-            $entry['shortna'  ] = '; ' .$this->ctrl->getUserName();
-            $entry['title'    ] = $this->title;
-            $entry['date'     ] = new \SFW\View\Helper\Date();
-            $entry['haserrors'] = false;
-            return $entry;
-        }
-
-        $entry['content'  ] = $row['Content'];
-        $entry['name'     ] = $row['FirstName'] . ' ' . $row['LastName'];
-        $entry['title'    ] = $row['Title'  ]?$row['Title']:$this->title;
-        $entry['date'     ] = new \SFW\View\Helper\Date($row['CreationDate']);
-        $entry['haserrors'] = false;
-        $entry['shortna'  ] = $this->getShortName($row);
-        return $entry;
-    }
-
-    protected function executeOperation(&$page) {
-        #FIXME $page = $this->dto->getPage();
-        $tmp = array(
-            'title'     => '',
-            'content'   => '',
-            'haserrors' => false
-        );
-
-        #FIXME if(
-        #    !$this->ctrl->hasCreatePermission() ||
-        #    $this->dto->getOperation() != 'create'
-        #) {
-            return $this->loadContent($page);
-        #}
-
-        $tmp['title'] = $this->dto->getTitle(
-            'title',
-            true,
-            'Die Überschrift',
-            50
-        );
-        $tmp['content'] = $this->dto->getData('content');
-
-        if(
-            $this->dto->getErrorProvider()->hasErrors() ||
-            $this->dto->getErrorProvider()->hasWarning()
-        ) {
-            $tmp['haserrors'] = true;
-            return $tmp;
-        }
-
-        $stmt =
-            "INSERT INTO `sfw_contenteditable` " .
-            "SET `PathId` = '%s', " .
-            "`CreationDate` = NOW(), " .
-            "`UserId` = %d, " .
-            "`Title` = '%s', " .
-            "`Content` = '%s'";
-
-        $this->db->insert(
-            $stmt,
-            array(
-                $this->ctrl->getPathId(),
-                $this->ctrl->getUserId(),
-                $tmp['title'  ],
-                $tmp['content']
-            )
-        );
-        $this->dto->setSaveSuccess();
-        $this->ctrl->updateModificationDate();
-        return $this->loadContent(0);
-    }
- *
- */
 }
