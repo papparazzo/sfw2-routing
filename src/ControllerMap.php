@@ -41,8 +41,8 @@ class ControllerMap {
             "SELECT `ClassName`, `JsonData` " .
             "FROM `sfw2_path` AS `ctrlMap` " .
             "LEFT JOIN `sfw2_controller_template` AS `ctrlTempl` " .
-            "ON `ctrlMap`.`ControllerTemplateId` = `ctrlTempl`.`ControllerTemplateId` " .
-            "WHERE `ctrlMap`.`PathId` = '%s' ";
+            "ON `ctrlMap`.`ControllerTemplateId` = `ctrlTempl`.`Id` " .
+            "WHERE `ctrlMap`.`Id` = '%s' ";
 
         $res = $this->database->selectRow($stmt, [$pathId]);
 
