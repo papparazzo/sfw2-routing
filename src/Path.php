@@ -52,15 +52,15 @@ class Path {
 
     public function loadPath(array &$map, int $parentId = 0, string $prefix = '/') {
         $stmt =
-            "SELECT `PathId`, `ParentPathId`, `Name` " .
+            "SELECT `Id`, `ParentPathId`, `Name` " .
             "FROM `sfw2_path` " .
             "WHERE `ParentPathId` = '%s'";
 
         $res = $this->database->select($stmt, [$parentId]);
 
         foreach($res as $item) {
-            $map[$prefix . $item['Name']] = $item['PathId'];
-            $this->loadPath($map, $item['PathId'], $prefix . $item['Name'] . '/');
+            $map[$prefix . $item['Name']] = $item['Id'];
+            $this->loadPath($map, $item['Id'], $prefix . $item['Name'] . '/');
         }
     }
 

@@ -68,10 +68,10 @@ class Menu {
 
     protected function getMenu(int $parentId, $depth, $checked = 0) {
         $stmt =
-            "SELECT `menu`.`PathId`, `ParentPathId`, `menu`.`Name`, `Position` " .
+            "SELECT `menu`.`Id`, `ParentPathId`, `menu`.`Name`, `Position` " .
             "FROM  `sfw2_menu` AS `menu` " .
             "LEFT JOIN `sfw2_path` " .
-            "ON `menu`.`PathId` = `sfw2_path`.`PathId` " .
+            "ON `menu`.`Id` = `sfw2_path`.`Id` " .
             "WHERE `ParentPathId` = '%s' " .
             "ORDER BY `Position` ASC";
 
@@ -80,14 +80,14 @@ class Menu {
         $map = [];
 
         foreach($res as $row) {
-            if(!$this->permission->readOwnAllowed($row['PathId'])) {
+            if(!$this->permission->readOwnAllowed($row['Id'])) {
                 continue;
             }
-            $item = new MenuItem($row['Name'], $this->path->getPath($row['PathId']), $row['PathId'] == $checked);
+            $item = new MenuItem($row['Name'], $this->path->getPath($row['Id']), $row['Id'] == $checked);
             if($depth > 1) {
-                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth - 1, $checked));
+                $item->addSubMenuItems($this->getMenu($row['Id'], $depth - 1, $checked));
             } else if($depth == -1) {
-                $item->addSubMenuItems($this->getMenu($row['PathId'], $depth, $checked));
+                $item->addSubMenuItems($this->getMenu($row['Id'], $depth, $checked));
             }
             $map[] = $item;
         }
