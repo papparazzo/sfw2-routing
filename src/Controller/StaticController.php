@@ -24,23 +24,53 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use \SFW2\Routing\Result\Content;
+use SFW2\Core\Database;
+use SFW2\Core\Config;
 
 class StaticController extends Controller {
 
+    /**
+     * @var Database
+     */
+    protected $database;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
     protected $template;
 
-    public function __construct(int $controllerId, string $template) {
+    protected $title;
+
+    public function __construct(int $controllerId, string $template, Database $database, Config $config, string $title = null) {
         parent::__construct($controllerId);
         $this->template = $template;
+        $this->database = $database;
+        $this->config = $config;
+        $this->title = $title;
     }
 
     public function index() {
         $content = new Content($this->template);
-        # FIXME Adressen ändern!!!
-        $content->assign('chairman', 'Herr Bla');
-        $content->assign('mailaddr', 'ddd');
-        #$content->appendCSSFile($file);
-        #$content->assign('title', 'Hallod');
+        $content->assign('chairman', $this->getChairman());
+        $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
+        $content->assign('title', $this->title);
         return $content;
+    }
+
+    protected function getChairman() {
+        $stmt =
+            "SELECT CONCAT(IF(`sfw2_user`.`Sex` = 'MALE', 'Herr ', 'Frau '), " .
+            "`sfw2_user`.`FirstName`, ' ', `sfw2_user`. `LastName`) AS `Chairman` " .
+            "FROM `sfw2_position` " .
+            "LEFT JOIN `sfw2_division` " .
+            "ON `sfw2_division`.`Id` = `sfw2_position`.`DivisionId` " .
+            "LEFT JOIN `sfw2_user` " .
+            "ON `sfw2_user`.`Id` = `sfw2_position`.`UserId` " .
+            "WHERE `sfw2_position`.`Order` = '1' " .
+            "AND `sfw2_division`.`Position` = '0' ";
+
+        return $this->database->selectSingle($stmt);
     }
 }
