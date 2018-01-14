@@ -41,18 +41,17 @@ class ManagementController extends Controller {
         $stmt =
             "SELECT IF(`sfw2_user`.`Sex` = 'MALE', 'Herr', 'Frau') AS `Sex`, " .
             "`sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, " .
-            "`sfw2_user`.`Email`, `sfw2_user`.`Phone1`, `sfw2_user`.`Phone2` " .
-            #"IFNULL(`sfw2_division`.`Alias`, 'Spartenleitung') AS `Title`, " .
-            #"IF(`sfw2_position`.`Position` = 'Spartenleitung', " .
-            #"CONCAT('Leitung ', `sfw2_division`.`Name`) , " .
-            #"`sfw2_position`.`Position`) AS `Position` " .
-            #"FROM `sfw2_position` " .
-            "FROM `sfw2_user` ";# .
-            #"INNER JOIN `sfw2_user` " .
-            #"ON `sfw2_position`.`UserId` = `sfw2_user`.`Id` " .
-            #"LEFT JOIN `sfw2_division` " .
-            #"ON `sfw2_division`.`DivisionId` = `sfw2_position`.`DivisionId` " .
-            #"WHERE `sfw2_position`.`TopMost` = 1 ";
+            "`sfw2_user`.`Email`, `sfw2_user`.`Phone1`, `sfw2_user`.`Phone2`, " .
+            "IFNULL(`sfw2_division`.`Alias`, 'Spartenleitung') AS `Title`, " .
+            "IF(`sfw2_position`.`Position` = 'Spartenleitung', " .
+            "CONCAT('Leitung ', `sfw2_division`.`Name`) , " .
+            "`sfw2_position`.`Position`) AS `Position` " .
+            "FROM `sfw2_position` " .
+            "INNER JOIN `sfw2_user` " .
+            "ON `sfw2_position`.`UserId` = `sfw2_user`.`Id` " .
+            "LEFT JOIN `sfw2_division` " .
+            "ON `sfw2_division`.`Id` = `sfw2_position`.`DivisionId` " .
+            "WHERE `sfw2_position`.`TopMost` = 1 ";
 
         $rows = $this->database->select($stmt);
         $data = array();
@@ -60,12 +59,12 @@ class ManagementController extends Controller {
             $user = [];
             $user['name'     ] =
                 $row['Sex'] . ' ' . $row['FirstName'] . ' ' . $row['LastName'];
-            $user['position' ] = 'Turner' ;#$row['Position'];
+            $user['position' ] = $row['Position'];
             $user['phone1'   ] = 'Tel.: ' . $row['Phone1']; /*new \SFW\View\Helper\Obfuscator\Phone(
                 $row['Phone1'],
                 'Tel.: ' . $row['Phone1']
             );*/
-            $user['phone2'   ] = $row['Phone2']; /*new \SFW\View\Helper\Obfuscator\Phone(
+            $user['phone2'   ] = 'Tel.: ' .$row['Phone2']; /*new \SFW\View\Helper\Obfuscator\Phone(
                 $row['Phone2'],
                 'Tel.: ' . $row['Phone2']
             );*/
@@ -73,7 +72,9 @@ class ManagementController extends Controller {
             $user['emailaddr'] = $row['Email']; /*new \SFW\View\Helper\Obfuscator\EMail(
                 $row['Email']
             );*/
-            $user['image'    ] = strtolower('/public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
+            $img = strtolower('public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
+
+            $user['image'    ] = is_file($img) ? '/' . $img : '/public/layout/unbekannt.png';
 
                     /*
  # FIXME: _No hardcoded path
@@ -83,20 +84,14 @@ class ManagementController extends Controller {
                     $row['FirstName'],
                     $row['LastName']
             );*/
-            #$data[$row['Title']][] = $user;
-            $data['Title'][] = $user;
+            $data[$row['Title']][] = $user;
         }
         foreach($data as $k => $v) {
-            $data[$k] = array_chunk($v, 4);
+            $data[$k] = array_chunk($v, 2);
         }
 
         $content = new \SFW2\Routing\Result\Content('content/leitung');
         $content->assign('data', $data);
-        $content->assign('firstname', 'Trude');
-
-        #$content->assign('title', 'Hallo');
-
-        $content->assign('description', 'Hallo Des');
         return $content;
     }
 }
