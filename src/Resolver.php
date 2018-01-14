@@ -36,6 +36,11 @@ class Resolver {
     protected $controllers = null;
 
     /**
+     * @var Permission
+     */
+    protected $permission = null;
+
+    /**
      * @var Path
      */
     protected $path;
@@ -45,8 +50,9 @@ class Resolver {
      */
     protected $container = null;
 
-    public function __construct(ControllerMap $controllers, Path $path, Dice $container) {
+    public function __construct(ControllerMap $controllers, Permission $permission, Path $path, Dice $container) {
         $this->controllers = $controllers;
+        $this->permission = $permission;
         $this->path = $path;
         $this->container = $container;
     }
@@ -72,7 +78,15 @@ class Resolver {
         }
 
         try {
-            $rule = $this->controllers->getRulsetByPathId($this->path->getPathId($path));
+            $pathId = $this->path->getPathId($path);
+            if(!$this->permission->getActionPermission($pathId, $action)) {
+                throw new ResolverException(
+                    'permission not allowed',
+                    ResolverException::NO_PERMISSION
+                );
+            }
+
+            $rule = $this->controllers->getRulsetByPathId($pathId);
             $this->container->addRules($rule);
             return $this->callMethode(key($rule), $action, $request);
         } catch(ControllerMapException $ex) {
