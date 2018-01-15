@@ -65,8 +65,11 @@ class Html extends ResponseType {
         );
 
         #$view->assign('authenticated', $this->container['authenticated']);
+        $title =
+            $this->dice->create('SFW2\Core\Config')->getVal('project', 'title') . ' - ' .
+            $this->result->getValue('title', '');
 
-        $view->assign('title', $this->result->getValue('title', $this->dice->create('SFW2\Core\Config')->getVal('project', 'title')));
+        $view->assign('title', $title);
         $view->assign('content', $this->getInnerContent());
         echo $view->getContent();
     }
