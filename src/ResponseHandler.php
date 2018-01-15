@@ -138,7 +138,7 @@ class ResponseHandler {
 
         $debug = null;
         if($this->config->getVal('debug', 'on', false)) {
-            $debug = $exception;
+            $debug = $this->prepareException($exception);
         } else {
             $this->saveError($exception);
         }
@@ -169,6 +169,27 @@ class ResponseHandler {
         fwrite($fd, $exception->getTimeStamp());
         fwrite($fd, $exception->__toString());
         fclose($fd);
+    }
+
+    protected function prepareException(SFW2Exception $exception) {
+        if($exception == null) {
+            return null;
+        }
+
+        $data = [
+            'timeStamp' => $exception->getTimeStamp(),
+            'id'        => $exception->getIdentifier(),
+            'message'   => $exception->getMessage(),
+            'code'      => $exception->getCode(),
+            'file'      => $exception->getFile(),
+            'line'      => $exception->getLine(),
+            'trace'     => explode(PHP_EOL, $exception->getTraceAsString())
+        ];
+
+        if(!is_null($exception->getPrevious())) {
+            $data['previous'] = explode(PHP_EOL, $exception->getPrevious()->getTraceAsString());
+        }
+        return $data;
     }
 }
 
