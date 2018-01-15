@@ -40,9 +40,7 @@ class SitemapController extends Controller {
 
     public function index() {
         $content = new Content('content/sitemap');
-        # FIXME Adressen ändern!!!
-        #$content->appendCSSFile($file);
-        #$content->assign('title', 'Hallod');
+        $content->assign('title', 'Sitemap');
         $content->assign('sitemapdata', $this->menu->getFullMenu());
         return $content;
     }
