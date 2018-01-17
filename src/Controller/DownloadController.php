@@ -1,9 +1,9 @@
 <?php
 
 /**
- *  SFW - SimpleFrameWork
+ *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2015  Stefan Paproth
+ *  Copyright (C) 2017  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -20,18 +20,26 @@
  *
  */
 
-namespace SFW\PageContent;
+namespace SFW2\Routing\Controller;
 
-class Download extends \SFW\PageContent {
+use SFW2\Routing\Controller;
+use SFW2\Core\Database;
 
-    public function __construct(
-        \SFW\Controller $ctrl, \SFW\Config $conf, $title = ''
-    ){
-        parent::__construct($ctrl, $conf, $title);
+class DownloadController extends Controller {
+
+    /**
+     * @var Database
+     */
+    protected $database;
+
+    public function __construct(int $controllerId, Database $database) {
+        parent::__construct($controllerId);
+        $this->database = $database;
         $this->clearTmpFolder();
     }
 
-    public function getContent() {
+    public function index() {
+
         if($this->ctrl->hasCreatePermission()) {
 # FIXME
 #            $this->ctrl->addJSFile('crud');
