@@ -33,8 +33,8 @@ class SponsorsController extends Controller {
      */
     protected $database;
 
-    public function __construct(int $controllerId, Database $database) {
-        parent::__construct($controllerId);
+    public function __construct(int $pathId, Database $database) {
+        parent::__construct($pathId);
         $this->database = $database;
     }
 

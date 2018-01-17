@@ -33,9 +33,9 @@ class SitemapController extends Controller {
      */
     protected $menu = null;
 
-    public function __construct(int $controllerId, Menu $menu) {
+    public function __construct(int $pathId, Menu $menu) {
         $this->menu = $menu;
-        parent::__construct($controllerId);
+        parent::__construct($pathId);
     }
 
     public function index() {

@@ -41,8 +41,8 @@ class NewspaperController extends Controller {
 
     protected $title;
 
-    public function __construct(int $controllerId, Database $database, Config $config, string $title = null) {
-        parent::__construct($controllerId);
+    public function __construct(int $pathId, Database $database, Config $config, string $title = null) {
+        parent::__construct($pathId);
         $this->database = $database;
         $this->config = $config;
         $this->title = $title;

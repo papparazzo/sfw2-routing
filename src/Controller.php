@@ -27,10 +27,10 @@ abstract class Controller {
     /**
      * @var int
      */
-    protected $controllerId;
+    protected $pathId;
 
-    public function __construct(int $controllerId) {
-        $this->controllerId = $controllerId;
+    public function __construct(int $pathId) {
+        $this->pathId = $pathId;
     }
 
     abstract function index();

@@ -43,8 +43,8 @@ class StaticController extends Controller {
 
     protected $title;
 
-    public function __construct(int $controllerId, string $template, Database $database, Config $config, string $title = null) {
-        parent::__construct($controllerId);
+    public function __construct(int $pathId, string $template, Database $database, Config $config, string $title = null) {
+        parent::__construct($pathId);
         $this->template = $template;
         $this->database = $database;
         $this->config = $config;
