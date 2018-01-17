@@ -32,82 +32,63 @@ class BlogController extends Controller {
      */
     protected $database;
 
-    public function __construct(int $controllerId, Database $database) {
-        parent::__construct($controllerId);
+    protected $title;
+
+    public function __construct(int $pathId, Database $database, string $title = null) {
+        parent::__construct($pathId);
         $this->database = $database;
+        $this->title = $title;
     }
 
     public function index() {
-        $content = new \SFW2\Routing\Result\Content('content/blog/blog');
-        $content->assign('isAllreadyLoggedIn', true);
-        $content->assign('firstname', 'Trude');
-
-        #$content->assign('title', 'Hallo');
-
-        $content->assign('description', 'Hallo Des');
-        return $content;
-
-
-
-        $stmt =
-            "SELECT ";
-
-
-        $page = 0;
-/*
 #        if($this->ctrl->hasCreatePermission()) {
 #            $this->ctrl->addJSFile('ckeditor/ckeditor');
 #            $this->ctrl->addJSFile('contenteditable');
 #        }
 
-        $view = new \SFW\View();
-        $view->assign('editable',   $this->ctrl->hasCreatePermission());
-        $view->assign('content',    $tmp);
-        $view->assign('isAdmin',    $this->ctrl->isAdmin());
-        $view->assignTpl(
-            $this->conf->getTemplateFile('PageContent/ContentEditable')
-        );
+        $content = new \SFW2\Routing\Result\Content('content/blog/blog');
 
-        return $view->getResult();
- */
+#        $content->assign('editable',   $this->ctrl->hasCreatePermission());
+#        $content->assign('content',    $tmp);
+#        $content->assign('isAdmin',    $this->ctrl->isAdmin());
+
+        $content->assign('title', $this->title);
+        $content->assign('items', $this->loadEntries());
+        return $content;
     }
-/*
-    protected function loadContent($page = 0) {
+
+    protected function loadEntries($page = 0) {
         $stmt =
-            "SELECT `sfw_contenteditable`.`Id`, `CreationDate`, `Title`, " .
-            "`sfw_users`.`FirstName`, `sfw_users`.`LastName`, `Email`, " .
+            "SELECT `sfw2_blog`.`Id`, `CreationDate`, `Title`, " .
+            "`sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, `Email`, " .
             "`Content` " .
-            "FROM `sfw_contenteditable` " .
-            "LEFT JOIN `sfw_users` " .
-            "ON `sfw_users`.`Id` = `sfw_contenteditable`.`UserId` " .
-            "WHERE `sfw_contenteditable`.`PathId` = '%s' " .
+            "FROM `sfw2_blog` " .
+            "LEFT JOIN `sfw2_user` " .
+            "ON `sfw2_user`.`Id` = `sfw2_blog`.`UserId` " .
+            "WHERE `sfw2_blog`.`PathId` = '%s' OR 1 " .
             "ORDER BY `Id` DESC ";
 
-        $row = $this->db->selectRow(
-            $stmt,
-            array($this->ctrl->getPathId()),
-            $page
-        );
+        return $this->database->select($stmt, array($this->pathId), $page);
 
         if(empty($row)) {
             $entry['content'  ] = '';
             $entry['name'     ] = '';
-            $entry['shortna'  ] = '; ' .$this->ctrl->getUserName();
+            #$entry['shortna'  ] = '; ' .$this->ctrl->getUserName();
             $entry['title'    ] = $this->title;
-            $entry['date'     ] = new \SFW\View\Helper\Date();
+            #$entry['date'     ] = new \SFW\View\Helper\Date();
             $entry['haserrors'] = false;
             return $entry;
         }
 
         $entry['content'  ] = $row['Content'];
         $entry['name'     ] = $row['FirstName'] . ' ' . $row['LastName'];
-        $entry['title'    ] = $row['Title'  ]?$row['Title']:$this->title;
-        $entry['date'     ] = new \SFW\View\Helper\Date($row['CreationDate']);
+        $entry['title'    ] = $row['Title'] ? $row['Title'] : $this->title;
+        #$entry['date'     ] = new \SFW\View\Helper\Date($row['CreationDate']);
         $entry['haserrors'] = false;
-        $entry['shortna'  ] = $this->getShortName($row);
+        $entry['shortna'  ] = '';#$this->getShortName($row);
         return $entry;
     }
-
+/*
     protected function executeOperation(&$page) {
         #FIXME $page = $this->dto->getPage();
         $tmp = array(
