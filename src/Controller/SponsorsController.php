@@ -50,7 +50,7 @@ class SponsorsController extends Controller {
 
         $content = new Content('content/sponsoren');
         $content->assign('chunksize', self::CHUNK_SIZE);
-        $content->assign('items', array_chunk($items, $size));
+        $content->assign('items', array_chunk($items, self::CHUNK_SIZE));
         $content->assign('title', 'Sponsoren');
         return $content;
     }
