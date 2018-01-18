@@ -30,7 +30,7 @@ class ContentController extends Controller {
     public function index() {
         $content = new Content('content/content');
         $content->assign('editable', false);
-        $content->assign('content', $this->loaContent());
+        $content->assign('content', $this->loadContent());
         return $content;
 /*
 #        if($this->ctrl->hasCreatePermission()) {
