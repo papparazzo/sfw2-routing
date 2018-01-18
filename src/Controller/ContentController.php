@@ -30,32 +30,26 @@ class ContentController extends Controller {
     public function index() {
         $content = new Content('content/content');
         $content->assign('editable', false);
-        $content->assign('content', [
+        $content->assign('content', $this->loaContent());
+        return $content;
+/*
+#        if($this->ctrl->hasCreatePermission()) {
+#            $this->ctrl->addJSFile('ckeditor/ckeditor');
+#            $this->ctrl->addJSFile('contenteditable');
+#        }
+ */
+    }
+
+    protected function loadContent() {
+        return [
             'title'   => 'title',
             'content' => 'inhalt',
             'name'    => 'Hallo Nae',
             'date'    => '1.April',
             'haserrors' => false,
             'shortna' => 'Hans'
-        ]);
-        return $content;
+        ];
 
-
-/*
-#        if($this->ctrl->hasCreatePermission()) {
-#            $this->ctrl->addJSFile('ckeditor/ckeditor');
-#            $this->ctrl->addJSFile('contenteditable');
-#        }
-
-        $view = new \SFW\View();
-        $view->assign('editable',   $this->ctrl->hasCreatePermission());
-        $view->assign('content',    $tmp);
-
-        return $view->getResult();
- */
-    }
-/*
-    protected function loadContent($page = 0) {
         $stmt =
             "SELECT `sfw_contenteditable`.`Id`, `CreationDate`, `Title`, " .
             "`sfw_users`.`FirstName`, `sfw_users`.`LastName`, `Email`, " .
@@ -90,7 +84,7 @@ class ContentController extends Controller {
         $entry['shortna'  ] = $this->getShortName($row);
         return $entry;
     }
-
+/*
     protected function executeOperation(&$page) {
         #FIXME $page = $this->dto->getPage();
         $tmp = array(

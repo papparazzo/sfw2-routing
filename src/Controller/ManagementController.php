@@ -24,6 +24,7 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Core\Database;
+use SFW2\Routing\Result\Content;
 
 class ManagementController extends Controller {
 
@@ -90,7 +91,7 @@ class ManagementController extends Controller {
             $data[$k] = array_chunk($v, 2);
         }
 
-        $content = new \SFW2\Routing\Result\Content('content/leitung');
+        $content = new Content('content/leitung');
         $content->assign('data', $data);
         return $content;
     }

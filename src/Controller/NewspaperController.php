@@ -48,22 +48,6 @@ class NewspaperController extends Controller {
         $this->title = $title;
     }
 
-//    protected $downloadlink = '';
-//
-//    public function __construct(
-//        \SFW\Controller $ctrl, \SFW\Config $conf, $title = '', $downloadlink = ''
-//    ){
-//        parent::__construct($ctrl, $conf, $title);
-//        $this->downloadlink = $downloadlink;
-//    }
-
-
-
-
-
-
-
-
     public function index() {
         $content = new Content('content/newspaper/Newspaperarticles');
         $content->assign('title', 'Pressemitteilungen [' . $this->title . ']');
@@ -80,20 +64,11 @@ class NewspaperController extends Controller {
         return $content;
 
 
-
-
-
-        $stmt =
-            "SELECT COUNT(*) AS `cnt` " .
-            "FROM `sfw_newspaperarticles` " .
-            "WHERE `sfw_newspaperarticles`.`PathId` = '%s' ";
-
-
 #        $this->ctrl->addJSFile('slimbox2');
  #       $this->ctrl->addCSSFile('slimbox2');
 
 #    FIXME    if($this->ctrl->hasCreatePermission()){
-            $this->ctrl->addJSFile('crud');
+#            $this->ctrl->addJSFile('crud');
   #          $this->ctrl->addJSFile('jquery.fileupload');
    #         $this->ctrl->addJSFile('newspaperarticles');
     #    }
@@ -108,23 +83,6 @@ class NewspaperController extends Controller {
 
 #        $navi = new SFW_NavigationBar($page, $maxPage, false);
 
-        $view->assign('editable',   $this->ctrl->hasCreatePermission());
-        $view->assign('articles',   $entries);
-        $view->assign('tmp',        $tmp);
-        $view->assign('hasErrors',  $hasErrors);
-#        $view->assign('navigation', $navi->getNavigationBar());
-        $view->assign('dllink',     $this->downloadlink);
-        $view->assign('mailaddr',   new \SFW\View\Helper\Obfuscator\EMail(
-            $this->conf->getVal('project', 'eMailWebMaster'),
-            $this->conf->getVal('project', 'eMailWebMaster'),
-            'Ich habe einen Zeitungsartikel'
-        ));
-
-        $view->assignTpl(
-            $this->conf->getTemplateFile('PageContent/Newspaperarticles')
-        );
-
-        return $view->getContent();
     }
 
     public function delete() {
