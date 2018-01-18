@@ -23,6 +23,7 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
+use SFW2\Routing\Result\Content;
 use SFW2\Core\Database;
 
 class DownloadController extends Controller {
@@ -40,16 +41,37 @@ class DownloadController extends Controller {
 
     public function index() {
 
-        if($this->ctrl->hasCreatePermission()) {
+#        if($this->ctrl->hasCreatePermission()) {
 # FIXME
 #            $this->ctrl->addJSFile('crud');
 #            $this->ctrl->addJSFile('jquery.fileupload');
 #            $this->ctrl->addJSFile('download');
-        }
+#        }
 
-        #$section = null;
-        $tmp = $this->executeOperation($section);
 
+        $tmp = array(
+            'title'    => ''
+        );
+
+        $content = new Content('content/download');
+        $content->assign('entries',  $this->loadEntries());
+        $content->assign('tmp',      $tmp);
+        $content->assign('title',    $this->title);
+
+        #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
+#        $content->assign('editable',   $this->ctrl->hasCreatePermission());
+        $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
+#        $view->assign('webmaster',  new \SFW\View\Helper\Obfuscator\EMail(
+#            $this->conf->getVal('project', 'eMailWebMaster'),
+#            $this->conf->getVal('project', 'eMailWebMaster')
+#        ));
+        return $content;
+        return
+            #FIXME $this->dto->getErrorProvider()->getContent() .
+            $view->getContent();
+    }
+
+    protected function loadEntries() {
         $stmt =
             "SELECT `sfw_media`.`Name`, `sfw_media`.`CreationDate`, " .
             "`sfw_media`.`Description`, `sfw_media`.`FileType`, " .
@@ -65,7 +87,7 @@ class DownloadController extends Controller {
             "LEFT JOIN `sfw_users` " .
             "ON `sfw_users`.`Id` = `sfw_media`.`UserId` ";
 
-        $rows = $this->db->select(
+        $rows = $this->database->select(
             $stmt,
             array(
                 $this->ctrl->getUserId(),
@@ -73,10 +95,10 @@ class DownloadController extends Controller {
             )
         );
 
-        $entries = array();
+        $entries = [];
 
         foreach($rows as $row) {
-            $entry = array();
+            $entry = [];
             $entry['description'] = $row['Description'];
             $entry['token'      ] = $row['Token'      ];
             $entry['filename'   ] = $row['Name'       ];
@@ -89,59 +111,10 @@ class DownloadController extends Controller {
                 '/public/layout/icon_' . $row['FileType'] . '.png';
             $entries[$row['Category']][] = $entry;
         }
-
-        $view = new \SFW\View($this->getPageId());
-        $view->assign('entries',     $entries);
-        $view->assign('editable',    $this->ctrl->hasCreatePermission());
-        $view->assign('sections',    $this->sections);
-        $view->assign('title',       $this->title);
-        $view->assign('tmp',         $tmp);
-
-        $view->assignTpl(
-            $this->conf->getTemplateFile('PageContent/Download')
-        );
-
-        return
-            #FIXME $this->dto->getErrorProvider()->getContent() .
-            $view->getContent();
+        return $entries;
     }
 
-    private function executeOperation(&$page) {
-        #$page = $this->dto->getPage();
-
-        if($page == 0) {
-            $page = 1;
-        }
-
-        $tmp = array(
-            'title'    => '',
-            'section'  => $page
-        );
-
-        #if(!$this->ctrl->hasCreatePermission()) {
-            return $tmp;
-        #}
-
-        switch($this->dto->getOperation()) {
-            case 'delete':
-                if($this->ctrl->hasDeletePermission()) {
-                    $this->deleteFile();
-                }
-                break;
-
-            case 'create':
-                if($this->ctrl->hasCreatePermission()) {
-                    $this->insertFile($tmp);
-                }
-                break;
-
-            case 'reload':
-                break;
-        }
-        return $tmp;
-    }
-
-    private function deleteFile() {
+    public function delete() {
         $stmt =
             "DELETE FROM `sfw_media` " .
             "WHERE `sfw_media`.`Token` = '%s' " .
@@ -150,11 +123,11 @@ class DownloadController extends Controller {
         if(!$this->ctrl->isAdmin()) {
             $stmt .=
                 "AND `UserId` = '" .
-                $this->db->escape($this->ctrl->getUserId()) . "'";
+                $this->database->escape($this->ctrl->getUserId()) . "'";
         }
 
         if(
-            $this->db->delete(
+            $this->database->delete(
                 $stmt, array($this->dto->getSimpleText('id'))
             ) != 1
         ) {
