@@ -33,6 +33,8 @@ class SponsorsController extends Controller {
      */
     protected $database;
 
+    const CHUNK_SIZE = 4;
+
     public function __construct(int $pathId, Database $database) {
         parent::__construct($pathId);
         $this->database = $database;
@@ -46,9 +48,8 @@ class SponsorsController extends Controller {
 
         $items = $this->database->select($stmt);
 
-        $size = 4;
         $content = new Content('content/sponsoren');
-        $content->assign('chunksize', $size);
+        $content->assign('chunksize', self::CHUNK_SIZE);
         $content->assign('items', array_chunk($items, $size));
         $content->assign('title', 'Sponsoren');
         return $content;
