@@ -22,6 +22,7 @@
 
 namespace SFW2\Routing\Controller;
 
+use SFW2\Routing\Result\Content;
 use SFW2\Routing\Controller;
 use SFW2\Core\Database;
 
@@ -83,7 +84,7 @@ class ContactController  extends Controller {
             $ld = $row['Division'];
         }
 
-        $content = new \SFW2\Routing\Result\Content('content/kontakt');
+        $content = new Content('content/kontakt');
         $content->assign('data', $data);
         return $content;
     }

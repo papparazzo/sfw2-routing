@@ -24,6 +24,9 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\User;
+use SFW2\Core\Config;
+
 use SFW2\Core\Database;
 
 class DownloadController extends Controller {
@@ -33,9 +36,25 @@ class DownloadController extends Controller {
      */
     protected $database;
 
-    public function __construct(int $pathId, Database $database) {
+    /**
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    protected $title;
+
+    public function __construct(int $pathId, Database $database, Config $config, User $user, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
+        $this->user = $user;
+        $this->title = $title;
+        $this->config = $config;
+
         $this->clearTmpFolder();
     }
 
@@ -48,7 +67,6 @@ class DownloadController extends Controller {
 #            $this->ctrl->addJSFile('download');
 #        }
 
-
         $tmp = array(
             'title'    => ''
         );
@@ -59,7 +77,7 @@ class DownloadController extends Controller {
         $content->assign('title',    $this->title);
 
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
-#        $content->assign('editable',   $this->ctrl->hasCreatePermission());
+        $content->assign('editable', true || $this->ctrl->hasCreatePermission());
         $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
 #        $view->assign('webmaster',  new \SFW\View\Helper\Obfuscator\EMail(
 #            $this->conf->getVal('project', 'eMailWebMaster'),
@@ -73,26 +91,21 @@ class DownloadController extends Controller {
 
     protected function loadEntries() {
         $stmt =
-            "SELECT `sfw_media`.`Name`, `sfw_media`.`CreationDate`, " .
-            "`sfw_media`.`Description`, `sfw_media`.`FileType`, " .
-            "`sfw_media`.`Deleted`, `sfw_media`.`Autogen`, " .
-            "`sfw_media`.`Token`,`sfw_division`.`Name` AS `Category`, " .
-            "IF((`sfw_media`.`UserId` = '%s' OR '%s') " .
-            "AND `sfw_media`.`Deleted` = '0', '1', '0') AS `DelAllowed`, " .
-            "`sfw_users`.`FirstName`, `sfw_users`.`LastName`, " .
-            "`sfw_users`.`Email` " .
-            "FROM `sfw_media` " .
-            "LEFT JOIN `sfw_division` " .
-            "ON `sfw_division`.`DivisionId` = `sfw_media`.`DivisionId` " .
-            "LEFT JOIN `sfw_users` " .
-            "ON `sfw_users`.`Id` = `sfw_media`.`UserId` ";
+            "SELECT `sfw2_media`.`Name`, `sfw2_media`.`CreationDate`, " .
+            "`sfw2_media`.`Description`, `sfw2_media`.`FileType`, " .
+            "`sfw2_media`.`Autogen`, `sfw2_user`.`Email`, " .
+            "`sfw2_media`.`Token`,`sfw2_division`.`Name` AS `Category`, " .
+            "IF(`sfw2_media`.`UserId` = '%s' OR '%s', '1', '0') AS `DelAllowed`, " .
+            "`sfw2_user`.`FirstName`, `sfw2_user`.`LastName` " .
+            "FROM `sfw2_media` " .
+            "LEFT JOIN `sfw2_division` " .
+            "ON `sfw2_division`.`Id` = `sfw2_media`.`DivisionId` " .
+            "LEFT JOIN `sfw2_user` " .
+            "ON `sfw2_user`.`Id` = `sfw2_media`.`UserId` ";
 
         $rows = $this->database->select(
             $stmt,
-            array(
-                $this->ctrl->getUserId(),
-                $this->ctrl->isAdmin() ? '1' : '0'
-            )
+            [$this->user->getUserId(), $this->user->isAdmin() ? '1' : '0']
         );
 
         $entries = [];
@@ -102,10 +115,9 @@ class DownloadController extends Controller {
             $entry['description'] = $row['Description'];
             $entry['token'      ] = $row['Token'      ];
             $entry['filename'   ] = $row['Name'       ];
-            $entry['deleted'    ] = $row['Deleted'    ] ? true : false;
-            $entry['auto'       ] = $row['Autogen'    ] ? true : false;
-            $entry['delAllowed' ] = $row['DelAllowed' ] ? true : false;
-            $entry['email'      ] = $this->getShortName($row);
+            $entry['auto'       ] = (bool)$row['Autogen'];
+            $entry['delAllowed' ] = (bool)$row['DelAllowed'];
+           # $entry['email'      ] = $this->getShortName($row);
             $entry['addFileInfo'] = $this->getAdditionalFileInfo($row);
             $entry['icon'       ] =
                 '/public/layout/icon_' . $row['FileType'] . '.png';
@@ -116,14 +128,14 @@ class DownloadController extends Controller {
 
     public function delete() {
         $stmt =
-            "DELETE FROM `sfw_media` " .
-            "WHERE `sfw_media`.`Token` = '%s' " .
+            "DELETE FROM `sfw2_media` " .
+            "WHERE `sfw2_media`.`Token` = '%s' " .
             "AND `Autogen` = '0'";
 
-        if(!$this->ctrl->isAdmin()) {
+        if(!$this->user->isAdmin()) {
             $stmt .=
                 "AND `UserId` = '" .
-                $this->database->escape($this->ctrl->getUserId()) . "'";
+                $this->database->escape($this->user->getUserId()) . "'";
         }
 
         if(
@@ -183,7 +195,7 @@ class DownloadController extends Controller {
         }
 
         $file = $_FILES['userfile'];
-        $path = SFW_DATA_PATH . $this->ctrl->getPathId() . '/';
+        $path = SFW_DATA_PATH . $this->pathId . '/';
 
         if(!is_dir($path) && !mkdir($path)) {
             throw new SFW_Exception(
@@ -208,7 +220,7 @@ class DownloadController extends Controller {
         }
 
         $stmt =
-            "INSERT INTO `sfw_media` " .
+            "INSERT INTO `sfw2_media` " .
             "SET `Token` = '%s', " .
             "`UserId` = '%s', " .
             "`Name` = '%s', " .
@@ -225,7 +237,7 @@ class DownloadController extends Controller {
             $stmt,
             array(
                 $token,
-                $this->ctrl->getUserId(),
+                $this->user->getUserId(),
                 $file['name'],
                 $tmp['title'],
                 $tmp['section'],
@@ -237,7 +249,7 @@ class DownloadController extends Controller {
         $tmp['title'  ] = '';
         $tmp['section'] = '';
         $this->dto->setSaveSuccess();
-        $this->ctrl->updateModificationDate();
+        #$this->ctrl->updateModificationDate();
         return true;
     }
 
@@ -291,7 +303,7 @@ return; # FIXME
 
     protected function getAdditionalFileInfo($row) {
         $name = substr($row['FirstName'], 0, 1)  . '. ' . $row['LastName'];
-        $date = new \SFW\View\Helper\Date($row['CreationDate']);
+        $date = '1. April';#new \SFW\View\Helper\Date($row['CreationDate']);
 
         if($date != '') {
             return '(' .  $name . '; Stand: ' . $date . ')';

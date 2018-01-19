@@ -24,12 +24,36 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\User;
+
+use SFW2\Core\Database;
+
 
 class ContentController extends Controller {
+
+    /**
+     * @var Database
+     */
+    protected $database;
+
+    /**
+     * @var User
+     */
+    protected $user;
+
+    protected $title;
+
+    public function __construct(int $pathId, Database $database, User $user, string $title = null) {
+        parent::__construct($pathId);
+        $this->database = $database;
+        $this->user = $user;
+        $this->title = $title;
+    }
 
     public function index() {
         $content = new Content('content/content');
         $content->assign('editable', false);
+        $content->assign('title', $this->title);
         $content->assign('content', $this->loadContent());
         return $content;
 /*
@@ -41,54 +65,60 @@ class ContentController extends Controller {
     }
 
     protected function loadContent() {
-        return [
-            'title'   => 'title',
-            'content' => 'inhalt',
-            'name'    => 'Hallo Nae',
-            'date'    => '1.April',
-            'haserrors' => false,
-            'shortna' => 'Hans'
-        ];
-
         $stmt =
-            "SELECT `sfw_contenteditable`.`Id`, `CreationDate`, `Title`, " .
-            "`sfw_users`.`FirstName`, `sfw_users`.`LastName`, `Email`, " .
+            "SELECT `sfw2_content`.`Id`, `CreationDate`, `Title`, " .
+            "`sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, `Email`, " .
             "`Content` " .
-            "FROM `sfw_contenteditable` " .
-            "LEFT JOIN `sfw_users` " .
-            "ON `sfw_users`.`Id` = `sfw_contenteditable`.`UserId` " .
-            "WHERE `sfw_contenteditable`.`PathId` = '%s' " .
+            "FROM `sfw2_content` " .
+            "LEFT JOIN `sfw2_user` " .
+            "ON `sfw2_user`.`Id` = `sfw2_content`.`UserId` " .
+            "WHERE `sfw2_content`.`PathId` = '%s' " .
             "ORDER BY `Id` DESC ";
 
-        $row = $this->db->selectRow(
-            $stmt,
-            array($this->ctrl->getPathId()),
-            $page
-        );
+        $row = $this->database->selectRow($stmt, [$this->pathId]);
 
         if(empty($row)) {
             $entry['content'  ] = '';
             $entry['name'     ] = '';
-            $entry['shortna'  ] = '; ' .$this->ctrl->getUserName();
+            $entry['shortna'  ] = '; ' . $this->user->getUserName();
             $entry['title'    ] = $this->title;
-            $entry['date'     ] = new \SFW\View\Helper\Date();
+            $entry['date'     ] = '';#new \SFW\View\Helper\Date();
             $entry['haserrors'] = false;
             return $entry;
         }
 
         $entry['content'  ] = $row['Content'];
         $entry['name'     ] = $row['FirstName'] . ' ' . $row['LastName'];
-        $entry['title'    ] = $row['Title'  ]?$row['Title']:$this->title;
-        $entry['date'     ] = new \SFW\View\Helper\Date($row['CreationDate']);
+        $entry['title'    ] = $row['Title'  ];
+        $entry['date'     ] = '';#new \SFW\View\Helper\Date($row['CreationDate']);
         $entry['haserrors'] = false;
         $entry['shortna'  ] = $this->getShortName($row);
         return $entry;
     }
+
+    protected function getShortName(array $data) {
+        if(!isset($data['FirstName']) || !isset($data['LastName'])) {
+            return '';
+        }
+
+        #if(empty($data['Email'])) {
+            return substr($data['FirstName'], 0, 1)  . '. ' . $data['LastName'];
+        #}
+        /*
+        return new SFW_View_Helper_MailObfuscator(
+            $data['Email'],
+            substr($data['FirstName'], 0, 1)  . '. ' . $data['LastName'],
+            "Seite: " . SFW_Dispatcher::getURL() . '?p=' . $this->dto->getPage()
+        );
+        */
+    }
+
+
 /*
     protected function executeOperation(&$page) {
         #FIXME $page = $this->dto->getPage();
         $tmp = array(
-            'title'     => '',
+            'title'     => $this->title,
             'content'   => '',
             'haserrors' => false
         );
