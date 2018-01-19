@@ -75,6 +75,10 @@ class User {
         return $this->lastName;
     }
 
+    public function getUserName() {
+        return substr($this->firstName, 0, 1) . '. ' . $this->lastName;
+    }
+
     public function getMailAddr() {
         return $this->mailAddr;
     }
