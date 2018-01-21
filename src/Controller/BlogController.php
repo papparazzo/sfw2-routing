@@ -23,6 +23,10 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
+use SFW2\Routing\Permission;
+use SFW2\Routing\Result\Content;
+use SFW2\Routing\User;
+
 use SFW2\Core\Database;
 
 class BlogController extends Controller {
@@ -32,70 +36,131 @@ class BlogController extends Controller {
      */
     protected $database;
 
+    /**
+     * @var Permission
+     */
+    protected $permission;
+
+    /**
+     * @var User
+     */
+    protected $user;
+
     protected $title;
 
-    public function __construct(int $pathId, Database $database, string $title = null) {
+    public function __construct(int $pathId, Database $database, User $user, Permission $permission, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
+        $this->user = $user;
+        $this->permission = $permission;
         $this->title = $title;
     }
 
     public function index() {
-#        if($this->ctrl->hasCreatePermission()) {
+        $editable = $this->permission->createAllowed($this->pathId);
+        if($editable) {
 #            $this->ctrl->addJSFile('ckeditor/ckeditor');
 #            $this->ctrl->addJSFile('contenteditable');
-#        }
+        }
 
-        $content = new \SFW2\Routing\Result\Content('content/blog/blog');
+        $tmp = array(
+            'title'    => '',
+            'section'  => '',
+            'location' => '',
+            'content'  => '',
+            'date'     => '1. April'
+        );
 
-#        $content->assign('editable',   $this->ctrl->hasCreatePermission());
-#        $content->assign('content',    $tmp);
-#        $content->assign('isAdmin',    $this->ctrl->isAdmin());
+        $content = new Content('content/blog/blog');
 
-        $content->assign('title', $this->title);
+        $content->assign('menu',       array());#$this->ctrl->getMenu()->getMenuArray());
+        $content->assign('deleteable', $this->permission->deleteOwnAllowed($this->pathId));
+        $content->assign('divisions', $this->getDivisions());
+
+        $content->assign('editable', $editable);
+        $content->assign('tmp', $tmp);
+        $content->assign('isAdmin', $this->user->isAdmin());
+        $content->assign('title', (string)$this->title);
         $content->assign('items', $this->loadEntries());
         return $content;
     }
 
-    protected function loadEntries($page = 0) {
+    protected function loadEntries() {
+        $entries = array();
+
         $stmt =
-            "SELECT `sfw2_blog`.`Id`, `CreationDate`, `Title`, " .
-            "`sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, `Email`, " .
-            "`Content` " .
+            "SELECT `sfw2_blog`.`Id`, `sfw2_blog`.`CreationDate`, " .
+            "`sfw2_blog`.`Link`, `sfw2_user`.`Email`, `sfw2_blog`.`Content`, " .
+            "`sfw2_blog`.`Title`, `sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, " .
+            "`sfw2_division`.`Name` AS `Resource`, " .
+#            "`sfw2_division`.`Module` AS `Module`, " .
+            "IF(`sfw2_blog`.`UserId` = '%s' OR '%s', '1', '0') " .
+            "AS `DelAllowed` " .
             "FROM `sfw2_blog` " .
             "LEFT JOIN `sfw2_user` " .
             "ON `sfw2_user`.`Id` = `sfw2_blog`.`UserId` " .
-            "WHERE `sfw2_blog`.`PathId` = '%s' OR 1 " .
-            "ORDER BY `Id` DESC ";
+            "LEFT JOIN `sfw2_division` " .
+            "ON `sfw2_division`.`Id` = `sfw2_blog`.`DivisionId` ";
 
-        return $this->database->select($stmt, array($this->pathId), $page);
+        $stmt .=  "ORDER BY `sfw2_blog`.`Id` DESC ";
+        $rows = $this->database->select(
+            $stmt,
+            [$this->user->getUserId(), $this->user->isAdmin() ? '1' : '0']
+        );
+/*
+        $cmt = new \SFW\Comments(
+            $this->db,
+            $this->dto,
+            $this->editable,
+            $this->isAdmin
+        );
+*/
+        foreach($rows as $row) {
+            #$cd = new \SFW\View\Helper\HDate($row['CreationDate'], new \SFW\Locale());
+            $entry = [];
+            $entry['id'         ] = $row['Id'];
+            $entry['date'       ] = '1. April'; # $cd;
+            $entry['title'      ] = $row['Title'];
+            #$entry['location'   ] = $row['Location'];
+            $entry['content'    ] = $row['Content'];
+            $entry['resname'    ] = $row['Resource'];
+            #$entry['resurl'     ] = '/';# . $row['Module'];
+            $entry['delAllowed' ] = (bool)$row['DelAllowed'];
+            $entry['commentscnt'] = 215; #$cmt->getEntriesCount('BLOG', $row['Id']);
 
-        if(empty($row)) {
-            $entry['content'  ] = '';
-            $entry['name'     ] = '';
-            #$entry['shortna'  ] = '; ' .$this->ctrl->getUserName();
-            $entry['title'    ] = $this->title;
-            #$entry['date'     ] = new \SFW\View\Helper\Date();
-            $entry['haserrors'] = false;
-            return $entry;
+            $img = strtolower('public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
+            $entry['image'    ] = is_file($img) ? '/' . $img : '/public/layout/unbekannt.png';
+
+
+            /*
+            $entry['image'      ] = '/public/content/users/' . \SFW\Helper::getImageFileName(
+ # FIXME: _No hardcoded path
+                    'public/content/users/',
+                    $row['FirstName'],
+                    $row['LastName']
+            );
+            */
+            $entry['mailaddr'   ] = $row["Email"]; /*new \SFW\View\Helper\Obfuscator\EMail(
+                $row["Email"],
+                $row['FirstName'] . ' ' . $row['LastName'],
+                "Blogeintrag vom " . $cd->getFormatedDate(true)
+             );
+            */
+            #$view = new \SFW\View();#$this->getPageId());
+            #$view->assignArray($entry);
+            #$view->assignTpl(
+            #    $this->config->getTemplateFile('Controller/Blogentry')
+            #);
+            $entries[] = $entry; #$view->getContent();
         }
-
-        $entry['content'  ] = $row['Content'];
-        $entry['name'     ] = $row['FirstName'] . ' ' . $row['LastName'];
-        $entry['title'    ] = $row['Title'] ? $row['Title'] : $this->title;
-        #$entry['date'     ] = new \SFW\View\Helper\Date($row['CreationDate']);
-        $entry['haserrors'] = false;
-        $entry['shortna'  ] = '';#$this->getShortName($row);
-        return $entry;
+        return $entries;
     }
+
+
+
+
 /*
     protected function executeOperation(&$page) {
-        #FIXME $page = $this->dto->getPage();
-        $tmp = array(
-            'title'     => '',
-            'content'   => '',
-            'haserrors' => false
-        );
 
         #FIXME if(
         #    !$this->ctrl->hasCreatePermission() ||
@@ -104,12 +169,7 @@ class BlogController extends Controller {
             return $this->loadContent($page);
         #}
 
-        $tmp['title'] = $this->dto->getTitle(
-            'title',
-            true,
-            'Die Überschrift',
-            50
-        );
+        $tmp['title'] = $this->dto->getTitle('title', true, 'Die Überschrift', 50);
         $tmp['content'] = $this->dto->getData('content');
 
         if(
@@ -143,4 +203,130 @@ class BlogController extends Controller {
     }
  *
  */
+
+
+
+
+
+
+
+/*
+    public function index() {
+
+        $entries = $this->loadEntries();
+
+        #$this->ctrl->addJSFile('slimbox2');
+        #$this->ctrl->addJSFile('jquery.comments');
+        #$this->ctrl->addCSSFile('slimbox2');
+        #$this->ctrl->addCSSFile('comments');
+
+#        if($this->hasCreatePermission()) {
+#            $this->addJSFile('crud');
+#        }
+    }
+*/
+    public function delete() {
+        if(!$this->hasDeletePermission()) {
+            return false;
+        }
+        $entryId = $this->dto->getNumeric('id');
+        $stmt =
+            "DELETE ".
+            "FROM `sfw2_blog` " .
+            "WHERE `Id` = %s ";
+
+        if(!$this->ctrl->isAdmin()) {
+            $stmt .=
+                "AND `UserId` = '" .
+                $this->db->escape($this->ctrl->getUserId()) . "'";
+        }
+
+        if($this->config->database->update($stmt, array($entryId)) != 1) {
+            $this->dto->getErrorProvider()->addError(
+                sfw2_Error_Provider::ERR_DEL,
+                array('<NAME>' => 'Der Blogeintrag')
+            );
+        }
+        $this->dto->setSaveSuccess(true);
+        return true;
+    }
+
+    public function create() {
+        if(!$this->hasCreatePermission()) {
+            return false;
+        }
+
+        $tmp['title'] = $this->dto->getTitle(
+            'title_' . $this->getPageId(),
+            true,
+            'Die Überschrift'
+        );
+        $tmp['location'] = $this->dto->getArrayValue(
+            'location_' . $this->getPageId(),
+            false,
+            'Der Link',
+            $this->getMenueArray()
+        );
+        $tmp['content'] = $this->dto->getTitle(
+            'content_' . $this->getPageId(),
+            true,
+            'Der Inhalt'
+        );
+        $tmp['section'] = $this->dto->getArrayValue(
+            'section_' . $this->getPageId(),
+            true,
+            'Das Resort',
+            $this->sections
+        );
+
+        if(
+            $this->dto->getErrorProvider()->hasErrors() ||
+            $this->dto->getErrorProvider()->hasWarning()
+        ) {
+            return false;
+        }
+
+        $stmt =
+            "INSERT INTO `sfw2_blog` " .
+            "SET `CreationDate` = NOW(), " .
+            "`Title` = '%s', " .
+            "`DivisionId` = '%s', " .
+            "`Location` = '%s', " .
+            "`Content` = '%s', " .
+            "`UserId` = %d";
+
+        $this->config->database->insert(
+            $stmt,
+            array(
+                $tmp['title'   ],
+                $tmp['section' ],
+                $tmp['location'],
+                $tmp['content' ],
+                $this->ctrl->getUserId()
+            )
+        );
+
+        $this->dto->setSaveSuccess();
+        $this->ctrl->updateModificationDate();
+        return true;
+    }
+
+    private function getMenueArray() {
+#        $rv = array('---' => '');#
+#
+#        foreach($this->ctrl->getMenu()->getMenuArray() as $v){
+#            $rv = array_merge($rv, $v);
+#        }
+#        return $rv;
+    }
+
+    protected function getDivisions() {
+        $stmt =
+            'SELECT `Id`, `Name` ' .
+            'FROM `sfw2_division` ' .
+            'ORDER BY `Position`';
+
+        return $this->database->select($stmt);
+    }
+
 }
