@@ -41,7 +41,6 @@ class SponsorsController extends Controller {
     }
 
     public function index() {
-
         $stmt =
             'SELECT `URL`, `Title`, `Source` ' .
             'FROM `sfw2_sponsors` ';

@@ -36,10 +36,11 @@ class User {
     protected $birthday      = null;
     protected $mailAddr      = '';
 
-    protected $phone        = '';
-    protected $mobile       = '';
+    protected $phone         = '';
+    protected $mobile        = '';
 
-    protected $loginName = '';
+    protected $loginName     = '';
+    protected $authenticated = false;
 
     public function __construct(int $userId = -1, $isAdmin = false, string $firstName = '') {
         $this->userid        = $userId;
@@ -91,4 +92,3 @@ class User {
         return $this->isAdmin;
     }
 }
-
