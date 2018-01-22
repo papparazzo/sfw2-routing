@@ -22,9 +22,12 @@
 
 namespace SFW2\Routing\Controller;
 
-use SFW2\Routing\Controller;
 use SFW2\Core\Database;
+
+use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Widget\Obfuscator\Phone;
+use SFW2\Routing\Widget\Obfuscator\EMail;
 
 class ManagementController extends Controller {
 
@@ -61,18 +64,10 @@ class ManagementController extends Controller {
             $user['name'     ] =
                 $row['Sex'] . ' ' . $row['FirstName'] . ' ' . $row['LastName'];
             $user['position' ] = $row['Position'];
-            $user['phone1'   ] = 'Tel.: ' . $row['Phone1']; /*new \SFW\View\Helper\Obfuscator\Phone(
-                $row['Phone1'],
-                'Tel.: ' . $row['Phone1']
-            );*/
-            $user['phone2'   ] = 'Tel.: ' .$row['Phone2']; /*new \SFW\View\Helper\Obfuscator\Phone(
-                $row['Phone2'],
-                'Tel.: ' . $row['Phone2']
-            );*/
+            $user['phone1'   ] = (string)(new Phone($row['Phone1'], 'Tel.: ' . $row['Phone1']));
+            $user['phone2'   ] = (string)(new Phone($row['Phone2'], 'Tel.: ' . $row['Phone2']));
 
-            $user['emailaddr'] = $row['Email']; /*new \SFW\View\Helper\Obfuscator\EMail(
-                $row['Email']
-            );*/
+            $user['emailaddr'] = (string)(new EMail($row['Email']));
             $img = strtolower('public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
 
             $user['image'    ] = is_file($img) ? '/' . $img : '/public/layout/unbekannt.png';

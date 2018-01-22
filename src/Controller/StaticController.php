@@ -23,7 +23,9 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
-use \SFW2\Routing\Result\Content;
+use SFW2\Routing\Result\Content;
+use SFW2\Routing\Widget\Obfuscator\EMail;
+
 use SFW2\Core\Database;
 use SFW2\Core\Config;
 
@@ -52,9 +54,10 @@ class StaticController extends Controller {
     }
 
     public function index() {
+        $email = $this->config->getVal('project', 'eMailWebMaster');
         $content = new Content($this->template);
         $content->assign('chairman', $this->getChairman());
-        $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
+        $content->assign('mailaddr', (string)(new EMail($email, $email)));
         $content->assign('title', $this->title);
         return $content;
     }
