@@ -73,10 +73,6 @@ class GalleryController extends Controller {
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
         $content->assign('editable',   true || $this->ctrl->hasCreatePermission());
         $content->assign('webmaster', $this->config->getVal('project', 'eMailWebMaster'));
-#        $view->assign('webmaster',  new \SFW\View\Helper\Obfuscator\EMail(
-#            $this->conf->getVal('project', 'eMailWebMaster'),
-#            $this->conf->getVal('project', 'eMailWebMaster')
-#        ));
         return $content;
     }
 

@@ -25,6 +25,7 @@ namespace SFW2\Routing\Controller;
 use SFW2\Routing\Controller;
 use SFW2\Routing\Permission;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 
 use SFW2\Core\Database;
@@ -59,9 +60,13 @@ class BlogController extends Controller {
     public function index() {
         $editable = $this->permission->createAllowed($this->pathId);
         if($editable) {
+#            $this->addJSFile('crud');
 #            $this->ctrl->addJSFile('ckeditor/ckeditor');
-#            $this->ctrl->addJSFile('contenteditable');
         }
+        #$this->ctrl->addJSFile('slimbox2');
+        #$this->ctrl->addJSFile('jquery.comments');
+        #$this->ctrl->addCSSFile('slimbox2');
+        #$this->ctrl->addCSSFile('comments');
 
         $tmp = array(
             'title'    => '',
@@ -73,7 +78,6 @@ class BlogController extends Controller {
 
         $content = new Content('content/blog/blog');
 
-        $content->assign('menu',       array());#$this->ctrl->getMenu()->getMenuArray());
         $content->assign('deleteable', $this->permission->deleteOwnAllowed($this->pathId));
         $content->assign('divisions', $this->getDivisions());
 
@@ -140,91 +144,17 @@ class BlogController extends Controller {
                     $row['LastName']
             );
             */
-            $entry['mailaddr'   ] = $row["Email"]; /*new \SFW\View\Helper\Obfuscator\EMail(
+            $entry['mailaddr'   ] = (string)(new EMail(
                 $row["Email"],
                 $row['FirstName'] . ' ' . $row['LastName'],
-                "Blogeintrag vom " . $cd->getFormatedDate(true)
-             );
-            */
-            #$view = new \SFW\View();#$this->getPageId());
-            #$view->assignArray($entry);
-            #$view->assignTpl(
-            #    $this->config->getTemplateFile('Controller/Blogentry')
-            #);
-            $entries[] = $entry; #$view->getContent();
+                "Blogeintrag vom " #. $cd->getFormatedDate(true)
+             ));
+
+            $entries[] = $entry;
         }
         return $entries;
     }
 
-
-
-
-/*
-    protected function executeOperation(&$page) {
-
-        #FIXME if(
-        #    !$this->ctrl->hasCreatePermission() ||
-        #    $this->dto->getOperation() != 'create'
-        #) {
-            return $this->loadContent($page);
-        #}
-
-        $tmp['title'] = $this->dto->getTitle('title', true, 'Die Überschrift', 50);
-        $tmp['content'] = $this->dto->getData('content');
-
-        if(
-            $this->dto->getErrorProvider()->hasErrors() ||
-            $this->dto->getErrorProvider()->hasWarning()
-        ) {
-            $tmp['haserrors'] = true;
-            return $tmp;
-        }
-
-        $stmt =
-            "INSERT INTO `sfw_contenteditable` " .
-            "SET `PathId` = '%s', " .
-            "`CreationDate` = NOW(), " .
-            "`UserId` = %d, " .
-            "`Title` = '%s', " .
-            "`Content` = '%s'";
-
-        $this->db->insert(
-            $stmt,
-            array(
-                $this->ctrl->getPathId(),
-                $this->ctrl->getUserId(),
-                $tmp['title'  ],
-                $tmp['content']
-            )
-        );
-        $this->dto->setSaveSuccess();
-        $this->ctrl->updateModificationDate();
-        return $this->loadContent(0);
-    }
- *
- */
-
-
-
-
-
-
-
-/*
-    public function index() {
-
-        $entries = $this->loadEntries();
-
-        #$this->ctrl->addJSFile('slimbox2');
-        #$this->ctrl->addJSFile('jquery.comments');
-        #$this->ctrl->addCSSFile('slimbox2');
-        #$this->ctrl->addCSSFile('comments');
-
-#        if($this->hasCreatePermission()) {
-#            $this->addJSFile('crud');
-#        }
-    }
-*/
     public function delete() {
         if(!$this->hasDeletePermission()) {
             return false;
@@ -309,15 +239,6 @@ class BlogController extends Controller {
         $this->dto->setSaveSuccess();
         $this->ctrl->updateModificationDate();
         return true;
-    }
-
-    private function getMenueArray() {
-#        $rv = array('---' => '');#
-#
-#        foreach($this->ctrl->getMenu()->getMenuArray() as $v){
-#            $rv = array_merge($rv, $v);
-#        }
-#        return $rv;
     }
 
     protected function getDivisions() {

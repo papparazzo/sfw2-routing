@@ -25,6 +25,8 @@ namespace SFW2\Routing\Controller;
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\User;
+use SFW2\Routing\Widget\Obfuscator\EMail;
+use SFW2\Routing\Permission;
 
 use SFW2\Core\Database;
 
@@ -43,25 +45,31 @@ class ContentController extends Controller {
 
     protected $title;
 
-    public function __construct(int $pathId, Database $database, User $user, string $title = null) {
+    /**
+     * @var Permission
+     */
+    protected $permission;
+
+    public function __construct(int $pathId, Database $database, User $user, Permission $permission, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
+        $this->permission = $permission;
         $this->title = $title;
     }
 
     public function index() {
+        $editable = $this->permission->createAllowed($this->pathId);
+        if($editable) {
+#            $this->ctrl->addJSFile('ckeditor/ckeditor');
+#            $this->ctrl->addJSFile('contenteditable');
+        }
+
         $content = new Content('content/content');
-        $content->assign('editable', false);
+        $content->assign('editable', $editable);
         $content->assign('title', $this->title);
         $content->assign('content', $this->loadContent());
         return $content;
-/*
-#        if($this->ctrl->hasCreatePermission()) {
-#            $this->ctrl->addJSFile('ckeditor/ckeditor');
-#            $this->ctrl->addJSFile('contenteditable');
-#        }
- */
     }
 
     protected function loadContent() {
@@ -101,34 +109,19 @@ class ContentController extends Controller {
             return '';
         }
 
-        #if(empty($data['Email'])) {
+        if(empty($data['Email'])) {
             return substr($data['FirstName'], 0, 1)  . '. ' . $data['LastName'];
-        #}
-        /*
-        return new SFW_View_Helper_MailObfuscator(
-            $data['Email'],
-            substr($data['FirstName'], 0, 1)  . '. ' . $data['LastName'],
-            "Seite: " . SFW_Dispatcher::getURL() . '?p=' . $this->dto->getPage()
-        );
-        */
+        }
+
+        return (string)(new EMail($data['Email'], substr($data['FirstName'], 0, 1)  . '. ' . $data['LastName']));
     }
 
-
-/*
-    protected function executeOperation(&$page) {
-        #FIXME $page = $this->dto->getPage();
+    public function create() {
         $tmp = array(
             'title'     => $this->title,
             'content'   => '',
             'haserrors' => false
         );
-
-        #FIXME if(
-        #    !$this->ctrl->hasCreatePermission() ||
-        #    $this->dto->getOperation() != 'create'
-        #) {
-            return $this->loadContent($page);
-        #}
 
         $tmp['title'] = $this->dto->getTitle(
             'title',
@@ -154,19 +147,12 @@ class ContentController extends Controller {
             "`Title` = '%s', " .
             "`Content` = '%s'";
 
-        $this->db->insert(
+        $this->database->insert(
             $stmt,
-            array(
-                $this->ctrl->getPathId(),
-                $this->ctrl->getUserId(),
-                $tmp['title'  ],
-                $tmp['content']
-            )
+            [$this->pathId, $this->user->getUserId(), $tmp['title'], $tmp['content']]
         );
         $this->dto->setSaveSuccess();
         $this->ctrl->updateModificationDate();
         return $this->loadContent(0);
     }
- *
- */
 }

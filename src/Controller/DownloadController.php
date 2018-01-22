@@ -24,6 +24,7 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 use SFW2\Core\Config;
 
@@ -78,15 +79,12 @@ class DownloadController extends Controller {
 
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
         $content->assign('editable', true || $this->ctrl->hasCreatePermission());
-        $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
-#        $view->assign('webmaster',  new \SFW\View\Helper\Obfuscator\EMail(
-#            $this->conf->getVal('project', 'eMailWebMaster'),
-#            $this->conf->getVal('project', 'eMailWebMaster')
-#        ));
+        $content->assign('mailaddr', (string)(new EMail(
+            $this->config->getVal('project', 'eMailWebMaster'),
+            $this->config->getVal('project', 'eMailWebMaster')
+        )));
+                    #FIXME $this->dto->getErrorProvider()->getContent() .
         return $content;
-        return
-            #FIXME $this->dto->getErrorProvider()->getContent() .
-            $view->getContent();
     }
 
     protected function loadEntries() {
