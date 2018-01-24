@@ -57,7 +57,7 @@ class Dispatcher {
                 break;
 
             case Request::REQUEST_TYPE_HTML:
-                $response = new ResponseType\Html($result, $dice);
+                $response = new ResponseType\Html($result, $dice->create('SFW2\Core\Config'), $dice->create('SFW2\Routing\Menu'));
                 break;
         }
         $response->dispatch();

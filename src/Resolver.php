@@ -27,6 +27,7 @@ use SFW2\Routing\ControllerMap\ControllerMapException;
 use Dice\Dice;
 
 use ReflectionMethod;
+use ReflectionException;
 
 class Resolver {
 
@@ -90,6 +91,12 @@ class Resolver {
             $this->container->addRules($rule);
             return $this->callMethode(key($rule), $action, $request);
         } catch(ControllerMapException $ex) {
+            throw new ResolverException(
+                $ex->getMessage(),
+                ResolverException::PAGE_NOT_FOUND,
+                $ex
+            );
+        } catch(ReflectionException $ex) { // Use chained Exception as of 7.1
             throw new ResolverException(
                 $ex->getMessage(),
                 ResolverException::PAGE_NOT_FOUND,
