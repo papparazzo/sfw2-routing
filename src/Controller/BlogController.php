@@ -27,6 +27,7 @@ use SFW2\Routing\Permission;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
+use SFW2\Core\Helper;
 
 use SFW2\Core\Database;
 
@@ -132,18 +133,13 @@ class BlogController extends Controller {
             $entry['delAllowed' ] = (bool)$row['DelAllowed'];
             $entry['commentscnt'] = 215; #$cmt->getEntriesCount('BLOG', $row['Id']);
 
-            $img = strtolower('public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
-            $entry['image'    ] = is_file($img) ? '/' . $img : '/public/layout/unbekannt.png';
-
-
-            /*
-            $entry['image'      ] = '/public/content/users/' . \SFW\Helper::getImageFileName(
- # FIXME: _No hardcoded path
-                    'public/content/users/',
-                    $row['FirstName'],
-                    $row['LastName']
+            $entry['image'      ] = '/public/layout/' . Helper::getImageFileName(
+                # FIXME: _No hardcoded path
+                'public/layout/',
+                $row['FirstName'],
+                $row['LastName']
             );
-            */
+
             $entry['mailaddr'   ] = (string)(new EMail(
                 $row["Email"],
                 $row['FirstName'] . ' ' . $row['LastName'],

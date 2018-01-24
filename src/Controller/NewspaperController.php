@@ -26,6 +26,7 @@ use SFW2\Routing\Controller;
 use SFW2\Core\Database;
 use SFW2\Core\Config;
 use SFW2\Routing\Result\Content;
+use SFW2\Core\Helper;
 
 class NewspaperController extends Controller {
 
@@ -252,9 +253,9 @@ class NewspaperController extends Controller {
                 $row["FirstName"] . ' ' . $row["LastName"],
                 "Zeitungsartikel vom " . $cd->getFormatedDate(true)
             );
-            $entry['image'      ] = '/public/content/users/' . \SFW\Helper::getImageFileName(
- # FIXME: _No hardcoded path
-                    'public/content/users/',
+            $entry['image'      ] = '/public/layout/' . Helper::getImageFileName(
+                    # FIXME: _No hardcoded path
+                    'public/layout/',
                     $row['FirstName'],
                     $row['LastName']
             );

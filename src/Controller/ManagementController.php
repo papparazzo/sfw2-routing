@@ -28,6 +28,7 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\Phone;
 use SFW2\Routing\Widget\Obfuscator\EMail;
+use SFW2\Core\Helper;
 
 class ManagementController extends Controller {
 
@@ -68,18 +69,12 @@ class ManagementController extends Controller {
             $user['phone2'   ] = (string)(new Phone($row['Phone2'], 'Tel.: ' . $row['Phone2']));
 
             $user['emailaddr'] = (string)(new EMail($row['Email']));
-            $img = strtolower('public/layout/' . $row['FirstName'] . '_' . $row['LastName'] . '.png');
-
-            $user['image'    ] = is_file($img) ? '/' . $img : '/public/layout/unbekannt.png';
-
-                    /*
- # FIXME: _No hardcoded path
-                '/public/content/users/' .
-                \SFW\Helper::getImageFileName(
-                    'public/content/users/',
-                    $row['FirstName'],
-                    $row['LastName']
-            );*/
+            $user['image'    ] = '/public/layout/' . Helper::getImageFileName(
+                # FIXME: _No hardcoded path
+                'public/layout/',
+                $row['FirstName'],
+                $row['LastName']
+            );
             $data[$row['Title']][] = $user;
         }
         foreach($data as $k => $v) {
