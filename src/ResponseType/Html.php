@@ -25,7 +25,8 @@ namespace SFW2\Routing\ResponseType;
 use SFW2\Routing\ResponseType;
 use SFW2\Routing\Result;
 use SFW2\Core\View;
-use Dice\Dice;
+use SFW2\Routing\Menu;
+use SFW2\Core\Config;
 
 class Html extends ResponseType {
 
@@ -34,13 +35,19 @@ class Html extends ResponseType {
     const HTTP_STATUS_FORBIDDEN             = 2;
 
     /**
-     * @var \Dice\Dice
+     * @var Config
      */
-    protected $dice = null;
+    protected $config;
 
-    public function __construct(Result $result, Dice $dice) {
+    /**
+     * @var Menu
+     */
+    protected $menu;
+
+    public function __construct(Result $result, Config $config, Menu $menu) {
        parent::__construct($result);
-       $this->dice = $dice;
+       $this->config = $config;
+       $this->menu = $menu;
     }
 
     public function dispatch() {
@@ -66,7 +73,7 @@ class Html extends ResponseType {
 
         #$view->assign('authenticated', $this->container['authenticated']);
         $title =
-            $this->dice->create('SFW2\Core\Config')->getVal('project', 'title') . ' - ' .
+            $this->config->getVal('project', 'title') . ' - ' .
             $this->result->getValue('title', '');
 
         $view->assign('title', $title);
@@ -75,12 +82,12 @@ class Html extends ResponseType {
     }
 
     protected function getInnerContent( ) {
-        $view = new View('web/templates/' . $this->result->getTemplateFile() . '.phtml');
+        $view = new View(__DIR__ . '/../Templates/' . $this->result->getTemplateFile() . '.phtml');
         $view->assignArray($this->result->getData());
-        $view0 = new View('web/templates/decorate.phtml');
+        $view0 = new View(__DIR__ . '/../Templates/decorate.phtml');
         $view0->assign('content', $view->getContent());
-        $view0->assign('mainMenu', $this->dice->create('SFW2\Routing\Menu')->getMainMenu());
-        $view0->assign('sideMenu', $this->dice->create('SFW2\Routing\Menu')->getSideMenu());
+        $view0->assign('mainMenu', $this->menu->getMainMenu());
+        $view0->assign('sideMenu', $this->menu->getSideMenu());
         return $view0->getContent();
     }
 
