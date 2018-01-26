@@ -86,6 +86,23 @@ class LoginResetController extends Controller {
         return $content;
     }
 
+    public function confirm() {
+        $state = 'error';
+        if($this->validateHash()) {
+            $state = 'ok';
+        }
+        $view = new \SFW\View();
+        $view->assign('state', $state);
+        $view->assign('expire', $this->getExpireDate(
+            self::EXPIRE_DATE_OFFSET)
+        );
+
+        return $view->getContent(
+            $this->config->getTemplateFile('LoginReset')
+        );
+    }
+
+
     protected function operate($addr, &$name) {
         $hash = md5($name . $addr . time() . Helper::getRandomInt());
 
@@ -182,27 +199,3 @@ class LoginResetController extends Controller {
         return date('Y-m-d H:i:s', $time);
     }
 }
-
-
-/*
- *
- *
-
-
- *
-    public function confirm() {
-        $state = 'error';
-        #if($this->validateHash()) {
-        #    $state = 'ok';
-        #}
-        $view = new \SFW\View();
-        $view->assign('state', $state);
-        $view->assign('expire', $this->getExpireDate(
-            self::EXPIRE_DATE_OFFSET)
-        );
-
-        return $view->getContent(
-            $this->config->getTemplateFile('LoginReset')
-        );
-    }
- */

@@ -24,8 +24,11 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\User;
+use SFW2\Routing\Permission;
 use SFW2\Core\Database;
 use SFW2\Core\Config;
+use SFW2\Core\Helper;
 
 class GalleryController extends Controller {
 
@@ -39,24 +42,29 @@ class GalleryController extends Controller {
      */
     protected $config;
 
+    /**
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * @var Permission
+     */
+    protected $permission;
+
     protected $title;
 
-    public function __construct(int $pathId, Database $database, Config $config, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, User $user, Permission $permission, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
+        $this->user = $user;
+        $this->permission = $permission;
         $this->config = $config;
         $this->title = $title;
     }
 
     public function index() {
-        #$this->ctrl->addJSFile('slimbox2');
-        #$this->ctrl->addCSSFile('slimbox2');
-
-#        if($this->hasCreatePermission()) {
-#            $this->ctrl->addJSFile('crud');
-#            $this->ctrl->addJSFile('jquery.fileupload');
-#            $this->ctrl->addJSFile('gallery');
-#        }
+        $editable = $this->permission->createAllowed($this->pathId);
 
         $tmp = [
             'caption'     => '',
@@ -71,35 +79,169 @@ class GalleryController extends Controller {
         $content->assign('caption',    $this->title ? $this->title : 'Gallerieübersicht');
         $content->assign('title',      $this->title);
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
-        $content->assign('editable',   true || $this->ctrl->hasCreatePermission());
+        $content->assign('editable',   $editable);
         $content->assign('webmaster', $this->config->getVal('project', 'eMailWebMaster'));
+        $content->appendJSFile('slimbox2');
+        $content->appendCSSFile('slimbox2');
+
+        if($editable) {
+            $content->appendJSFile('crud');
+            $content->appendJSFile('jquery.fileupload');
+            $content->appendJSFile('gallery');
+        }
+
+
         return $content;
     }
 
+    public function create() {
+        $tmp = [
+            'caption'     => '',
+            'description' => ''
+        ];
 
+        $tmp['caption'] = $this->dto->getTitle('caption', true, 'Der Galleriename');
+        $tmp['description'] = $this->dto->getTitle('description', true, 'Die Beschreibung');
 
+        if(
+            $this->dto->getErrorProvider()->hasErrors() ||
+            $this->dto->getErrorProvider()->hasWarning()
+        ) {
+            return
+                $this->dto->getErrorProvider()->getContent() .
+                $this->getSummary(0, $tmp);
+        }
 
+        $folder = \SFW\Helper::createFolder(SFW_GALLERY_PATH, $tmp['caption']);
 
+        if(
+            !mkdir(SFW_GALLERY_PATH . $folder . '/thumb'  ) ||
+            !mkdir(SFW_GALLERY_PATH . $folder . '/regular') ||
+            !mkdir(SFW_GALLERY_PATH . $folder . '/high'   )
+        ) {
+            throw new \SFW\Gallery\Exception(
+                'could not create gallery-path <' .
+                SFW_GALLERY_PATH . $folder . '>',
+                \SFW\Gallery\Exception::COULD_NOT_CREATE_GALLERY_PATH
+            );
+        }
 
+        $sections = $this->database->selectKeyValue(
+            'Module',
+            'DivisionId',
+            'sfw_division'
+        );
 
+        $stmt =
+            "INSERT INTO `sfw_media` " .
+            "SET " .
+            "`UserId` = '%s', " .
+            "`Token` = '%s', " .
+            "`Name` = '%s', " .
+            "`Description` = '%s', " .
+            "`DivisionId` = '%s', " .
+            "`CreationDate` = NOW(), " .
+            "`ActionHandler` = 'zipFolder', " .
+            "`Path` = '%s', " .
+            "`FileType` = 'zip', " .
+            "`Deleted` = '1'," .
+            "`Autogen` = '1';";
 
-            public function create() {
-                return $this->createGallery();
-            }
+        $data = array(
+            $this->user->getUserId(),
+            md5($tmp['caption'] . $this->user->getUserId() . time()),
+            SFW_AuxFunc::getSimplifiedName($tmp['caption']) . '.zip',
+            'Alle Bilder der Galerie "' . $tmp['caption'] . '" als ZIP-Datei',
+            $sections[strtolower($this->category)], // FIXME: fixen!!!
+            SFW_GALLERY_PATH . $folder
+        );
 
-            public function delete() {
-                $this->deleteGallery($this->dto->getNumeric('id'));
-                return
-                    $this->dto->getErrorProvider()->getContent() .
-                    $this->getSummary($page);
-            }
+        if(!($id = $this->database->insert($stmt, $data)) != 0) {
+            throw new \SFW\Gallery\Exception(
+                'insertation of gallery in media-table failed! ' .
+                SFW_GALLERY_PATH . $folder . '>',
+                \SFW\Gallery\Exception::COULD_NOT_INSERT_INTO_MEDIA_TABLE
+            );
+        }
 
-            public function undelete() {
-                $this->undeleteGallery($this->dto->getNumeric('id'));
-                return
-                    $this->dto->getErrorProvider()->getContent() .
-                    $this->getSummary($page);
-            }
+        $stmt =
+            "INSERT INTO `sfw_imagegalleries` " .
+            "SET " .
+            "`PathId` = '%s', " .
+            "`MediaId` = '%s', " .
+            "`Description` = '%s', " .
+            "`Deleted` = '0'," .
+            "`Name` = '%s'";
+
+        $data = [
+            $this->pathId,
+            $id,
+            $tmp['description'],
+            $tmp['caption']
+        ];
+
+        if(!($id = $this->database->insert($stmt, $data)) != 0) {
+            throw new \SFW\Gallery\Exception(
+                'insertation of gallery failed! <' .
+                '<' . SFW_GALLERY_PATH . $folder . '>',
+                \SFW\Gallery\Exception::INSERTATION_OF_GALLERY_FAILED
+            );
+        }
+
+        $url =
+            '/' . strtolower($this->category) .
+            '/bilder?do=showgallery&g=' . $id . '&p=0';
+
+        $this->ctrl->updateModificationDate();
+
+        $view = new SFW_View();
+        $view->assign('url', $url);
+        $view->assignTpl('JumpTo');
+        return $view->getContent();
+    }
+
+    public function delete() {
+        $stmt =
+            "SELECT `sfw_media`.`Path`, `sfw_media`.`Id` " .
+            "FROM `sfw_imagegalleries` " .
+            "LEFT JOIN `sfw_media`" .
+            "ON `sfw_imagegalleries`.`MediaId` = `sfw_media`.`Id` " .
+            "WHERE `sfw_imagegalleries`.`Id` = %s";
+
+        $data = $this->database->selectRow($stmt, [$galleryId]);
+        $path = SFW_GALLERY_PATH . $data['Path'] . '/.htaccess';
+        file_put_contents($path, 'deny from all');
+
+        $stmt =
+            "UPDATE `sfw_media` " .
+            "SET `sfw_media`.`Deleted` = '1' " .
+            "WHERE `sfw_media`.`Id` = '%s'";
+
+        if($this->database->update($stmt, [$data['Id']]) > 1) {
+            $this->dto->getErrorProvider()->addError(
+                SFW_Error_Provider::ERR_DEL,
+                ['<NAME>' => 'Die Galerie']
+            );
+        }
+
+        $stmt =
+            "UPDATE `sfw_imagegalleries` " .
+            "SET `sfw_imagegalleries`.`Deleted` = '1' " .
+            "WHERE `sfw_imagegalleries`.`MediaId` = '%s'";
+
+        if($this->database->update($stmt, [$data['Id']]) != 1) {
+            $this->dto->getErrorProvider()->addError(
+                SFW_Error_Provider::ERR_DEL,
+                ['<NAME>' => 'Die Galerie']
+            );
+        }
+
+        $this->dto->setSaveSuccess(true);
+
+        return
+            $this->dto->getErrorProvider()->getContent() .
+            $this->getSummary($page);
+    }
 
     public function showgallery() {
         return $this->getGallery(45); #$this->dto->getNumeric('g'), $page);
@@ -232,164 +374,8 @@ class GalleryController extends Controller {
 
 
 
-    protected function createGallery() {
-        $tmp = array(
-            'caption'     => '',
-            'description' => ''
-        );
 
-        $tmp['caption'] = $this->dto->getTitle(
-            'caption',
-            true,
-            'Der Galleriename'
-        );
 
-        $tmp['description'] = $this->dto->getTitle(
-            'description',
-            true,
-            'Die Beschreibung'
-        );
-
-        if(
-            $this->dto->getErrorProvider()->hasErrors() ||
-            $this->dto->getErrorProvider()->hasWarning()
-        ) {
-            return
-                $this->dto->getErrorProvider()->getContent() .
-                $this->getSummary(0, $tmp);
-        }
-
-        $folder = \SFW\Helper::createFolder(SFW_GALLERY_PATH, $tmp['caption']);
-
-        if(
-            !mkdir(SFW_GALLERY_PATH . $folder . '/thumb'  ) ||
-            !mkdir(SFW_GALLERY_PATH . $folder . '/regular') ||
-            !mkdir(SFW_GALLERY_PATH . $folder . '/high'   )
-        ) {
-            throw new \SFW\Gallery\Exception(
-                'could not create gallery-path <' .
-                SFW_GALLERY_PATH . $folder . '>',
-                \SFW\Gallery\Exception::COULD_NOT_CREATE_GALLERY_PATH
-            );
-        }
-
-        $sections = $this->db->selectKeyValue(
-            'Module',
-            'DivisionId',
-            'sfw_division'
-        );
-
-        $stmt =
-            "INSERT INTO `sfw_media` " .
-            "SET " .
-            "`UserId` = '%s', " .
-            "`Token` = '%s', " .
-            "`Name` = '%s', " .
-            "`Description` = '%s', " .
-            "`DivisionId` = '%s', " .
-            "`CreationDate` = NOW(), " .
-            "`ActionHandler` = 'zipFolder', " .
-            "`Path` = '%s', " .
-            "`FileType` = 'zip', " .
-            "`Deleted` = '1'," .
-            "`Autogen` = '1';";
-
-        $data = array(
-            $this->ctrl->getUserId(),
-            md5($tmp['caption'] . $this->ctrl->getUserId() . time()),
-            SFW_AuxFunc::getSimplifiedName($tmp['caption']) . '.zip',
-            'Alle Bilder der Galerie "' . $tmp['caption'] . '" als ZIP-Datei',
-            $sections[strtolower($this->category)], // FIXME: fixen!!!
-            SFW_GALLERY_PATH . $folder
-        );
-
-        if(!($id = $this->db->insert($stmt, $data)) != 0) {
-            throw new \SFW\Gallery\Exception(
-                'insertation of gallery in media-table failed! ' .
-                SFW_GALLERY_PATH . $folder . '>',
-                \SFW\Gallery\Exception::COULD_NOT_INSERT_INTO_MEDIA_TABLE
-            );
-        }
-
-        $stmt =
-            "INSERT INTO `sfw_imagegalleries` " .
-            "SET " .
-            "`PathId` = '%s', " .
-            "`MediaId` = '%s', " .
-            "`Description` = '%s', " .
-            "`Deleted` = '0'," .
-            "`Name` = '%s'";
-
-        $data = array(
-            $this->ctrl->getPathId(),
-            $id,
-            $tmp['description'],
-            $tmp['caption']
-        );
-
-        if(!($id = $this->db->insert($stmt, $data)) != 0) {
-            throw new \SFW\Gallery\Exception(
-                'insertation of gallery failed! <' .
-                '<' . SFW_GALLERY_PATH . $folder . '>',
-                \SFW\Gallery\Exception::INSERTATION_OF_GALLERY_FAILED
-            );
-        }
-
-        $url =
-            '/' . strtolower($this->category) .
-            '/bilder?do=showgallery&g=' . $id . '&p=0';
-
-        $this->ctrl->updateModificationDate();
-
-        $view = new SFW_View();
-        $view->assign('url', $url);
-        $view->assignTpl('JumpTo');
-        return $view->getContent();
-    }
-
-    protected function deleteGallery($galleryId) {
-        if(!$this->ctrl->hasDeletePermission()) {
-            return false;
-        }
-
-        $stmt =
-            "SELECT `sfw_media`.`Path`, `sfw_media`.`Id` " .
-            "FROM `sfw_imagegalleries` " .
-            "LEFT JOIN `sfw_media`" .
-            "ON `sfw_imagegalleries`.`MediaId` = `sfw_media`.`Id` " .
-            "WHERE `sfw_imagegalleries`.`Id` = %s";
-
-        $data = $this->db->selectRow($stmt, array($galleryId));
-        $path = SFW_GALLERY_PATH . $data['Path'] . '/.htaccess';
-        file_put_contents($path, 'deny from all');
-
-        $stmt =
-            "UPDATE `sfw_media` " .
-            "SET `sfw_media`.`Deleted` = '1' " .
-            "WHERE `sfw_media`.`Id` = '%s'";
-
-        if($this->db->update($stmt, array($data['Id'])) > 1) {
-            $this->dto->getErrorProvider()->addError(
-                SFW_Error_Provider::ERR_DEL,
-                array('<NAME>' => 'Die Galerie')
-            );
-        }
-
-        $stmt =
-            "UPDATE `sfw_imagegalleries` " .
-            "SET `sfw_imagegalleries`.`Deleted` = '1' " .
-            "WHERE `sfw_imagegalleries`.`MediaId` = '%s'";
-
-        if($this->db->update($stmt, array($data['Id'])) != 1) {
-            $this->dto->getErrorProvider()->addError(
-                SFW_Error_Provider::ERR_DEL,
-                array('<NAME>' => 'Die Galerie')
-            );
-        }
-
-        $this->dto->setSaveSuccess(true);
-        return true;
-    }
 
     protected function getGallery($id, $page = 0) {
         $stmt =

@@ -47,7 +47,6 @@ class ProfileController extends Controller {
     }
 
     public function index() {
-
         $content = new Content('content/blog/blog');
 
         $content->assign('menu',       array());#$this->ctrl->getMenu()->getMenuArray());
@@ -60,36 +59,8 @@ class ProfileController extends Controller {
         $content->assign('title', (string)$this->title);
         $content->assign('items', $this->loadEntries());
         return $content;
-    }
 
 
-
-
-    public function saveUser() {
-        if($this->user->isAdmin()) {
-            $userid = $this->getDTO()->getNumeric('user');
-        }
-        $this->saveUserData($userid);
-    }
-
-    public function resetPwd() {
-        #TODO: wenn account gesperrt dann automatischer passwort reset!!!
-        if($this->isAdmin()) {
-            $userid = $this->getDTO()->getNumeric('id');
-            $this->dispatchNewPassword($userid);
-        }
-    }
-
-    public function changeUser() {
-        if($this->user->isAdmin()) {
-            $userid = $this->getDTO()->getNumeric('id');
-        }
-    }
-
-
-
-
-    public function index() {
         $this->addJSFile('profile');
         $userid = $this->getUserId();
 
@@ -168,49 +139,21 @@ class ProfileController extends Controller {
         return $view->getContent();
     }
 
-    private function dispatchNewPassword($userid) {
-        $stmt =
-            "SELECT `sfw_users`.`Email`, `sfw_users`.`LoginName`, " .
-            "CONCAT(`FirstName`, ' ', `LastName`) AS `Name` " .
-            "FROM `sfw_users` " .
-            "WHERE `sfw_users`.`id` = '%s'";
 
-        $data = $this->db->selectRow($stmt, array($userid));
 
-        if($data['Email'] == '') {
-            $this->dto->getErrorProvider()->addUserError(
-                'Der User "' . $data['Name'] .
-                '" verfügt über keine E-Mail-Adresse!',
-                'email'
-            );
-            return false;
+
+
+    public function saveUser() {
+        if($this->user->isAdmin()) {
+            $userid = $this->getDTO()->getNumeric('user');
         }
+        $this->saveUserData($userid);
+    }
 
-        $pwd = SFW_AuxFunc::generatePassword();
-
-        $stmt =
-            "UPDATE `sfw_users` " .
-            "SET `Password` = MD5('%s'), `Active` = '1' " .
-            "WHERE `Id` = '%s' ";
-
-        $this->db->update($stmt, array($pwd, $userid));
-
-        $mail = new SFW_Mailer();
-        if(!$mail->sendNewPassword(
-            $data['Email'],
-            $data['Name'],
-            $data['LoginName'],
-            $pwd
-        )) {
-            $this->dto->getErrorProvider()->addError(
-                SFW_Error_Provider::SEND_FAILED
-            );
-            return false;
+    public function changeUser() {
+        if($this->user->isAdmin()) {
+            $userid = $this->getDTO()->getNumeric('id');
         }
-        $this->dto->setActionSuccess(
-            'Neues Passwort wurde erfolgreich verschickt'
-        );
-        return true;
     }
 
     private function saveUserData($userid) {

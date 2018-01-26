@@ -24,9 +24,11 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Core\Database;
-use SFW2\Core\Config;
-use SFW2\Routing\Result\Content;
 use SFW2\Core\Helper;
+use SFW2\Core\Config;
+use SFW2\Routing\User;
+use SFW2\Routing\Result\Content;
+use SFW2\Routing\Permission;
 
 class NewspaperController extends Controller {
 
@@ -40,20 +42,34 @@ class NewspaperController extends Controller {
      */
     protected $config;
 
+    /**
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * @var Permission
+     */
+    protected $permission;
+
     protected $title;
 
-    public function __construct(int $pathId, Database $database, Config $config, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, User $user, Permission $permission, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
-        $this->config = $config;
+        $this->user = $user;
+        $this->permission = $permission;
         $this->title = $title;
+        $this->config = $config;
     }
 
     public function index() {
+        $editable = $this->permission->createAllowed($this->pathId);
+
         $content = new Content('content/newspaper/Newspaperarticles');
         $content->assign('title', 'Pressemitteilungen [' . $this->title . ']');
         $content->assign('about', ''.$this->title);
-        $content->assign('editable', true);
+        $content->assign('editable', $editable);
         $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
         $content->assign('items', $this->loadEntries());
         $content->assign('tmp', [
@@ -61,18 +77,21 @@ class NewspaperController extends Controller {
             'date'      => '01. April 2012',
             'newspaper' => 'Spiegel'
         ]);
+        $content->appendJSFile('slimbox2');
+        $content->appendCSSFile('slimbox2');
+
+        if($editable) {
+            $content->appendJSFile('crud');
+            $content->appendJSFile('jquery.fileupload');
+            $content->appendJSFile('newspaperarticles');
+        }
+
 
         return $content;
 
 
-#        $this->ctrl->addJSFile('slimbox2');
- #       $this->ctrl->addCSSFile('slimbox2');
 
-#    FIXME    if($this->ctrl->hasCreatePermission()){
-#            $this->ctrl->addJSFile('crud');
-  #          $this->ctrl->addJSFile('jquery.fileupload');
-   #         $this->ctrl->addJSFile('newspaperarticles');
-    #    }
+
 
         $hasErrors = false;
 #        if(
@@ -91,55 +110,37 @@ class NewspaperController extends Controller {
             return false;
         }
         $entryId = $this->dto->getNumeric('id');
-        $params = array($entryId);
+        $params = [$entryId];
         $stmt =
             "DELETE FROM `sfw_newspaperarticles` " .
             "WHERE `Id` = %s ";
 
         if(!$this->isAdmin()) {
             $stmt .= "AND `UserId` = '%s'";
-            $params[] = $this->ctrl->getUserId();
+            $params[] = $this->user->getUserId();
         }
 
-        if($this->db->update($stmt, $params) != 1) {
-            $this->dto->getErrorProvider()->addError(
-                SFW_Error_Provider::ERR_DEL,
-                array('<NAME>' => 'Der Presseartikel')
-            );
+        if($this->database->update($stmt, $params) != 1) {
+            #$this->dto->getErrorProvider()->addError(
+            #    SFW_Error_Provider::ERR_DEL,
+            #    array('<NAME>' => 'Der Presseartikel')
+            #);
         }
-        $this->dto->setSaveSuccess(true);
+        #$this->dto->setSaveSuccess(true);
         return true;
     }
 
     public function create() {
-        if(!$this->hasCreatePermission()) {
-            return false;
-        }
-
-        $tmp['title'] = $this->dto->getTitle(
-            'title',
-            true,
-            'Die Überschrift'
-        );
-
-        $tmp['date'] = $this->dto->getDate(
-            'date',
-            true,
-            'Das Veröffentlichskeitsdatum'
-        );
-
-        $tmp['newspaper'] = $this->dto->getTitle(
-            'newspaper',
-            true,
-            'Die Quelle'
-        );
+        $tmp['title'] = $this->dto->getTitle('title', true, 'Die Überschrift');
+        $tmp['date'] = $this->dto->getDate('date', true, 'Das Veröffentlichskeitsdatum');
+        $tmp['newspaper'] = $this->dto->getTitle('newspaper', true, 'Die Quelle');
 
         $data = $this->dto->getData('filecontent');
         if($data == null) {
             $this->dto->getErrorProvider()->addError(
                 SFW_Error_Provider::NO_FILE,
-                array(),
-                'dropzone_fileuploadArea_' . $this->getPageId()
+                [],
+                'dropzone_fileuploadArea_' . $this->pathId
             );
         }
 
@@ -151,7 +152,7 @@ class NewspaperController extends Controller {
         }
 
         $img = new SFW_Image(
-            SFW_GALLERY_PATH . '/presse_' . $this->ctrl->getPathId()
+            SFW_GALLERY_PATH . '/presse_' . $this->getPathId()
         );
 
         $stmt =
@@ -167,8 +168,8 @@ class NewspaperController extends Controller {
         $this->db->insert(
             $stmt,
             array(
-                $this->ctrl->getUserId(),
-                $this->ctrl->getPathId(),
+                $this->user->getUserId(),
+                $this->pathId,
                 $tmp['title'    ],
                 $tmp['date'     ],
                 $img->storeImage($data),
@@ -207,7 +208,7 @@ class NewspaperController extends Controller {
 
 
         # $offset = $page * self::ENTRIES_PER_PAGE;
-        $entries = array();
+        $entries = [];
 
         $stmt =
             "SELECT `sfw_newspaperarticles`.`Id`, `Title`, `Date`, `Source`, " .
@@ -234,7 +235,7 @@ class NewspaperController extends Controller {
         );
 
         $img = new \SFW\Image(
-            $this->config->getVal('path', 'gallery') . $this->ctrl->getPathId() . '/0/'
+            $this->config->getVal('path', 'gallery') . $this->pathId . '/0/'
         );
 
         foreach($rows as $row) {
