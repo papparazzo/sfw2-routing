@@ -23,6 +23,7 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\Controller;
 use SFW2\Core\Database;
 
@@ -67,8 +68,7 @@ class ContactController  extends Controller {
                 $user['position' ] = $row['Position'];
             }
             $user['phone'    ] = $row['Phone1'] ? 'Tel.: ' . $row['Phone1'] : '';
-            $user['emailaddr'] = $row['Email'];
-                #new SFW_View_Helper_MailObfuscator($row['Email']);
+            $user['emailaddr'] = (string)(new EMail($row["Email"]));
 
             $data[$row['Division']][] = $user;
 
