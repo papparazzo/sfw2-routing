@@ -38,10 +38,10 @@ return [
 
 #        'templatePathSFW' => dirname(__FILE__) . '/Templates/',
 
-#        'jsPath'          => 'public/js/',
+        'jsPath'          => 'public/js/',
 #        'jsPathSFW'       =>  dirname(__FILE__) . '/Public/js/',
 
-#        'cssPath'         => 'public/css/',
+        'cssPath'         => 'public/css/',
 #        'cssPathSFW' => dirname(__FILE__) . '/Public/css/'
     ],
 
