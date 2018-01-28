@@ -59,6 +59,7 @@ class BlogController extends Controller {
     }
 
     public function index() {
+        $content = new Content('content/blog/blog');
         $editable = $this->permission->createAllowed($this->pathId);
         if($editable) {
 #            $this->addJSFile('crud');
@@ -76,8 +77,6 @@ class BlogController extends Controller {
             'content'  => '',
             'date'     => '1. April'
         );
-
-        $content = new Content('content/blog/blog');
 
         $content->assign('deleteable', $this->permission->deleteOwnAllowed($this->pathId));
         $content->assign('divisions', $this->getDivisions());
