@@ -44,11 +44,13 @@ class Content extends Result {
         $this->cssFiles[] = $file;
     }
 
-    public function getJSFiles() : array {
+    public function getJSFiles(string $path) : array {
+        $this->appendPath($this->jsFiles, $path);
         return $this->jsFiles;
     }
 
-    public function getCSSFiles() : array {
+    public function getCSSFiles(string $path) : array {
+        $this->appendPath($this->cssFiles, $path);
         return $this->cssFiles;
     }
 
@@ -87,5 +89,18 @@ class Content extends Result {
 
     public function getTemplateFile() {
         return $this->templateFile;
+    }
+
+    protected function appendPath(array &$items, string $path) {
+        array_walk(
+            $items,
+            function(&$item, $key, $path) {
+                if(is_file($item)) {
+                    return;
+                }
+                $item = DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $item;
+            },
+            $path
+        );
     }
 }
