@@ -78,13 +78,8 @@ class DownloadController extends Controller {
 #            $this->ctrl->addJSFile('download');
         }
 
-        $tmp = array(
-            'title'    => ''
-        );
-
         $content = new Content('content/download');
         $content->assign('entries',  $this->loadEntries());
-        $content->assign('tmp',      $tmp);
         $content->assign('title',    $this->title);
         $content->assign('divisions', $this->getDivisions());
 
@@ -94,7 +89,7 @@ class DownloadController extends Controller {
             $this->config->getVal('project', 'eMailWebMaster'),
             'Bescheid.'
         )));
-                    #FIXME $this->dto->getErrorProvider()->getContent() .
+        #FIXME $this->dto->getErrorProvider()->getContent() .
         return $content;
     }
 

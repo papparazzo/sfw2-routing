@@ -26,6 +26,7 @@ use SFW2\Routing\Controller;
 use SFW2\Core\Database;
 use SFW2\Core\Helper;
 use SFW2\Core\Config;
+use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Permission;
@@ -70,7 +71,10 @@ class NewspaperController extends Controller {
         $content->assign('title', 'Pressemitteilungen [' . $this->title . ']');
         $content->assign('about', ''.$this->title);
         $content->assign('editable', $editable);
-        $content->assign('mailaddr', $this->config->getVal('project', 'eMailWebMaster'));
+        $content->assign('mailaddr', (string)(new EMail(
+            $this->config->getVal('project', 'eMailWebMaster'),
+            $this->config->getVal('project', 'eMailWebMaster')
+        )));
         $content->assign('items', $this->loadEntries());
         $content->assign('tmp', [
             'title'     => 'Neuer Titel',

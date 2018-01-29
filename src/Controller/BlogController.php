@@ -74,19 +74,10 @@ class BlogController extends Controller {
         #$this->ctrl->addCSSFile('slimbox2');
         #$this->ctrl->addCSSFile('comments');
 
-        $tmp = array(
-            'title'    => '',
-            'section'  => '',
-            'location' => '',
-            'content'  => '',
-            'date'     => '1. April'
-        );
-
         $content->assign('deleteable', $this->permission->deleteOwnAllowed($this->pathId));
         $content->assign('divisions', $this->getDivisions());
 
         $content->assign('editable', $editable);
-        $content->assign('tmp', $tmp);
         $content->assign('isAdmin', $this->user->isAdmin());
         $content->assign('title', (string)$this->title);
         $content->assign('items', $this->loadEntries());
