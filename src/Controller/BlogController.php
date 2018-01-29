@@ -31,7 +31,11 @@ use SFW2\Core\Helper;
 
 use SFW2\Core\Database;
 
+use SFW2\Routing\Controller\Helper\GetDivisionTrait;
+
 class BlogController extends Controller {
+
+    use GetDivisionTrait;
 
     /**
      * @var Database
@@ -235,14 +239,4 @@ class BlogController extends Controller {
         $this->ctrl->updateModificationDate();
         return true;
     }
-
-    protected function getDivisions() {
-        $stmt =
-            'SELECT `Id`, `Name` ' .
-            'FROM `sfw2_division` ' .
-            'ORDER BY `Position`';
-
-        return $this->database->select($stmt);
-    }
-
 }

@@ -26,11 +26,15 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
-use SFW2\Core\Config;
+use SFW2\Routing\Permission;
+use SFW2\Routing\Controller\Helper\GetDivisionTrait;
 
+use SFW2\Core\Config;
 use SFW2\Core\Database;
 
 class DownloadController extends Controller {
+
+    use GetDivisionTrait;
 
     /**
      * @var Database
@@ -47,26 +51,32 @@ class DownloadController extends Controller {
      */
     protected $config;
 
+    /**
+     * @var Permission
+     */
+    protected $permission;
+
     protected $title;
 
-    public function __construct(int $pathId, Database $database, Config $config, User $user, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, User $user, Permission $permission, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
         $this->title = $title;
         $this->config = $config;
+        $this->permission = $permission;
 
         $this->clearTmpFolder();
     }
 
     public function index() {
-
-#        if($this->ctrl->hasCreatePermission()) {
+        $editable = $this->permission->createAllowed($this->pathId);
+        if($editable) {
 # FIXME
 #            $this->ctrl->addJSFile('crud');
 #            $this->ctrl->addJSFile('jquery.fileupload');
 #            $this->ctrl->addJSFile('download');
-#        }
+        }
 
         $tmp = array(
             'title'    => ''
@@ -76,12 +86,13 @@ class DownloadController extends Controller {
         $content->assign('entries',  $this->loadEntries());
         $content->assign('tmp',      $tmp);
         $content->assign('title',    $this->title);
+        $content->assign('divisions', $this->getDivisions());
 
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
-        $content->assign('editable', true || $this->ctrl->hasCreatePermission());
+        $content->assign('editable', $editable);
         $content->assign('mailaddr', (string)(new EMail(
             $this->config->getVal('project', 'eMailWebMaster'),
-            $this->config->getVal('project', 'eMailWebMaster')
+            'Bescheid.'
         )));
                     #FIXME $this->dto->getErrorProvider()->getContent() .
         return $content;
