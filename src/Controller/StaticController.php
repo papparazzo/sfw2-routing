@@ -43,14 +43,17 @@ class StaticController extends Controller {
 
     protected $template;
 
+    protected $templateData;
+
     protected $title;
 
-    public function __construct(int $pathId, string $template, Database $database, Config $config, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, string $template, array $templateData = [], string $title = null) {
         parent::__construct($pathId);
         $this->template = $template;
         $this->database = $database;
         $this->config = $config;
         $this->title = $title;
+        $this->templateData = $templateData;
     }
 
     public function index() {
@@ -59,6 +62,7 @@ class StaticController extends Controller {
         $content->assign('chairman', $this->getChairman());
         $content->assign('mailaddr', (string)(new EMail($email, $email)));
         $content->assign('title', $this->title);
+        $content->assignArray($this->templateData);
         return $content;
     }
 
