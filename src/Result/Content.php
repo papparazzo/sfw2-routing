@@ -59,7 +59,7 @@ class Content extends Result {
     }
 
     public function assignArray(array $values) {
-        $this->vars = array_merge($this->vars, $values);
+        $this->vars += $values;
     }
 
     public function append(string $name, $val) {
@@ -73,7 +73,7 @@ class Content extends Result {
         if(!isset($this->vars[$name])) {
             $this->vars[$name] = [];
         }
-        $this->vars[$name] = array_merge($this->vars[$name], $values);
+        $this->vars[$name] += $values;
     }
 
     public function getData() {
