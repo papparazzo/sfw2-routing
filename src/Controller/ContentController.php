@@ -45,28 +45,17 @@ class ContentController extends Controller {
 
     protected $title;
 
-    /**
-     * @var Permission
-     */
-    protected $permission;
-
-    public function __construct(int $pathId, Database $database, User $user, Permission $permission, string $title = null) {
+    public function __construct(int $pathId, Database $database, User $user, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
-        $this->permission = $permission;
         $this->title = $title;
     }
 
-    public function index() {
-        $editable = $this->permission->createAllowed($this->pathId);
-        if($editable) {
-#            $this->ctrl->addJSFile('ckeditor/ckeditor');
-#            $this->ctrl->addJSFile('contenteditable');
-        }
-
+    public function index($all = false) {
+#       $this->ctrl->addJSFile('ckeditor/ckeditor');
+#       $this->ctrl->addJSFile('contenteditable');
         $content = new Content('content/content');
-        $content->assign('editable', $editable);
         $content->assign('title', $this->title);
         $content->assign('content', $this->loadContent());
         return $content;

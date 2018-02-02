@@ -29,7 +29,6 @@ use SFW2\Routing\User;
 use SFW2\Routing\Permission;
 use SFW2\Core\Database;
 use SFW2\Core\Config;
-use SFW2\Core\Helper;
 
 class GalleryController extends Controller {
 
@@ -55,54 +54,38 @@ class GalleryController extends Controller {
 
     protected $title;
 
-    public function __construct(int $pathId, Database $database, Config $config, User $user, Permission $permission, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, User $user, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
-        $this->permission = $permission;
         $this->config = $config;
         $this->title = $title;
     }
 
-    public function index() {
-        $editable = $this->permission->createAllowed($this->pathId);
-
-        $tmp = [
-            'caption'     => '',
-            'description' => ''
-        ];
+    public function index($all = false) {
 
         $content = new Content('content/gallery/summary');
         $content->assign('title', 'Sitemap');
 
         $content->assign('galleries',  $this->loadSummary());
-        $content->assign('tmp',        $tmp);
         $content->assign('caption',    $this->title ? $this->title : 'Gallerieübersicht');
         $content->assign('title',      $this->title);
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
-        $content->assign('editable',   $editable);
         $content->assign('webmaster',  (string)(new EMail(
             $this->config->getVal('project', 'eMailWebMaster')
         )));
         $content->appendJSFile('slimbox2');
         $content->appendCSSFile('slimbox2');
 
-        if($editable) {
-            $content->appendJSFile('crud');
-            $content->appendJSFile('jquery.fileupload');
-            $content->appendJSFile('gallery');
-        }
-
+        $content->appendJSFile('crud');
+        $content->appendJSFile('jquery.fileupload');
+        $content->appendJSFile('gallery');
 
         return $content;
     }
 
     public function create() {
-        $tmp = [
-            'caption'     => '',
-            'description' => ''
-        ];
-
+        $tmp = [];
         $tmp['caption'] = $this->dto->getTitle('caption', true, 'Der Galleriename');
         $tmp['description'] = $this->dto->getTitle('description', true, 'Die Beschreibung');
 
@@ -129,11 +112,7 @@ class GalleryController extends Controller {
             );
         }
 
-        $sections = $this->database->selectKeyValue(
-            'Module',
-            'DivisionId',
-            'sfw_division'
-        );
+        $sections = $this->database->selectKeyValue('Module', 'DivisionId', 'sfw_division');
 
         $stmt =
             "INSERT INTO `sfw_media` " .
@@ -159,13 +138,7 @@ class GalleryController extends Controller {
             SFW_GALLERY_PATH . $folder
         );
 
-        if(!($id = $this->database->insert($stmt, $data)) != 0) {
-            throw new \SFW\Gallery\Exception(
-                'insertation of gallery in media-table failed! ' .
-                SFW_GALLERY_PATH . $folder . '>',
-                \SFW\Gallery\Exception::COULD_NOT_INSERT_INTO_MEDIA_TABLE
-            );
-        }
+        $id = $this->database->insert($stmt, $data);
 
         $stmt =
             "INSERT INTO `sfw_imagegalleries` " .
@@ -176,24 +149,10 @@ class GalleryController extends Controller {
             "`Deleted` = '0'," .
             "`Name` = '%s'";
 
-        $data = [
-            $this->pathId,
-            $id,
-            $tmp['description'],
-            $tmp['caption']
-        ];
+        $data = [$this->pathId, $id, $tmp['description'], $tmp['caption']];
 
-        if(!($id = $this->database->insert($stmt, $data)) != 0) {
-            throw new \SFW\Gallery\Exception(
-                'insertation of gallery failed! <' .
-                '<' . SFW_GALLERY_PATH . $folder . '>',
-                \SFW\Gallery\Exception::INSERTATION_OF_GALLERY_FAILED
-            );
-        }
-
-        $url =
-            '/' . strtolower($this->category) .
-            '/bilder?do=showgallery&g=' . $id . '&p=0';
+        $id = $this->database->insert($stmt, $data);
+        $url = '/' . strtolower($this->category) . '/bilder?do=showgallery&g=' . $id . '&p=0';
 
         $this->ctrl->updateModificationDate();
 
@@ -203,7 +162,7 @@ class GalleryController extends Controller {
         return $view->getContent();
     }
 
-    public function delete() {
+    public function delete($all = false) {
         $stmt =
             "SELECT `sfw_media`.`Path`, `sfw_media`.`Id` " .
             "FROM `sfw_imagegalleries` " .

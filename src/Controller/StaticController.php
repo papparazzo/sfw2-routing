@@ -56,7 +56,7 @@ class StaticController extends Controller {
         $this->templateData = $templateData;
     }
 
-    public function index() {
+    public function index($all = false) {
         $email = $this->config->getVal('project', 'eMailWebMaster');
         $content = new Content($this->template);
         $content->assign('chairman', $this->getChairman());

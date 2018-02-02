@@ -43,41 +43,29 @@ class BlogController extends Controller {
     protected $database;
 
     /**
-     * @var Permission
-     */
-    protected $permission;
-
-    /**
      * @var User
      */
     protected $user;
 
     protected $title;
 
-    public function __construct(int $pathId, Database $database, User $user, Permission $permission, string $title = null) {
+    public function __construct(int $pathId, Database $database, User $user, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
-        $this->permission = $permission;
         $this->title = $title;
     }
 
-    public function index() {
+    public function index($all = false) {
         $content = new Content('content/blog/blog');
-        $editable = $this->permission->createAllowed($this->pathId);
-        if($editable) {
-#            $this->addJSFile('crud');
-#            $this->ctrl->addJSFile('ckeditor/ckeditor');
-        }
+        #$this->addJSFile('crud');
+        #$this->ctrl->addJSFile('ckeditor/ckeditor');
         #$this->ctrl->addJSFile('slimbox2');
         #$this->ctrl->addJSFile('jquery.comments');
         #$this->ctrl->addCSSFile('slimbox2');
         #$this->ctrl->addCSSFile('comments');
 
-        $content->assign('deleteable', $this->permission->deleteOwnAllowed($this->pathId));
         $content->assign('divisions', $this->getDivisions());
-
-        $content->assign('editable', $editable);
         $content->assign('isAdmin', $this->user->isAdmin());
         $content->assign('title', (string)$this->title);
         $content->assign('items', $this->loadEntries());
@@ -92,7 +80,6 @@ class BlogController extends Controller {
             "`sfw2_blog`.`Link`, `sfw2_user`.`Email`, `sfw2_blog`.`Content`, " .
             "`sfw2_blog`.`Title`, `sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, " .
             "`sfw2_division`.`Name` AS `Resource`, " .
-#            "`sfw2_division`.`Module` AS `Module`, " .
             "IF(`sfw2_blog`.`UserId` = '%s' OR '%s', '1', '0') " .
             "AS `DelAllowed` " .
             "FROM `sfw2_blog` " .
@@ -145,7 +132,7 @@ class BlogController extends Controller {
         return $entries;
     }
 
-    public function delete() {
+    public function delete($all = false) {
         if(!$this->hasDeletePermission()) {
             return false;
         }

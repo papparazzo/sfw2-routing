@@ -42,7 +42,7 @@ class ManagementController extends Controller {
         $this->database = $database;
     }
 
-    public function index() {
+    public function index($all = false) {
         $stmt =
             "SELECT IF(`sfw2_user`.`Sex` = 'MALE', 'Herr', 'Frau') AS `Sex`, " .
             "`sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, " .

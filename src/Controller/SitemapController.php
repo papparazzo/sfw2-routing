@@ -38,7 +38,7 @@ class SitemapController extends Controller {
         parent::__construct($pathId);
     }
 
-    public function index() {
+    public function index($all = false) {
         $content = new Content('content/sitemap');
         $content->assign('title', 'Sitemap');
         $content->assign('sitemapdata', $this->menu->getFullMenu());

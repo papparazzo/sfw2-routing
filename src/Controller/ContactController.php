@@ -40,7 +40,7 @@ class ContactController  extends Controller {
         $this->database = $database;
     }
 
-    public function index() {
+    public function index($all = false) {
         $stmt =
             "SELECT `sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, " .
             "IF(`sfw2_user`.`Sex` = 'MALE', 'Herr', 'Frau') AS `Sex`, " .

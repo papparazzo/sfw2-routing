@@ -41,27 +41,16 @@ class PeriodicalDates extends Controller {
      */
     protected $config;
 
-    /**
-     * @var Permission
-     */
-    protected $permission;
-
-    public function __construct(int $pathId, Database $database, Config $config, Permission $permission) {
+    public function __construct(int $pathId, Database $database, Config $config) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->config = $config;
-        $this->permission = $permission;
     }
 
-    public function index() {
-        $editable = $this->permission->createAllowed($this->pathId);
-        if($editable) {
+    public function index($all = false) {
 #            $this->ctrl->addJSFile('crud');
-        }
-
         $content = new Content('content/periodicalDates');
         $content->assign('periodicalDates', $this->getDates());
-        $content->assign('editable', $editable);
         return $content;
     }
 
@@ -105,7 +94,7 @@ class PeriodicalDates extends Controller {
         return $rv;
     }
 
-    public function delete() {
+    public function delete($all = false) {
         $stmt =
             "DELETE FROM `sfw2_calendar` " .
             "WHERE `sfw2_calendar`.`id` = '%s' " .

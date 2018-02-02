@@ -40,7 +40,7 @@ class SponsorsController extends Controller {
         $this->database = $database;
     }
 
-    public function index() {
+    public function index($all = false) {
         $stmt =
             'SELECT `URL`, `Title`, `Source` ' .
             'FROM `sfw2_sponsors` ';

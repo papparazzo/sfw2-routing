@@ -51,32 +51,22 @@ class DownloadController extends Controller {
      */
     protected $config;
 
-    /**
-     * @var Permission
-     */
-    protected $permission;
-
     protected $title;
 
-    public function __construct(int $pathId, Database $database, Config $config, User $user, Permission $permission, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, User $user, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
         $this->title = $title;
         $this->config = $config;
-        $this->permission = $permission;
-
         $this->clearTmpFolder();
     }
 
-    public function index() {
-        $editable = $this->permission->createAllowed($this->pathId);
-        if($editable) {
+    public function index($all = false) {
 # FIXME
 #            $this->ctrl->addJSFile('crud');
 #            $this->ctrl->addJSFile('jquery.fileupload');
 #            $this->ctrl->addJSFile('download');
-        }
 
         $content = new Content('content/download');
         $content->assign('entries',  $this->loadEntries());
@@ -84,7 +74,6 @@ class DownloadController extends Controller {
         $content->assign('divisions', $this->getDivisions());
 
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
-        $content->assign('editable', $editable);
         $content->assign('mailaddr', (string)(new EMail(
             $this->config->getVal('project', 'eMailWebMaster'),
             'Bescheid.'
@@ -129,7 +118,7 @@ class DownloadController extends Controller {
         return $entries;
     }
 
-    public function delete() {
+    public function delete($all = false) {
         $stmt =
             "DELETE FROM `sfw2_media` " .
             "WHERE `sfw2_media`.`Token` = '%s' " .

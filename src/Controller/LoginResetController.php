@@ -46,7 +46,7 @@ class LoginResetController extends Controller {
         $this->database = $database;
     }
 
-    public function index() {
+    public function index($all = false) {
         return $this->showResetScreen(self::STATE_START);
     }
 
@@ -101,7 +101,6 @@ class LoginResetController extends Controller {
             $this->config->getTemplateFile('LoginReset')
         );
     }
-
 
     protected function operate($addr, &$name) {
         $hash = md5($name . $addr . time() . Helper::getRandomInt());

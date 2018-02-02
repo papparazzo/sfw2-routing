@@ -46,15 +46,12 @@ class ProfileController extends Controller {
         $this->user = $user;
     }
 
-    public function index() {
+    public function index($all = false) {
         $content = new Content('content/blog/blog');
 
         $content->assign('menu',       array());#$this->ctrl->getMenu()->getMenuArray());
         $content->assign('deleteable', $this->permission->deleteOwnAllowed($this->pathId));
         $content->assign('divisions', $this->getDivisions());
-
-        $content->assign('editable', $editable);
-        $content->assign('tmp', $tmp);
         $content->assign('isAdmin', $this->user->isAdmin());
         $content->assign('title', (string)$this->title);
         $content->assign('items', $this->loadEntries());

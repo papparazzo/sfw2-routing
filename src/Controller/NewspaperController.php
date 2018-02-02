@@ -48,29 +48,21 @@ class NewspaperController extends Controller {
      */
     protected $user;
 
-    /**
-     * @var Permission
-     */
-    protected $permission;
-
     protected $title;
 
-    public function __construct(int $pathId, Database $database, Config $config, User $user, Permission $permission, string $title = null) {
+    public function __construct(int $pathId, Database $database, Config $config, User $user, string $title = null) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->user = $user;
-        $this->permission = $permission;
         $this->title = $title;
         $this->config = $config;
     }
 
     public function index() {
-        $editable = $this->permission->createAllowed($this->pathId);
 
         $content = new Content('content/newspaper/Newspaperarticles');
         $content->assign('title', 'Pressemitteilungen [' . $this->title . ']');
         $content->assign('about', ''.$this->title);
-        $content->assign('editable', $editable);
         $content->assign('mailaddr', (string)(new EMail(
             $this->config->getVal('project', 'eMailWebMaster'),
             $this->config->getVal('project', 'eMailWebMaster')
@@ -84,11 +76,9 @@ class NewspaperController extends Controller {
         $content->appendJSFile('slimbox2');
         $content->appendCSSFile('slimbox2');
 
-        if($editable) {
-            $content->appendJSFile('crud');
-            $content->appendJSFile('jquery.fileupload');
-            $content->appendJSFile('newspaperarticles');
-        }
+        $content->appendJSFile('crud');
+        $content->appendJSFile('jquery.fileupload');
+        $content->appendJSFile('newspaperarticles');
 
 
         return $content;
@@ -109,7 +99,7 @@ class NewspaperController extends Controller {
 
     }
 
-    public function delete() {
+    public function delete($all = false) {
         $entryId = $this->dto->getNumeric('id');
         $params = [$entryId];
         $stmt =

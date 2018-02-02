@@ -41,28 +41,18 @@ class SingularDates extends Controller {
      */
     protected $config;
 
-    /**
-     * @var Permission
-     */
-    protected $permission;
-
-    public function __construct(int $pathId, Database $database, Config $config, Permission $permission) {
+    public function __construct(int $pathId, Database $database, Config $config) {
         parent::__construct($pathId);
         $this->database = $database;
         $this->config = $config;
-        $this->permission = $permission;
         $this->removeExhaustedDates();
     }
 
-    public function index() {
-        $editable = $this->permission->createAllowed($this->pathId);
-        if($editable) {
-#            $this->ctrl->addJSFile('crud');
-        }
+    public function index($all = false) {
+#       $this->ctrl->addJSFile('crud');
 
         $content = new Content('content/singularDates');
         $content->assign('singularDates', $this->getDates());
-        $content->assign('editable', $editable);
         return $content;
     }
 
@@ -92,13 +82,13 @@ class SingularDates extends Controller {
 
         $changeable = false;
         $rv = array();
-        foreach($rs as $row){
+        foreach($rs as $row) {
             $date = array();
             $date['id'        ] = $row['Id'];
             $date['startDate' ] = new \SFW\View\Helper\Date($row['StartDate']);
             $date['endDate'   ] = new \SFW\View\Helper\Date($row['EndDate'  ]);
-            $date['startTime' ] = \substr($row['StartTime'], 0, -3);
-            $date['endTime'   ] = \substr($row['EndTime'  ], 0, -3);
+            $date['startTime' ] = mb_substr($row['StartTime'], 0, -3);
+            $date['endTime'   ] = mb_substr($row['EndTime'  ], 0, -3);
             $date['desc'      ] = $row['Description'];
             $date['changeable'] = $row['Changeable']=='0' ? false : true;
             if($date['changeable']) {

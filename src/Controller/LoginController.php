@@ -45,7 +45,7 @@ class LoginController extends Controller {
         }
     }
 
-    public function index() {
+    public function index($all = false) {
         return $this->showLoginScreen();
     }
 

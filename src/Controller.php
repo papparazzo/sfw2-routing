@@ -33,35 +33,22 @@ abstract class Controller {
         $this->pathId = $pathId;
     }
 
-    abstract function index();
+    abstract function index($all = false);
 
 
     public function create() {
 
     }
 
-    public function delete() {
+    public function delete($all = false) {
 
     }
 
-    public function update() {
+    public function update($all = false) {
 
     }
-
-
 /*
-
-    protected $showNewLabel = true;
     protected $pathId       = -1;
-
-        $this->dto        = $dto;
-        $this->ep         = new Error\Provider();
-        $this->dispatcher = $dispatcher;
-        $this->registry   = $registry;
-        $this->auth       = $registry->getSession()->getGlobalEntry('auth');
-        $this->conf       = $registry->getConfig();
-        $this->setPathId();
-
 
     public function updateModificationDate() {
         $stmt =
@@ -72,67 +59,7 @@ abstract class Controller {
         $this->registry->getDatabase()->update($stmt, array($this->pathId));
     }
 
-    public function getPathId() {
-        if($this->pathId == -1) {
-            throw new \SFW\Controller\Exception(
-                'path-Id not set',
-                \SFW\Controller\Exception::INVAL_PATH_ID
-            );
-        }
-        return $this->pathId;
-    }
-
-
-    public function showNewLabel() {
-        return $this->showNewLabel;
-    }
-
-    public function getUserName() {
-        return
-            \mb_substr($this->auth->getFirstName(), 0, 1) . '. ' .
-            $this->auth->getLastName();
-    }
-
-    public function getUserId() {
-        return $this->auth->getUserId();
-    }
-
-    public function getModificationDate() {
-        if($this->modiDate == null) {
-            throw new \SFW\Controller\Exception(
-                'modification-date not set',
-                \SFW\Controller\Exception::INVAL_MODI_DATE
-            );
-        }
-        return $this->modiDate;
-    }
-
     protected function setPathId() {
-        $data = array();
-        $data[] = $this->dispatcher->getModule();
-        $data[] = $this->dispatcher->getController();
-
-        $stmt =
-            "SELECT `sfw_path`.`PathId`, `sfw_path`.`LastModified` " .
-            "FROM `sfw_path` " .
-            "WHERE `sfw_path`.`Module` = '%s' " .
-            "AND `sfw_path`.`Controller` = '%s' ";
-
-
-        if($this->dispatcher->getAction() == Dispatcher::DEFAULT_ACTION) {
-            $stmt .= "AND `sfw_path`.`Action` IS NULL ";
-        } else {
-            $stmt .= "AND `sfw_path`.`Action` = '%s' ";
-            $data[] = $this->dispatcher->getAction();
-        }
-
-        $rv = $this->registry->getDatabase()->selectRow($stmt, $data);
-
-        if(empty($rv)) {
-            return;
-        }
-
-        $this->pathId   = $rv['PathId'];
         $this->modiDate = new \SFW\View\Helper\Date($rv['LastModified']);
     }
  */
