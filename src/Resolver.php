@@ -89,7 +89,7 @@ class Resolver {
 
             $rule = $this->controllers->getRulsetByPathId($pathId);
             $this->container->addRules($rule);
-            return $this->callMethode(key($rule), $action, $request);
+            return $this->callMethode(key($rule), $action);
         } catch(ControllerMapException $ex) {
             throw new ResolverException(
                 $ex->getMessage(),
@@ -105,7 +105,7 @@ class Resolver {
         }
     }
 
-    protected function callMethode(string $class, string $action, Request $request) {
+    protected function callMethode(string $class, string $action) {
         if(!class_exists($class)) {
             throw new ResolverException(
                 'class "' . $class . '" does not exists',
@@ -123,35 +123,6 @@ class Resolver {
         }
 
         $ctrl = $this->container->create($class);
-        $args = $this->getArguments($refl, $request);
-        return call_user_func_array(array($ctrl, $action), $args);
-    }
-
-    protected function getArguments(ReflectionMethod $methode, Request $request) : array {
-        $params = [];
-
-        foreach($methode->getParameters() as $param) {
-
-            /* @var $param \ReflectionParameter */
-            $gParam = $request->getGetParam($param->getName());
-
-            if(is_null($gParam) && $param->isDefaultValueAvailable()) {
-                $params[] = $param->getDefaultValue();
-                continue;
-            }
-
-            switch((string)$param->getType()) {
-                case 'int':
-                    $params[] = (int)$gParam;
-                    break;
-
-                case 'string':
-                default:
-                    $params[] = (string)$gParam;
-                    break;
-            }
-
-        }
-        return $params;
+        return call_user_func(array($ctrl, $action));
     }
 }
