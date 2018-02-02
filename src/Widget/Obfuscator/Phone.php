@@ -28,7 +28,7 @@ class Phone extends Obfuscator {
         $displayName = htmlentities($displayName, ENT_COMPAT, 'utf-8', false);
         $pos = (int)(mb_strlen($displayName) / 2);
         return
-            mb_substr($displayName, 0, $pos) . '<br class="hidden"/>' .
+            mb_substr($displayName, 0, $pos) . '<br class="noshow"/>' .
             mb_substr($displayName, $pos);
     }
 

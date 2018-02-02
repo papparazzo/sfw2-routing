@@ -27,7 +27,7 @@ class EMail extends Obfuscator {
     protected function obfuscateDisplayName($displayName) {
         return str_replace(
             '@',
-            '<br class="invisible" />@',
+            '<br class="noshow" />@',
             htmlentities($displayName, ENT_COMPAT, 'utf-8', false)
         );
     }
