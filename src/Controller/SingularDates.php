@@ -60,18 +60,8 @@ class SingularDates extends Controller {
 #            $this->ctrl->addJSFile('crud');
         }
 
-        $tmp = [
-            'sdstartdate'  => '',
-            'sdenddate'    => '',
-            'sdstarttime'  => '',
-            'sdendtime'    => '',
-            'sddesc'       => '',
-            'sdchangeable' => false
-        ];
-
-        $content = new Content($this->getPageId());
-        $content->assign('singularDates', $this->getSingularDates());
-        $content->assign('tmp', $tmp);
+        $content = new Content('content/singularDates');
+        $content->assign('singularDates', $this->getDates());
         $content->assign('editable', $editable);
         return $content;
     }
@@ -86,19 +76,19 @@ class SingularDates extends Controller {
         $this->database->delete($stmt);
     }
 
-    protected function getSingularDates() {
+    protected function getDates() {
         $stmt =
-            "SELECT `sfw_calendar`.`Id`, `sfw_calendar`.`Description`, " .
-                   "`sfw_calendar`.`StartDate`, `sfw_calendar`.`StartTime`, " .
-                   "`sfw_calendar`.`EndDate`, `sfw_calendar`.`EndTime`, " .
-                   "`sfw_calendar`.`Changeable` " .
-            "FROM `sfw_calendar` " .
-            "WHERE `sfw_calendar`.`PathId` = '%s' " .
-            "AND `sfw_calendar`.`Day` IS NULL " .
-            "ORDER BY `sfw_calendar`.`StartDate`, " .
-                     "`sfw_calendar`.`StartTime` ";
+            "SELECT `sfw2_calendar`.`Id`, `sfw2_calendar`.`Description`, " .
+                   "`sfw2_calendar`.`StartDate`, `sfw2_calendar`.`StartTime`, " .
+                   "`sfw2_calendar`.`EndDate`, `sfw2_calendar`.`EndTime`, " .
+                   "`sfw2_calendar`.`Changeable` " .
+            "FROM `sfw2_calendar` " .
+            "WHERE `sfw2_calendar`.`PathId` = '%s' " .
+            "AND `sfw2_calendar`.`Day` IS NULL " .
+            "ORDER BY `sfw2_calendar`.`StartDate`, " .
+                     "`sfw2_calendar`.`StartTime` ";
 
-        $rs = $this->database->select($stmt, array($this->ctrl->getPathId()));
+        $rs = $this->database->select($stmt, array($this->pathId));
 
         $changeable = false;
         $rv = array();
@@ -119,7 +109,7 @@ class SingularDates extends Controller {
         return ['data' => $rv, 'changeable' => $changeable];
     }
 
-    protected function delete($id) {
+    public function delete() {
         $stmt =
             "DELETE FROM `sfw2_calendar` " .
             "WHERE `sfw2_calendar`.`id` = '%s' " .
@@ -130,38 +120,13 @@ class SingularDates extends Controller {
         $this->ctrl->updateModificationDate();
     }
 
-    private function create(&$tmp) {
-        $tmp['sdstartdate'] = $this->dto->getDate(
-            'sdstartdate',
-            true,
-            'Das Startdatum',
-            true
-        );
-        $tmp['sdenddate'] = $this->dto->getDate(
-            'sdenddate',
-            false,
-            'Das Enddatum',
-            true
-        );
-        $tmp['sdstarttime'] = $this->dto->getTime(
-            'sdstarttime',
-            false,
-            'Die Startzeit'
-        );
-        $tmp['sdendtime'] = $this->dto->getTime(
-            'sdendtime',
-            false,
-            'Die Endzeit'
-        );
-        $tmp['sdchangeable'] = $this->dto->getBool(
-            'sdchangeable',
-            'Die Auswahl'
-        );
-        $tmp['sddesc'] = $this->dto->getText(
-            'sddesc',
-            true,
-            'Die Beschreibung'
-        );
+    public function create() {
+        $tmp['sdstartdate'] = $this->dto->getDate('sdstartdate', true, 'Das Startdatum', true);
+        $tmp['sdenddate'] = $this->dto->getDate('sdenddate', false, 'Das Enddatum', true);
+        $tmp['sdstarttime'] = $this->dto->getTime('sdstarttime', false, 'Die Startzeit');
+        $tmp['sdendtime'] = $this->dto->getTime('sdendtime', false, 'Die Endzeit');
+        $tmp['sdchangeable'] = $this->dto->getBool('sdchangeable', 'Die Auswahl');
+        $tmp['sddesc'] = $this->dto->getText('sddesc', true, 'Die Beschreibung');
 
         if(
             !empty($tmp['sdtill']) &&
@@ -188,34 +153,27 @@ class SingularDates extends Controller {
             "`PathId` = '%s', `Changeable` = '%s' ";
 
         if(!empty($tmp['sdstarttime'])) {
-            $stmt .= ", `StartTime` = '"
-                   . $this->db->escape($tmp['sdstarttime']) . "' ";
+            $stmt .= ", `StartTime` = '" . $this->db->escape($tmp['sdstarttime']) . "' ";
         }
 
         if(!empty($tmp['sdendtime'])) {
-            $stmt .= ", `EndTime` = '"
-                   . $this->db->escape($tmp['sdendtime']) . "' ";
+            $stmt .= ", `EndTime` = '" . $this->db->escape($tmp['sdendtime']) . "' ";
         }
 
-        if(
-            !empty($tmp['sdenddate']) &&
-            $tmp['sdenddate'] != $tmp['sdstartdate']
-        ) {
-            $stmt .=
-                ", `EndDate` = '" .
-                $this->db->escape(
-                    $this->db->convertToMysqlDate($tmp['sdenddate'])
-                ) . "' ";
+        if(!empty($tmp['sdenddate']) && $tmp['sdenddate'] != $tmp['sdstartdate']) {
+            $stmt .= ", `EndDate` = '" . $this->db->escape(
+                $this->database->convertToMysqlDate($tmp['sdenddate'])
+            ) . "' ";
         }
 
-        $this->db->insert(
+        $this->database->insert(
             $stmt,
-            array(
-                $this->db->convertToMysqlDate($tmp['sdstartdate']),
+            [
+                $this->database->convertToMysqlDate($tmp['sdstartdate']),
                 $tmp['sddesc'],
                 $this->ctrl->getPathId(),
                 $tmp['sdchangeable']?'1':'0'
-            )
+            ]
         );
 
         $this->dto->setSaveSuccess();

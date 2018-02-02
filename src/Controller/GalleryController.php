@@ -24,6 +24,7 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 use SFW2\Routing\Permission;
 use SFW2\Core\Database;
@@ -80,7 +81,9 @@ class GalleryController extends Controller {
         $content->assign('title',      $this->title);
         #FIXME $view->assign('modiDate',   $this->ctrl->getModificationDate());
         $content->assign('editable',   $editable);
-        $content->assign('webmaster', $this->config->getVal('project', 'eMailWebMaster'));
+        $content->assign('webmaster',  (string)(new EMail(
+            $this->config->getVal('project', 'eMailWebMaster')
+        )));
         $content->appendJSFile('slimbox2');
         $content->appendCSSFile('slimbox2');
 

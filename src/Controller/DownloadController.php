@@ -89,7 +89,6 @@ class DownloadController extends Controller {
             $this->config->getVal('project', 'eMailWebMaster'),
             'Bescheid.'
         )));
-        #FIXME $this->dto->getErrorProvider()->getContent() .
         return $content;
     }
 
@@ -166,16 +165,11 @@ class DownloadController extends Controller {
             );
         }
 
-        $tmp['title'] = $this->dto->getTitle(
-            'title_' . $this->getPageId(),
-            true,
-            'Die Beschreibung'
-        );
+        $tmp['title'] = $this->dto->getTitle('title_' . $this->getPageId(), true);
 
         $tmp['section'] = $this->dto->getArrayValue(
             'section_' . $this->getPageId(),
             true,
-            'Das Resort',
             $this->sections
         );
 
@@ -207,8 +201,7 @@ class DownloadController extends Controller {
             );
         }
 
-        $token =
-            md5($file['tmp_name'] . getmypid() . SFW_AuxFunc::getRandomInt());
+        $token = md5($file['tmp_name'] . getmypid() . SFW_AuxFunc::getRandomInt());
 
         if(is_file($path . $token)) {
             throw new SFW_Exception(
@@ -237,7 +230,7 @@ class DownloadController extends Controller {
             "`Deleted` = '0', " .
             "`Autogen` = '0'";
 
-        $this->db->insert(
+        $this->database->insert(
             $stmt,
             array(
                 $token,

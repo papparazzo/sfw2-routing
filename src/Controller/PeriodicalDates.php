@@ -51,7 +51,6 @@ class PeriodicalDates extends Controller {
         $this->database = $database;
         $this->config = $config;
         $this->permission = $permission;
-        $this->removeExhaustedDates();
     }
 
     public function index() {
@@ -60,31 +59,14 @@ class PeriodicalDates extends Controller {
 #            $this->ctrl->addJSFile('crud');
         }
 
-        $tmp = [
-            'pdday'  => '',
-            'pdfrom' => '',
-            'pdtill' => '',
-            'pddesc' => ''
-        ];
-
-        $content = new Content('content/newspaper/PeriodicalDates');
-        $content->assign('periodicalDates', $this->getPeriodicalDates());
-        $content->assign('tmp', $tmp);
+        $content = new Content('content/periodicalDates');
+        $content->assign('periodicalDates', $this->getDates());
         $content->assign('editable', $editable);
         return $content;
     }
 
-    protected function removeExhaustedDates() {
-        $stmt =
-            "DELETE FROM `sfw2_calendar` " .
-            "WHERE `Day` IS NULL " .
-            "AND ((`EndDate` IS NULL AND `StartDate` < NOW()) " .
-            "OR (`EndDate` < NOW()))";
 
-        $this->database->delete($stmt);
-    }
-
-    protected function getPeriodicalDates() {
+    protected function getDates() {
         $stmt =
             "SELECT `sfw2_calendar`.`Id`, `sfw2_calendar`.`Description`, " .
                    "`sfw2_calendar`.`Day`, `sfw2_calendar`.`StartTime`, " .
@@ -96,7 +78,7 @@ class PeriodicalDates extends Controller {
             "AND `sfw2_calendar`.`Day` IS NOT NULL " .
             "ORDER BY `sfw2_calendar`.`Day`, `sfw2_calendar`.`StartTime` ";
 
-        $rs = $this->database->select($stmt, array($this->ctrl->getPathId()));
+        $rs = $this->database->select($stmt, array($this->pathId));
 
         if(isset($rs[0]['Day'])) {
             $ld = $rs[0]['Day'];
@@ -123,7 +105,7 @@ class PeriodicalDates extends Controller {
         return $rv;
     }
 
-    protected function delete($id) {
+    public function delete() {
         $stmt =
             "DELETE FROM `sfw2_calendar` " .
             "WHERE `sfw2_calendar`.`id` = '%s' " .
@@ -134,7 +116,7 @@ class PeriodicalDates extends Controller {
         $this->ctrl->updateModificationDate();
     }
 
-    protected  function create(&$tmp) {
+    public function create() {
         $tmp['pdfrom'] = $this->dto->getTime('pdfrom', true,  'Die Startzeit');
         $tmp['pdtill'] = $this->dto->getTime('pdtill', false, 'Die Endzeit');
         $tmp['pddesc'] = $this->dto->getText('pddesc', true, 'Die Beschreibung');

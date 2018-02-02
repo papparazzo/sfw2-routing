@@ -110,9 +110,6 @@ class NewspaperController extends Controller {
     }
 
     public function delete() {
-        if(!$this->hasDeletePermission()) {
-            return false;
-        }
         $entryId = $this->dto->getNumeric('id');
         $params = [$entryId];
         $stmt =
@@ -124,20 +121,14 @@ class NewspaperController extends Controller {
             $params[] = $this->user->getUserId();
         }
 
-        if($this->database->update($stmt, $params) != 1) {
-            #$this->dto->getErrorProvider()->addError(
-            #    SFW_Error_Provider::ERR_DEL,
-            #    array('<NAME>' => 'Der Presseartikel')
-            #);
-        }
+        $this->database->delete($stmt, $params);
         #$this->dto->setSaveSuccess(true);
-        return true;
     }
 
     public function create() {
-        $tmp['title'] = $this->dto->getTitle('title', true, 'Die Überschrift');
-        $tmp['date'] = $this->dto->getDate('date', true, 'Das Veröffentlichskeitsdatum');
-        $tmp['newspaper'] = $this->dto->getTitle('newspaper', true, 'Die Quelle');
+        $tmp['title'] = $this->dto->getTitle('title', true);
+        $tmp['date'] = $this->dto->getDate('date', true);
+        $tmp['newspaper'] = $this->dto->getTitle('newspaper', true);
 
         $data = $this->dto->getData('filecontent');
         if($data == null) {
@@ -169,16 +160,16 @@ class NewspaperController extends Controller {
             "`Source` = '%s', " .
             "`Deleted` = '0'";
 
-        $this->db->insert(
+        $this->database->insert(
             $stmt,
-            array(
+            [
                 $this->user->getUserId(),
                 $this->pathId,
                 $tmp['title'    ],
                 $tmp['date'     ],
                 $img->storeImage($data),
                 $tmp['newspaper']
-            )
+            ]
         );
 
         $tmp['title'    ] = '';

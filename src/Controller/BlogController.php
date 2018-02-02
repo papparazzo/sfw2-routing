@@ -172,39 +172,15 @@ class BlogController extends Controller {
     }
 
     public function create() {
-        if(!$this->hasCreatePermission()) {
-            return false;
-        }
 
-        $tmp['title'] = $this->dto->getTitle(
-            'title_' . $this->getPageId(),
-            true,
-            'Die Überschrift'
-        );
+        $tmp['title'] = $this->dto->getTitle('title_' . $this->getPageId(), true);
         $tmp['location'] = $this->dto->getArrayValue(
-            'location_' . $this->getPageId(),
-            false,
-            'Der Link',
-            $this->getMenueArray()
+            'location_' . $this->getPageId(), false, $this->getMenueArray()
         );
-        $tmp['content'] = $this->dto->getTitle(
-            'content_' . $this->getPageId(),
-            true,
-            'Der Inhalt'
-        );
+        $tmp['content'] = $this->dto->getTitle('content_' . $this->getPageId(), true);
         $tmp['section'] = $this->dto->getArrayValue(
-            'section_' . $this->getPageId(),
-            true,
-            'Das Resort',
-            $this->sections
+            'section_' . $this->getPageId(), true, $this->sections
         );
-
-        if(
-            $this->dto->getErrorProvider()->hasErrors() ||
-            $this->dto->getErrorProvider()->hasWarning()
-        ) {
-            return false;
-        }
 
         $stmt =
             "INSERT INTO `sfw2_blog` " .
@@ -217,13 +193,13 @@ class BlogController extends Controller {
 
         $this->config->database->insert(
             $stmt,
-            array(
+            [
                 $tmp['title'   ],
                 $tmp['section' ],
                 $tmp['location'],
                 $tmp['content' ],
                 $this->ctrl->getUserId()
-            )
+            ]
         );
 
         $this->dto->setSaveSuccess();

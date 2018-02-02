@@ -24,6 +24,7 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
+use SFW2\Routing\Widget\Obfuscator\Phone;
 use SFW2\Routing\Controller;
 use SFW2\Core\Database;
 
@@ -55,11 +56,11 @@ class ContactController  extends Controller {
 
         $rows = $this->database->select($stmt);
 
-        $data = array();
+        $entries = [];
         $lp = '';
         $ld = '';
-        foreach($rows as $row){
-            $user = array();
+        foreach($rows as $row) {
+            $user = [];
             $user['position' ] = '';
             $user['name'     ] =
                 $row['Sex'] . ' ' . $row['FirstName'] . ' ' . $row['LastName'];
@@ -67,17 +68,17 @@ class ContactController  extends Controller {
             if($ld != $row['Division'] || $lp != $row['Position']){
                 $user['position' ] = $row['Position'];
             }
-            $user['phone'    ] = $row['Phone1'] ? 'Tel.: ' . $row['Phone1'] : '';
+            $user['phone'    ] = $this->getPhoneNumber($row['Phone1']);
             $user['emailaddr'] = (string)(new EMail($row["Email"]));
 
-            $data[$row['Division']][] = $user;
+            $entries[$row['Division']][] = $user;
 
-            if($row['Phone2'] != ''){
+            if($row['Phone2'] != '') {
                 $user['name'     ] = '';
                 $user['position' ] = '';
                 $user['emailaddr'] = null;
-                $user['phone'    ] = $row['Phone2'] ? 'Tel.: ' . $row['Phone2'] : '';
-                $data[$row['Division']][] = $user;
+                $user['phone'    ] = $this->getPhoneNumber($row['Phone2'] ?? '');
+                $entries[$row['Division']][] = $user;
             }
 
             $lp = $row['Position'];
@@ -85,7 +86,17 @@ class ContactController  extends Controller {
         }
 
         $content = new Content('content/kontakt');
-        $content->assign('data', $data);
+        $content->assign('entries', $entries);
         return $content;
+    }
+
+    protected function getPhoneNumber($phone) {
+        if($phone == '') {
+            return '';
+        }
+        return (string)(new Phone(
+            $phone,
+            'Tel.: ' . $phone
+        ));
     }
 }
