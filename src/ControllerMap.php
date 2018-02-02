@@ -53,7 +53,7 @@ class ControllerMap {
             );
         }
 
-        $params = json_decode($res['JsonData']);
+        $params = json_decode($res['JsonData'], true);
 
         if(!is_array($params)) {
             throw new ControllerMapException(
