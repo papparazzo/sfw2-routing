@@ -23,7 +23,6 @@
 namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
-use SFW2\Routing\Permission;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
@@ -77,11 +76,10 @@ class BlogController extends Controller {
 
         $stmt =
             "SELECT `sfw2_blog`.`Id`, `sfw2_blog`.`CreationDate`, " .
-            "`sfw2_blog`.`Link`, `sfw2_user`.`Email`, `sfw2_blog`.`Content`, " .
+            "`sfw2_user`.`Email`, `sfw2_blog`.`Content`, " .
             "`sfw2_blog`.`Title`, `sfw2_user`.`FirstName`, `sfw2_user`.`LastName`, " .
             "`sfw2_division`.`Name` AS `Resource`, " .
-            "IF(`sfw2_blog`.`UserId` = '%s' OR '%s', '1', '0') " .
-            "AS `DelAllowed` " .
+            "IF(`sfw2_blog`.`UserId` = '%s', '1', '0') AS `OwnEntry` " .
             "FROM `sfw2_blog` " .
             "LEFT JOIN `sfw2_user` " .
             "ON `sfw2_user`.`Id` = `sfw2_blog`.`UserId` " .
@@ -89,30 +87,17 @@ class BlogController extends Controller {
             "ON `sfw2_division`.`Id` = `sfw2_blog`.`DivisionId` ";
 
         $stmt .=  "ORDER BY `sfw2_blog`.`Id` DESC ";
-        $rows = $this->database->select(
-            $stmt,
-            [$this->user->getUserId(), $this->user->isAdmin() ? '1' : '0']
-        );
-/*
-        $cmt = new \SFW\Comments(
-            $this->db,
-            $this->dto,
-            $this->editable,
-            $this->isAdmin
-        );
-*/
+        $rows = $this->database->select($stmt, [$this->user->getUserId()]);
+
         foreach($rows as $row) {
             #$cd = new \SFW\View\Helper\HDate($row['CreationDate'], new \SFW\Locale());
             $entry = [];
-            $entry['id'         ] = $row['Id'];
-            $entry['date'       ] = '1. April'; # $cd;
-            $entry['title'      ] = $row['Title'];
-            #$entry['location'   ] = $row['Location'];
-            $entry['content'    ] = $row['Content'];
-            $entry['resname'    ] = $row['Resource'];
-            #$entry['resurl'     ] = '/';# . $row['Module'];
-            $entry['delAllowed' ] = (bool)$row['DelAllowed'];
-            $entry['commentscnt'] = 215; #$cmt->getEntriesCount('BLOG', $row['Id']);
+            $entry['id'      ] = $row['Id'];
+            $entry['date'    ] = '1. April'; # $cd;
+            $entry['title'   ] = $row['Title'];
+            $entry['content' ] = $row['Content'];
+            $entry['resname' ] = $row['Resource'];
+            $entry['ownEntry'] = (bool)$row['ownEntry'];
 
             $entry['image'      ] = '/public/layout/' . Helper::getImageFileName(
                 # FIXME: _No hardcoded path
@@ -133,64 +118,46 @@ class BlogController extends Controller {
     }
 
     public function delete($all = false) {
-        if(!$this->hasDeletePermission()) {
-            return false;
-        }
+
         $entryId = $this->dto->getNumeric('id');
         $stmt =
             "DELETE ".
             "FROM `sfw2_blog` " .
             "WHERE `Id` = %s ";
 
-        if(!$this->ctrl->isAdmin()) {
+        if(!$all) {
             $stmt .=
                 "AND `UserId` = '" .
-                $this->db->escape($this->ctrl->getUserId()) . "'";
+                $this->database->escape($this->user->getUserId()) . "'";
         }
 
-        if($this->config->database->update($stmt, array($entryId)) != 1) {
-            $this->dto->getErrorProvider()->addError(
-                sfw2_Error_Provider::ERR_DEL,
-                array('<NAME>' => 'Der Blogeintrag')
-            );
-        }
+        $this->database->delete($stmt, [$entryId]);
+
         $this->dto->setSaveSuccess(true);
         return true;
     }
 
     public function create() {
-
-        $tmp['title'] = $this->dto->getTitle('title_' . $this->getPageId(), true);
-        $tmp['location'] = $this->dto->getArrayValue(
-            'location_' . $this->getPageId(), false, $this->getMenueArray()
-        );
-        $tmp['content'] = $this->dto->getTitle('content_' . $this->getPageId(), true);
-        $tmp['section'] = $this->dto->getArrayValue(
-            'section_' . $this->getPageId(), true, $this->sections
-        );
-
         $stmt =
             "INSERT INTO `sfw2_blog` " .
             "SET `CreationDate` = NOW(), " .
             "`Title` = '%s', " .
             "`DivisionId` = '%s', " .
-            "`Location` = '%s', " .
             "`Content` = '%s', " .
             "`UserId` = %d";
 
-        $this->config->database->insert(
+        $this->database->insert(
             $stmt,
             [
-                $tmp['title'   ],
-                $tmp['section' ],
-                $tmp['location'],
-                $tmp['content' ],
-                $this->ctrl->getUserId()
+                $this->dto->getTitle('title', true),
+                $this->dto->getArrayValue('division', true, $this->sections),
+                $this->dto->getTitle('content', true),
+                $this->user->getUserId()
             ]
         );
 
-        $this->dto->setSaveSuccess();
-        $this->ctrl->updateModificationDate();
+        #$this->dto->setSaveSuccess();
+        #$this->ctrl->updateModificationDate();
         return true;
     }
 }

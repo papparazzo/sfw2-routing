@@ -124,24 +124,14 @@ class DownloadController extends Controller {
             "WHERE `sfw2_media`.`Token` = '%s' " .
             "AND `Autogen` = '0'";
 
-        if(!$this->user->isAdmin()) {
+        if(!$all) {
             $stmt .=
                 "AND `UserId` = '" .
                 $this->database->escape($this->user->getUserId()) . "'";
         }
 
-        if(
-            $this->database->delete(
-                $stmt, array($this->dto->getSimpleText('id'))
-            ) != 1
-        ) {
-            $this->dto->getErrorProvider()->addError(
-                SFW_Error_Provider::ERR_DEL,
-                array('<NAME>' => 'Die Datei')
-            );
-            return;
-        }
-        $this->dto->setSaveSuccess(true);
+        $this->database->delete($stmt, [$this->dto->getSimpleText('id')]);
+        #$this->dto->setSaveSuccess(true);
         return;
     }
 
@@ -154,13 +144,8 @@ class DownloadController extends Controller {
             );
         }
 
-        $tmp['title'] = $this->dto->getTitle('title_' . $this->getPageId(), true);
-
-        $tmp['section'] = $this->dto->getArrayValue(
-            'section_' . $this->getPageId(),
-            true,
-            $this->sections
-        );
+        $tmp['title'] = $this->dto->getTitle('title', true);
+        $tmp['section'] = $this->dto->getArrayValue('section', true, $this->sections);
 
         if(
             !array_key_exists('userfile', $_FILES) ||

@@ -106,28 +106,6 @@ class ContentController extends Controller {
     }
 
     public function create() {
-        $tmp = array(
-            'title'     => $this->title,
-            'content'   => '',
-            'haserrors' => false
-        );
-
-        $tmp['title'] = $this->dto->getTitle(
-            'title',
-            true,
-            'Die Überschrift',
-            50
-        );
-        $tmp['content'] = $this->dto->getData('content');
-
-        if(
-            $this->dto->getErrorProvider()->hasErrors() ||
-            $this->dto->getErrorProvider()->hasWarning()
-        ) {
-            $tmp['haserrors'] = true;
-            return $tmp;
-        }
-
         $stmt =
             "INSERT INTO `sfw_contenteditable` " .
             "SET `PathId` = '%s', " .
@@ -138,10 +116,15 @@ class ContentController extends Controller {
 
         $this->database->insert(
             $stmt,
-            [$this->pathId, $this->user->getUserId(), $tmp['title'], $tmp['content']]
+            [
+                $this->pathId,
+                $this->user->getUserId(),
+                $this->dto->getTitle('title', true, 50),
+                $this->dto->getData('content')
+            ]
         );
-        $this->dto->setSaveSuccess();
-        $this->ctrl->updateModificationDate();
-        return $this->loadContent(0);
+        #$this->dto->setSaveSuccess();
+        #$this->ctrl->updateModificationDate();
+        return $this->loadContent();
     }
 }

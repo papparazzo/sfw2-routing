@@ -62,8 +62,7 @@ class ManagementController extends Controller {
         $data = array();
         foreach($rows as $row) {
             $user = [];
-            $user['name'     ] =
-                $row['Sex'] . ' ' . $row['FirstName'] . ' ' . $row['LastName'];
+            $user['name'     ] = $row['Sex'] . ' ' . $row['FirstName'] . ' ' . $row['LastName'];
             $user['position' ] = $row['Position'];
             $user['phone1'   ] = (string)(new Phone($row['Phone1'], 'Tel.: ' . $row['Phone1']));
             $user['phone2'   ] = (string)(new Phone($row['Phone2'], 'Tel.: ' . $row['Phone2']));
