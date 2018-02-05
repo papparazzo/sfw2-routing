@@ -3,7 +3,7 @@
 namespace SFW2\Routing\Controller\Helper;
 
 trait GetDivisionTrait {
-    function getDivisions() {
+    protected function getDivisions() {
         $stmt =
             'SELECT `Id`, `Name` ' .
             'FROM `sfw2_division` ' .
