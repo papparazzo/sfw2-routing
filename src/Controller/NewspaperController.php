@@ -29,7 +29,9 @@ use SFW2\Core\Config;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 use SFW2\Routing\Result\Content;
-use SFW2\Routing\Permission;
+
+use DateTime;
+use DateTimeZone;
 
 class NewspaperController extends Controller {
 
@@ -58,7 +60,7 @@ class NewspaperController extends Controller {
         $this->config = $config;
     }
 
-    public function index() {
+    public function index($all = false) {
 
         $content = new Content('content/newspaper/Newspaperarticles');
         $content->assign('title', 'Pressemitteilungen [' . $this->title . ']');
@@ -82,8 +84,12 @@ class NewspaperController extends Controller {
 
 
         return $content;
-
-
+/*
+            $cd = strftime(
+                '%a., %d. %B %G',
+                (new DateTime($row['CreationDate'], new DateTimeZone('Europe/Berlin')))->getTimestamp()
+            );
+*/
 
 
 
@@ -95,7 +101,7 @@ class NewspaperController extends Controller {
    #         $hasErrors = $this->ctrl->hasCreatePermission();
     #    }
 
-#        $navi = new SFW_NavigationBar($page, $maxPage, false);
+
 
     }
 

@@ -53,4 +53,12 @@ class SponsorsController extends Controller {
         $content->assign('title', 'Sponsoren');
         return $content;
     }
+
+    public function delete($all = false) {
+
+    }
+
+    public function create() {
+
+    }
 }

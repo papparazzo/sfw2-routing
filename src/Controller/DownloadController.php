@@ -26,7 +26,6 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
-use SFW2\Routing\Permission;
 use SFW2\Routing\Controller\Helper\GetDivisionTrait;
 
 use SFW2\Core\Config;

@@ -24,7 +24,6 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
-use SFW2\Routing\Permission;
 
 use SFW2\Core\Database;
 use SFW2\Core\Config;
@@ -49,21 +48,11 @@ class SingularDates extends Controller {
     }
 
     public function index($all = false) {
-#       $this->ctrl->addJSFile('crud');
-
         $content = new Content('content/singularDates');
         $content->assign('singularDates', $this->getDates());
+#       $this->ctrl->addJSFile('crud');
+
         return $content;
-    }
-
-    protected function removeExhaustedDates() {
-        $stmt =
-            "DELETE FROM `sfw2_calendar` " .
-            "WHERE `Day` IS NULL " .
-            "AND ((`EndDate` IS NULL AND `StartDate` < NOW()) " .
-            "OR (`EndDate` < NOW()))";
-
-        $this->database->delete($stmt);
     }
 
     protected function getDates() {
@@ -99,7 +88,7 @@ class SingularDates extends Controller {
         return ['data' => $rv, 'changeable' => $changeable];
     }
 
-    public function delete() {
+    public function delete($all = false) {
         $stmt =
             "DELETE FROM `sfw2_calendar` " .
             "WHERE `sfw2_calendar`.`id` = '%s' " .
@@ -138,7 +127,7 @@ class SingularDates extends Controller {
         }
 
         $stmt =
-            "INSERT INTO `sfw_calendar` " .
+            "INSERT INTO `sfw2_calendar` " .
             "SET `StartDate` = '%s', `Description` = '%s', " .
             "`PathId` = '%s', `Changeable` = '%s' ";
 

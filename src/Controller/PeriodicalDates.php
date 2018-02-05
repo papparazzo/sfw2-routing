@@ -24,7 +24,6 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
-use SFW2\Routing\Permission;
 
 use SFW2\Core\Database;
 use SFW2\Core\Config;
@@ -45,15 +44,16 @@ class PeriodicalDates extends Controller {
         parent::__construct($pathId);
         $this->database = $database;
         $this->config = $config;
+        $this->removeExhaustedDates();
     }
 
     public function index($all = false) {
-#            $this->ctrl->addJSFile('crud');
         $content = new Content('content/periodicalDates');
         $content->assign('periodicalDates', $this->getDates());
+#       $this->ctrl->addJSFile('crud');
+
         return $content;
     }
-
 
     protected function getDates() {
         $stmt =

@@ -26,11 +26,13 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
-use SFW2\Core\Helper;
+use SFW2\Routing\Controller\Helper\GetDivisionTrait;
 
+use SFW2\Core\Helper;
 use SFW2\Core\Database;
 
-use SFW2\Routing\Controller\Helper\GetDivisionTrait;
+use DateTime;
+use DateTimeZone;
 
 class BlogController extends Controller {
 
@@ -90,14 +92,18 @@ class BlogController extends Controller {
         $rows = $this->database->select($stmt, [$this->user->getUserId()]);
 
         foreach($rows as $row) {
-            #$cd = new \SFW\View\Helper\HDate($row['CreationDate'], new \SFW\Locale());
+            $cd = strftime(
+                '%a., %d. %B %G',
+                (new DateTime($row['CreationDate'], new DateTimeZone('Europe/Berlin')))->getTimestamp()
+            );
+
             $entry = [];
             $entry['id'      ] = $row['Id'];
-            $entry['date'    ] = '1. April'; # $cd;
+            $entry['date'    ] = $cd;
             $entry['title'   ] = $row['Title'];
             $entry['content' ] = $row['Content'];
             $entry['resname' ] = $row['Resource'];
-            $entry['ownEntry'] = (bool)$row['ownEntry'];
+            $entry['ownEntry'] = (bool)$row['OwnEntry'];
 
             $entry['image'      ] = '/public/layout/' . Helper::getImageFileName(
                 # FIXME: _No hardcoded path
@@ -109,7 +115,7 @@ class BlogController extends Controller {
             $entry['mailaddr'   ] = (string)(new EMail(
                 $row["Email"],
                 $row['FirstName'] . ' ' . $row['LastName'],
-                "Blogeintrag vom " #. $cd->getFormatedDate(true)
+                "Blogeintrag vom " . $cd
              ));
 
             $entries[] = $entry;
