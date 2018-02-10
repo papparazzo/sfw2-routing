@@ -24,21 +24,19 @@ namespace SFW2\Routing\Menu;
 
 class MenuItem {
 
-    const TIME_DIFF = 7; // in days
+    const STATUS_IS_NORMAL   = 0;
+    const STATUS_IS_CHECKED  = 1;
+    const STATUS_IS_MODIFIED = 2;
 
     protected $url;
     protected $displayname;
-    protected $checked;
+    protected $status;
     protected $submen       = [];
-    protected $lastModified = null;
 
-    public function __construct(
-        string $displayname, string $url, bool $isChecked = false, $lastModified = null
-    ) {
-        $this->lastModified = $lastModified;
+    public function __construct(string $displayname, string $url, $status = self::STATUS_IS_NORMAL) {
         $this->displayname  = $displayname;
         $this->url          = $url;
-        $this->checked      = $isChecked;
+        $this->status       = $status;
     }
 
     public function addSubMenuItem(MenuItem $menuItem) {
@@ -54,7 +52,7 @@ class MenuItem {
     }
 
     public function getChecked() {
-        return $this->checked;
+        return $this->status & self::STATUS_IS_CHECKED;
     }
 
     public function getDisplayName() {
@@ -67,8 +65,8 @@ class MenuItem {
 
     public function isRrecentlyModified() {
         return
-            $this->hasNewContent(); #||
-            #$this->hasNewContentSubMenu($this->submen);
+            $this->hasNewContent() ||
+            $this->hasNewContentSubMenu($this->submen);
     }
 
     protected function hasNewContentSubMenu(Array $items) {
@@ -79,24 +77,19 @@ class MenuItem {
             if($item->hasNewContent()) {
                 return true;
             }
-
+/*
             if(
                 $item->hasSubMenu() &&
                 $this->hasNewContentSubMenu($item->getSubMenu())
             ) {
                 return true;
             }
+ */
         }
         return false;
     }
 
     protected function hasNewContent() {
-        if(
-            $this->lastModified &&
-            time() - $this->lastModified < (self::TIME_DIFF * 60 * 60 * 24)
-        ) {
-            return true;
-        }
-        return false;
+        return $this->status & self::STATUS_IS_MODIFIED;
     }
 }
