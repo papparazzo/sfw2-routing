@@ -76,9 +76,6 @@ class ManagementController extends Controller {
             );
             $data[$row['Title']][] = $user;
         }
-        foreach($data as $k => $v) {
-            $data[$k] = array_chunk($v, 2);
-        }
 
         $content = new Content('content/leitung');
         $content->assign('data', $data);
