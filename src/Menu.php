@@ -82,7 +82,7 @@ class Menu {
         $map = [];
 
         foreach($res as $row) {
-            if(!$this->permission->readOwnAllowed($row['Id'])) {
+            if(!$this->permission->getPermission($row['Id'])->readOwnAllowed()) {
                 continue;
             }
 

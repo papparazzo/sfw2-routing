@@ -70,21 +70,14 @@ class MenuItem {
     }
 
     protected function hasNewContentSubMenu(Array $items) {
-        #if(!$this->topMostMenu) {
-        #    return false;
-        #}
         foreach($items as $item) {
             if($item->hasNewContent()) {
                 return true;
             }
-/*
-            if(
-                $item->hasSubMenu() &&
-                $this->hasNewContentSubMenu($item->getSubMenu())
-            ) {
+
+            if($this->hasNewContentSubMenu($item->getSubMenu())) {
                 return true;
             }
- */
         }
         return false;
     }
