@@ -22,7 +22,7 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\Bootstrap\BootstrapException;
+use SFW2\Routing\Bootstrap\Exception AS BootstrapException;
 
 use SFW2\Core\Database;
 use SFW2\Core\Session;

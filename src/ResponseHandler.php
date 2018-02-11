@@ -22,7 +22,7 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\Resolver\ResolverException;
+use SFW2\Routing\Resolver\Exception as ResolverException;
 use SFW2\Routing\Result\Content;
 
 use SFW2\Core\Config;

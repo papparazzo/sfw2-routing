@@ -23,7 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Core\Database;
-use SFW2\Routing\ControllerMap\ControllerMapException;
+use SFW2\Routing\ControllerMap\Exception as ControllerMapException;
 
 class ControllerMap {
 

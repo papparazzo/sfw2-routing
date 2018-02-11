@@ -24,7 +24,7 @@ namespace SFW2\Routing;
 
 use SFW2\Core\Database;
 use SFW2\Routing\Request;
-use SFW2\Routing\Path\PathException;
+use SFW2\Routing\Path\Exception as PathException;
 
 class Path {
 
@@ -52,7 +52,7 @@ class Path {
 
     public function loadPath(array &$map, int $parentId = 0, string $prefix = '/') {
         $stmt =
-            "SELECT `Id`, `ParentPathId`, `Name` " .
+            "SELECT `Id`, `Name` " .
             "FROM `sfw2_path` " .
             "WHERE `ParentPathId` = '%s'";
 
