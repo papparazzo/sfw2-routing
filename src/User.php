@@ -28,7 +28,7 @@ class User {
     const SEX_FEMAL   = 'FEMALE';
     const SEX_UNKNOWN = 'UNKNOWN';
 
-    protected $userid        = -1;
+    protected $userid        = 0;
     protected $isAdmin       = false;
     protected $firstName     = '';
     protected $lastName      = '';
@@ -42,7 +42,7 @@ class User {
     protected $loginName     = '';
     protected $authenticated = false;
 
-    public function __construct(int $userId = -1, $isAdmin = false, string $firstName = '') {
+    public function __construct(int $userId = 0, $isAdmin = false, string $firstName = '') {
         $this->userid        = $userId;
         $this->isAdmin       = $isAdmin;
         $this->firstName     = $firstName;
@@ -60,7 +60,7 @@ class User {
         $this->firstName     = '';
         $this->lastName      = '';
         $this->mailAddr      = '';
-        $this->userid        = -1;
+        $this->userid        = 0;
         $this->isAdmin       = false;
     }
 
