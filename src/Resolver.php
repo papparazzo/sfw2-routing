@@ -89,7 +89,8 @@ class Resolver {
 
             $rule = $this->controllers->getRulsetByPathId($pathId);
             $this->container->addRules($rule);
-            return $this->callMethode(key($rule), $action);
+            $hasFullPermission = $this->permission->hasFullActionPermission($pathId, $action);
+            return $this->callMethode(key($rule), $action, $hasFullPermission);
         } catch(ControllerMapException $ex) {
             throw new ResolverException(
                 $ex->getMessage(),
@@ -105,7 +106,7 @@ class Resolver {
         }
     }
 
-    protected function callMethode(string $class, string $action) {
+    protected function callMethode(string $class, string $action, bool $hasFullPermission) {
         if(!class_exists($class)) {
             throw new ResolverException(
                 'class "' . $class . '" does not exists',
@@ -123,6 +124,6 @@ class Resolver {
         }
 
         $ctrl = $this->container->create($class);
-        return call_user_func(array($ctrl, $action));
+        return call_user_func([$ctrl, $action], $hasFullPermission);
     }
 }
