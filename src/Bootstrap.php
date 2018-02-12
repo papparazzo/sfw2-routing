@@ -165,6 +165,9 @@ class Bootstrap {
                 'substitutions' => [
                     Dice::class => $this->container
                 ]
+            ],
+            Permission::class => [
+                'shared' => true
             ]
         ]);
     }
