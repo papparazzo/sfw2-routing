@@ -74,7 +74,7 @@ class BlogController extends Controller {
     }
 
     protected function loadEntries() {
-        $entries = array();
+        $entries = [];
 
         $stmt =
             "SELECT `sfw2_blog`.`Id`, `sfw2_blog`.`CreationDate`, " .

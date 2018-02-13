@@ -54,8 +54,7 @@ class Permission {
         $this->user = $user;
         $this->database = $database;
         $this->loadRoles();
-        $this->loadPermissions(0, '');
-        die();
+        $this->loadPermissions(0, $this->getInitPermission());
     }
 
     protected function loadRoles() {
@@ -78,28 +77,46 @@ class Permission {
         }
     }
 
+    protected function getInitPermission() {
+        $stmt =
+           "SELECT GROUP_CONCAT(`Permission`) AS `Permission` " .
+           "FROM `sfw2_permission` " .
+           "WHERE `PathId` = '0' " .
+           "AND `RoleId` IN(%s) " .
+           "GROUP BY `RoleId`";
+
+        return $this->database->selectSingle($stmt, [implode(',', $this->roles)]);
+    }
+
     public function loadPermissions(int $parentPathId, $initPermission) {
         if($this->user->isAdmin()) {
             return;
         }
 
         $stmt =
-            "SELECT `sfw2_path`.`Id`, GROUP_CONCAT(`Permission`) AS `Permission` " .
+            "SELECT `sfw2_path`.`Id` " .
             "FROM `sfw2_path` " .
-            "LEFT JOIN `sfw2_permission` " .
-            "ON `sfw2_path`.`Id` = `PathId` " .
-            "WHERE `ParentPathId` = '%s' " .
-            "AND `RoleId` IN(%s) " .
-            "GROUP BY `RoleId`";
+            "WHERE `ParentPathId` = '%s'";
 
-        $rows = $this->database->select($stmt, [$parentPathId, implode(',', $this->roles)]);
+        $rows = $this->database->select($stmt, [$parentPathId]);
 
         foreach($rows as $row) {
-            if($row['Permission'] !== null) {
-                $initPermission = $row['Permission'];
+            $stmt =
+                "SELECT GROUP_CONCAT(`Permission`) AS `Permission` " .
+                "FROM `sfw2_permission` " .
+                "WHERE `PathId` = '%s' " .
+                "AND `RoleId` IN(%s) " .
+                "GROUP BY `RoleId`";
+
+            $subRow = $this->database->selectRow($stmt, [$row['Id'], implode(',', $this->roles)]);
+
+            $permission = $initPermission;
+            if(!empty($subRow)) {
+                $permission = $subRow['Permission'];
             }
-            $this->permissions[$row['Id']] = new PagePermission(explode(',', $initPermission));
-            $this->loadPermissions($row['Id'], $initPermission);
+
+            $this->permissions[$row['Id']] = new PagePermission(explode(',', $permission));
+            $this->loadPermissions($row['Id'], $permission);
         }
     }
 

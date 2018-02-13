@@ -80,8 +80,8 @@ class GalleryController extends Controller {
 
     public function create() {
         $tmp = [];
-        $tmp['caption'] = $this->dto->getTitle('caption', true, 'Der Galleriename');
-        $tmp['description'] = $this->dto->getTitle('description', true, 'Die Beschreibung');
+        $tmp['caption'] = $this->dto->getTitle('caption', true);
+        $tmp['description'] = $this->dto->getTitle('description', true);
 
         if(
             $this->dto->getErrorProvider()->hasErrors() ||
@@ -481,6 +481,34 @@ class GalleryController extends Controller {
     }
 
     protected function loadSummary() {
+       $galleries = [];
+
+
+        $entry = [];
+        $entry['id'         ] = 123;
+        $entry['name'       ] = 'Name';
+        $entry['filename'   ] = 'FileName';
+        $entry['description'] = 'Description';
+        $entry['date'       ] = '' ; #new \SFW\View\Helper\Date(
+#            $row['CreationDate'],
+#            new \SFW\Locale()
+#        );
+        $entry['preview'    ] = '/public/layout/IMG_1031.JPG'; #$this->getPreviewPath(
+#            $row['Path'],
+#            $row['PreviewImage']
+#        );
+        $entry['dllink'     ] = '?getfile=';# . $row['Token'];
+        $entry['creator'    ] = 'Hans Wurst'; /*new \SFW\View\Helper\Obfuscator\EMail(
+            $row['Email'],
+            $row['Creator'],
+            'Galerie ' . $row['Name'] . ' (' .
+            $entry['date']->getFormatedDate(true) . ")"
+        );*/
+
+        $galleries[] = $entry;
+
+        return $galleries;
+
         return [];
         $stmt =
             "SELECT `sfw_imagegalleries`.`Id`, `sfw_imagegalleries`.`Name`, " .
