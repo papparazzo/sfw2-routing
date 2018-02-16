@@ -26,6 +26,7 @@ use SFW2\Routing\ResponseType;
 use SFW2\Routing\Result;
 use SFW2\Core\View;
 use SFW2\Routing\Menu;
+use SFW2\Routing\Permission;
 use SFW2\Core\Config;
 
 class Html extends ResponseType {
@@ -44,8 +45,14 @@ class Html extends ResponseType {
      */
     protected $menu;
 
-    public function __construct(Result $result, Config $config, Menu $menu) {
+    /**
+     * @var Permission
+     */
+    protected $permission;
+
+    public function __construct(Result $result, Permission $permission, Config $config, Menu $menu) {
        parent::__construct($result);
+       $this->permission = $permission;
        $this->config = $config;
        $this->menu = $menu;
     }
@@ -67,7 +74,8 @@ class Html extends ResponseType {
                 'https://code.jquery.com/jquery-3.2.1.min.js',
                 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js',
                 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js',
-                '/' . $this->config->getVal('path', 'jsPath') . 'helper.js'
+                '/' . $this->config->getVal('path', 'jsPath') . 'helper.js',
+                '/' . $this->config->getVal('path', 'jsPath') . 'starter.js'
             ], $this->result->getJSFiles($this->config->getVal('path', 'jsPath')))
         );
 
@@ -75,6 +83,8 @@ class Html extends ResponseType {
         $title =
             $this->config->getVal('project', 'title') . ' - ' .
             $this->result->getValue('title', '');
+
+        $this->result->assign('permission', new Permission\PagePermission());
 
         $view->assign('title', $title);
         $view->assign('content', $this->getInnerContent());
