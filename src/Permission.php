@@ -120,7 +120,7 @@ class Permission {
         }
     }
 
-    public function getPermission($pathId) : PagePermission {
+    public function getPagePermission($pathId) : PagePermission {
         if($this->user->isAdmin()) {
             return (new PagePermission())->setAllPermissions();
         }
@@ -138,17 +138,17 @@ class Permission {
 
         switch($action) {
             case 'create':
-                return $this->getPermission($pathId)->createAllowed();
+                return $this->getPagePermission($pathId)->createAllowed();
 
             case 'update':
-                return $this->getPermission($pathId)->updateOwnAllowed();
+                return $this->getPagePermission($pathId)->updateOwnAllowed();
 
             case 'delete':
-                return $this->getPermission($pathId)->deleteOwnAllowed();
+                return $this->getPagePermission($pathId)->deleteOwnAllowed();
 
             case 'index':
             default:
-                return $this->getPermission($pathId)->readOwnAllowed();
+                return $this->getPagePermission($pathId)->readOwnAllowed();
         }
     }
 
@@ -159,17 +159,17 @@ class Permission {
 
         switch($action) {
             case 'create':
-                return $this->getPermission($pathId)->createAllowed();
+                return $this->getPagePermission($pathId)->createAllowed();
 
             case 'update':
-                return $this->getPermission($pathId)->updateAllAllowed();
+                return $this->getPagePermission($pathId)->updateAllAllowed();
 
             case 'delete':
-                return $this->getPermission($pathId)->deleteAllAllowed();
+                return $this->getPagePermission($pathId)->deleteAllAllowed();
 
             case 'index':
             default:
-                return $this->getPermission($pathId)->readAllAllowed();
+                return $this->getPagePermission($pathId)->readAllAllowed();
         }
     }
 }
