@@ -91,30 +91,30 @@ class PagePermission {
     }
 
     public function readOwnAllowed() {
-        return (bool)$this->permission & self::READ_OWN;
+        return (bool)($this->permission & self::READ_OWN);
     }
 
     public function readAllAllowed() {
-        return (bool)$this->permission & self::READ_ALL;
+        return (bool)($this->permission & self::READ_ALL);
     }
 
     public function createAllowed() {
-        return (bool)$this->permission & self::CREATE;
+        return (bool)($this->permission & self::CREATE);
     }
 
     public function updateOwnAllowed() {
-        return (bool)$this->permission & self::UPDATE_OWN;
+        return (bool)($this->permission & self::UPDATE_OWN);
     }
 
     public function updateAllAllowed() {
-        return (bool)$this->permission & self::UPDATE_ALL;
+        return (bool)($this->permission & self::UPDATE_ALL);
     }
 
     public function deleteOwnAllowed() {
-        return (bool)$this->permission & self::DELETE_OWN;
+        return (bool)($this->permission & self::DELETE_OWN);
     }
 
     public function deleteAllAllowed() {
-        return (bool)$this->permission & self::DELETE_ALL;
+        return (bool)($this->permission & self::DELETE_ALL);
     }
 }
