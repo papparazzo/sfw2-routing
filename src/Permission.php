@@ -85,7 +85,9 @@ class Permission {
            "AND `RoleId` IN(%s) " .
            "GROUP BY `RoleId`";
 
-        return $this->database->selectSingle($stmt, [implode(',', $this->roles)]);
+        $permission = $this->database->selectSingle($stmt, [implode(',', $this->roles)]);
+        $this->permissions[0] = new PagePermission(explode(',', $permission));
+        return $permission;
     }
 
     public function loadPermissions(int $parentPathId, $initPermission) {
