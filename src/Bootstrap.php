@@ -98,9 +98,11 @@ class Bootstrap {
             $resolver = $this->container->create(Resolver::class);
             $result = $response->getContent($request, $resolver);
         }
+        $path = $this->container->create(Path::class);
+        $pathId = $path->getPathId($request->getPath());
 
-        $dispatcher = $this->container->create(Dispatcher::class);;
-        $dispatcher->dispatch($result, $this->container);
+        $dispatcher = $this->container->create(Dispatcher::class);
+        $dispatcher->dispatch($pathId, $result, $this->container);
     }
 
     protected function loadConfig(string $configPath) {
