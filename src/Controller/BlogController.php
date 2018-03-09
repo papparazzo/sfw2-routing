@@ -59,7 +59,7 @@ class BlogController extends Controller {
 
     public function index($all = false) {
         $content = new Content('content/blog/blog');
-        #$this->addJSFile('crud');
+        $content->appendJSFile('crud.js');
         #$this->ctrl->addJSFile('ckeditor/ckeditor');
         #$this->ctrl->addJSFile('slimbox2');
         #$this->ctrl->addJSFile('jquery.comments');
@@ -86,9 +86,8 @@ class BlogController extends Controller {
             "LEFT JOIN `sfw2_user` " .
             "ON `sfw2_user`.`Id` = `sfw2_blog`.`UserId` " .
             "LEFT JOIN `sfw2_division` " .
-            "ON `sfw2_division`.`Id` = `sfw2_blog`.`DivisionId` ";
-
-        $stmt .=  "ORDER BY `sfw2_blog`.`Id` DESC ";
+            "ON `sfw2_division`.`Id` = `sfw2_blog`.`DivisionId` " .
+            "ORDER BY `sfw2_blog`.`Id` DESC ";
         $rows = $this->database->select($stmt, [$this->user->getUserId()]);
 
         foreach($rows as $row) {
@@ -124,7 +123,6 @@ class BlogController extends Controller {
     }
 
     public function delete($all = false) {
-
         $entryId = $this->dto->getNumeric('id');
         $stmt =
             "DELETE ".
@@ -136,11 +134,7 @@ class BlogController extends Controller {
                 "AND `UserId` = '" .
                 $this->database->escape($this->user->getUserId()) . "'";
         }
-
-        $this->database->delete($stmt, [$entryId]);
-
-        $this->dto->setSaveSuccess(true);
-        return true;
+        return $this->database->delete($stmt, [$entryId]) > 0 ? true : false;
     }
 
     public function create() {
@@ -162,7 +156,6 @@ class BlogController extends Controller {
             ]
         );
 
-        #$this->dto->setSaveSuccess();
         #$this->ctrl->updateModificationDate();
         return true;
     }
