@@ -27,6 +27,7 @@ use SFW2\Routing\Result\Content;
 use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 use SFW2\Routing\Controller\Helper\GetDivisionTrait;
+use SFW2\Routing\Resolver\Exception as ResolverException;
 
 use SFW2\Core\Helper;
 use SFW2\Core\Database;
@@ -137,7 +138,12 @@ class BlogController extends Controller {
                 "AND `UserId` = '" .
                 $this->database->escape($this->user->getUserId()) . "'";
         }
-        return $this->database->delete($stmt, [$entryId, $this->pathId]) > 0 ? true : false;
+        if(!$this->database->delete($stmt, [$entryId, $this->pathId])) {
+            throw new ResolverException("no entry found", ResolverException::NO_PERMISSION);
+        }
+        $content = new Content('content/blog/blog');
+        $content->append('hallo', 'balli');
+        return $content;
     }
 
     public function create() {
