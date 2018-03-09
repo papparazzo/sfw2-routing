@@ -48,7 +48,7 @@ return [
     'misc' => [
         'timeZone'    => 'Europe/Berlin',
         'locale'      => 'de_DE',
-        'memoryLimit' => 256
+        'memoryLimit' => '256M'
     ],
 
 
