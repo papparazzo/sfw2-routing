@@ -87,8 +87,10 @@ class BlogController extends Controller {
             "ON `sfw2_user`.`Id` = `sfw2_blog`.`UserId` " .
             "LEFT JOIN `sfw2_division` " .
             "ON `sfw2_division`.`Id` = `sfw2_blog`.`DivisionId` " .
+            "WHERE `PathId` = '%s' " .
             "ORDER BY `sfw2_blog`.`Id` DESC ";
-        $rows = $this->database->select($stmt, [$this->user->getUserId()]);
+
+        $rows = $this->database->select($stmt, [$this->user->getUserId(), $this->pathId]);
 
         foreach($rows as $row) {
             $cd = strftime(
@@ -127,14 +129,15 @@ class BlogController extends Controller {
         $stmt =
             "DELETE ".
             "FROM `sfw2_blog` " .
-            "WHERE `Id` = %s ";
+            "WHERE `Id` = %s " .
+            "AND `PathId` = '%s'";
 
         if(!$all) {
             $stmt .=
                 "AND `UserId` = '" .
                 $this->database->escape($this->user->getUserId()) . "'";
         }
-        return $this->database->delete($stmt, [$entryId]) > 0 ? true : false;
+        return $this->database->delete($stmt, [$entryId, $this->pathId]) > 0 ? true : false;
     }
 
     public function create() {
@@ -142,17 +145,19 @@ class BlogController extends Controller {
             "INSERT INTO `sfw2_blog` " .
             "SET `CreationDate` = NOW(), " .
             "`Title` = '%s', " .
-            "`DivisionId` = '%s', " .
             "`Content` = '%s', " .
-            "`UserId` = %d";
+            "`UserId` = %d, " .
+            "`PathId` = %d, " .
+            "`DivisionId` = '%s' ";
 
         $this->database->insert(
             $stmt,
             [
                 $this->dto->getTitle('title', true),
-                $this->dto->getArrayValue('division', true, $this->sections),
                 $this->dto->getTitle('content', true),
-                $this->user->getUserId()
+                $this->user->getUserId(),
+                $this->pathId,
+                $this->dto->getArrayValue('division', true, $this->sections)
             ]
         );
 
