@@ -27,7 +27,13 @@ use SFW2\Routing\Result\File as FileContent;
 
 class File extends ResponseType {
 
-    public function dispatch(FileContent $file) {
+    public function __construct(FileContent $file) {
+        parent::__construct($file, new PagePermission());
+    }
+
+    public function dispatch() {
+
+        #$this->result;
 
         $file = $this->data['path'] . $this->data['fileName'];
 

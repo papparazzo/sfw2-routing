@@ -23,11 +23,16 @@
 namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
+use SFW2\Core\View;
 
 class Xml extends ResponseType {
 
     public function dispatch() {
+        $this->result->assign('permission', $this->pagePermission);
+        $view = new View(__DIR__ . '/../Templates/' . $this->result->getTemplateFile() . '.phtml');
+        $view->assignArray($this->result->getData());
+
         header('Content-type: text/xml');
-        echo '<?xml version="1.0" encoding="utf-8"?>' . $this->result->getData();
+        echo '<?xml version="1.0" encoding="utf-8"?>' . $view->getContent();
     }
 }

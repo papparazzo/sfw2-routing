@@ -28,8 +28,8 @@ class Json extends ResponseType {
 
     public function dispatch() {
         $data = [
-            'jsFiles' => $this->result->getJSFiles(),
-            'cssFiles' => $this->result->getCSSFiles(),
+            'jsFiles' => $this->result->getJSFiles($this->config->getVal('path', 'jsPath')),
+            'cssFiles' => $this->result->getCSSFiles($this->config->getVal('path', 'cssPath')),
             'data' => $this->result->getData()
         ];
 
