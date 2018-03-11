@@ -59,13 +59,10 @@ class Request {
         if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return self::REQUEST_TYPE_HTML;
         }
-        if(strpos($this->server["HTTP_ACCEPT"], "application/xml") !== false) {
-            return self::REQUEST_TYPE_AJAX_XML;
-        }
         if(strpos($this->server["HTTP_ACCEPT"], "application/json") !== false) {
             return self::REQUEST_TYPE_AJAX_JSON;
         }
-        return self::REQUEST_TYPE_UNKNOWN;
+        return self::REQUEST_TYPE_AJAX_XML;
     }
 
     public function getGetParam($name, $def = null) {
