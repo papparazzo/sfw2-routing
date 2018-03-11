@@ -24,6 +24,8 @@ namespace SFW2\Routing;
 
 use SFW2\Routing\Result\File;
 use SFW2\Routing\Result\Redirect;
+use SFW2\Core\Config;
+use SFW2\Routing\Menu;
 
 use Dice\Dice;
 
@@ -38,7 +40,7 @@ class Dispatcher {
         $this->request = $request;
     }
 
-    public function dispatch(Result $result, Dice $dice) {
+    public function dispatch($pathId, Result $result, Dice $dice) {
         if($result instanceof File) {
 
         }
@@ -49,19 +51,27 @@ class Dispatcher {
 
         switch($this->request->getRequestType()) {
             case Request::REQUEST_TYPE_AJAX_JSON:
-                $response = new ResponseType\Json($result);
+                $response = new ResponseType\Json(
+                    $result,
+                    $dice->create(Permission::class)->getPagePermission($pathId),
+                    $dice->create(Config::class)
+                );
                 break;
 
             case Request::REQUEST_TYPE_AJAX_XML:
-                $response = new ResponseType\Xml($result);
+                $response = new ResponseType\Xml(
+                    $result,
+                    $dice->create(Permission::class)->getPagePermission($pathId),
+                    $dice->create(Config::class)
+                );
                 break;
 
             case Request::REQUEST_TYPE_HTML:
                 $response = new ResponseType\Html(
                     $result,
-                    $dice->create('SFW2\Routing\Permission'),
-                    $dice->create('SFW2\Core\Config'),
-                    $dice->create('SFW2\Routing\Menu')
+                    $dice->create(Permission::class)->getPagePermission($pathId),
+                    $dice->create(Config::class),
+                    $dice->create(Menu::class)
                 );
                 break;
         }
