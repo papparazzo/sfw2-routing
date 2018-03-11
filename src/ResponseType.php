@@ -22,6 +22,9 @@
 
 namespace SFW2\Routing;
 
+use SFW2\Routing\Permission\PagePermission;
+use SFW2\Core\Config;
+
 abstract class ResponseType {
 
     /**
@@ -29,8 +32,20 @@ abstract class ResponseType {
      */
     protected $result;
 
-    public function __construct(Result $result) {
+    /**
+     * @var \SFW2\Routing\Permission\PagePermission
+     */
+    protected $pagePermission;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    public function __construct(Result $result, PagePermission $pagePermission, Config $config) {
         $this->result = $result;
+        $this->config = $config;
+        $this->pagePermission = $pagePermission;
     }
 
     abstract function dispatch();
