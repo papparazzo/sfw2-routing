@@ -62,12 +62,12 @@ class DownloadController extends Controller {
     }
 
     public function index($all = false) {
+        $content = new Content('content/download');
+        $content->appendJSFile('crud.js');
 # FIXME
-#            $this->ctrl->addJSFile('crud');
 #            $this->ctrl->addJSFile('jquery.fileupload');
 #            $this->ctrl->addJSFile('download');
 
-        $content = new Content('content/download');
         $content->assign('entries',  $this->loadEntries());
         $content->assign('title',    $this->title);
         $content->assign('divisions', $this->getDivisions());
@@ -82,7 +82,7 @@ class DownloadController extends Controller {
 
     protected function loadEntries() {
         $stmt =
-            "SELECT `sfw2_media`.`Name`, `sfw2_media`.`CreationDate`, " .
+            "SELECT `sfw2_media`.`Id`, `sfw2_media`.`Name`, `sfw2_media`.`CreationDate`, " .
             "`sfw2_media`.`Description`, `sfw2_media`.`FileType`, " .
             "`sfw2_media`.`Autogen`, `sfw2_user`.`Email`, " .
             "`sfw2_media`.`Token`,`sfw2_division`.`Name` AS `Category`, " .
@@ -103,6 +103,7 @@ class DownloadController extends Controller {
 
         foreach($rows as $row) {
             $entry = [];
+            $entry['id'         ] = $row['Id'];
             $entry['description'] = $row['Description'];
             $entry['token'      ] = $row['Token'      ];
             $entry['filename'   ] = $row['Name'       ];
@@ -118,6 +119,9 @@ class DownloadController extends Controller {
     }
 
     public function delete($all = false) {
+      #$entryId = $this->dto->getNumeric('id');
+        $entryId = -1;
+
         $stmt =
             "DELETE FROM `sfw2_media` " .
             "WHERE `sfw2_media`.`Token` = '%s' " .
@@ -129,8 +133,10 @@ class DownloadController extends Controller {
                 $this->database->escape($this->user->getUserId()) . "'";
         }
 
-        $this->database->delete($stmt, [$this->dto->getSimpleText('id')]);
-        #$this->dto->setSaveSuccess(true);
+        if(!$this->database->delete($stmt, [$entryId, $this->pathId])) {
+            throw new ResolverException("no entry found", ResolverException::NO_PERMISSION);
+        }
+
         return;
     }
 

@@ -30,9 +30,6 @@ use SFW2\Routing\Widget\Obfuscator\EMail;
 use SFW2\Routing\User;
 use SFW2\Routing\Result\Content;
 
-use DateTime;
-use DateTimeZone;
-
 class NewspaperController extends Controller {
 
     /**
@@ -187,7 +184,11 @@ class NewspaperController extends Controller {
             'id' => 1,
             'image' => '/public/layout/zeitung/wisentrun2.png',
             'title' => 'Alle Jahre wieder',
-            'mailaddr' => 'stefan.paproth@vfvconcordia.de',
+            'mailaddr' => (string)(new EMail(
+                'bla@blub.de',
+                'Stefan Paproth',
+                "Blogeintrag vom "
+             )),
             'source' => 'Spiegel',
             'date' => '12.04.1977',
             'delAllowed' => true

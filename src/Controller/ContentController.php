@@ -52,9 +52,9 @@ class ContentController extends Controller {
     }
 
     public function index($all = false) {
+        $content = new Content('content/content');
 #       $this->ctrl->addJSFile('ckeditor/ckeditor');
 #       $this->ctrl->addJSFile('contenteditable');
-        $content = new Content('content/content');
         $content->assign('title', $this->title);
         $content->assign('content', $this->loadContent());
         return $content;

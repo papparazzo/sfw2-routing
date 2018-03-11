@@ -24,11 +24,14 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Controller\Helper\RemoveExhaustedDatesTrait;
 
 use SFW2\Core\Database;
 use SFW2\Core\Config;
 
 class PeriodicalDates extends Controller {
+
+    use RemoveExhaustedDatesTrait;
 
     /**
      * @var Database
@@ -49,8 +52,8 @@ class PeriodicalDates extends Controller {
 
     public function index($all = false) {
         $content = new Content('content/periodicalDates');
+        $content->appendJSFile('crud.js');
         $content->assign('periodicalDates', $this->getDates());
-#       $this->ctrl->addJSFile('crud');
 
         return $content;
     }
@@ -59,9 +62,7 @@ class PeriodicalDates extends Controller {
         $stmt =
             "SELECT `sfw2_calendar`.`Id`, `sfw2_calendar`.`Description`, " .
                    "`sfw2_calendar`.`Day`, `sfw2_calendar`.`StartTime`, " .
-                   "`sfw2_calendar`.`EndTime`, " .
-                   "IF(`sfw2_calendar`.`ValidTo` < NOW(), '1', '0') " .
-                   " AS `expired` " .
+                   "`sfw2_calendar`.`EndTime` " .
             "FROM `sfw2_calendar` " .
             "WHERE `sfw2_calendar`.`PathId` = '%s' " .
             "AND `sfw2_calendar`.`Day` IS NOT NULL " .
@@ -101,8 +102,7 @@ class PeriodicalDates extends Controller {
             "AND `PathId` = '%s'";
 
         $this->database->delete($stmt, [$id, $this->pathId]);
-        $this->dto->setSaveSuccess(true);
-        $this->ctrl->updateModificationDate();
+        #$this->ctrl->updateModificationDate();
     }
 
     public function create() {

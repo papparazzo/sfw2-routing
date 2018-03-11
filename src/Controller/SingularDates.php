@@ -24,11 +24,14 @@ namespace SFW2\Routing\Controller;
 
 use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Controller\Helper\RemoveExhaustedDatesTrait;
 
 use SFW2\Core\Database;
 use SFW2\Core\Config;
 
 class SingularDates extends Controller {
+
+    use RemoveExhaustedDatesTrait;
 
     /**
      * @var Database

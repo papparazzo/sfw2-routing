@@ -126,7 +126,8 @@ class BlogController extends Controller {
     }
 
     public function delete($all = false) {
-        $entryId = $this->dto->getNumeric('id');
+        #$entryId = $this->dto->getNumeric('id');
+        $entryId = -1;
         $stmt =
             "DELETE ".
             "FROM `sfw2_blog` " .
