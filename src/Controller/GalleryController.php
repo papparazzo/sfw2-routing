@@ -489,7 +489,7 @@ class GalleryController extends Controller {
         $entry['name'       ] = 'Name';
         $entry['filename'   ] = 'FileName';
         $entry['description'] = 'Description';
-        $entry['date'       ] = '' ; #new \SFW\View\Helper\Date(
+        $entry['date'       ] = '19. Sept. 2015' ; #new \SFW\View\Helper\Date(
 #            $row['CreationDate'],
 #            new \SFW\Locale()
 #        );

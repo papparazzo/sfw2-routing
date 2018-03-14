@@ -72,12 +72,12 @@ class NewspaperController extends Controller {
             'date'      => '01. April 2012',
             'newspaper' => 'Spiegel'
         ]);
-        $content->appendJSFile('slimbox2');
-        $content->appendCSSFile('slimbox2');
+        #$content->appendJSFile('slimbox2');
+        #$content->appendCSSFile('slimbox2');
 
-        $content->appendJSFile('crud');
-        $content->appendJSFile('jquery.fileupload');
-        $content->appendJSFile('newspaperarticles');
+        $content->appendJSFile('crud.js');
+        #$content->appendJSFile('jquery.fileupload');
+        #$content->appendJSFile('newspaperarticles');
 
 
         return $content;
@@ -103,6 +103,10 @@ class NewspaperController extends Controller {
     }
 
     public function delete($all = false) {
+        $content = new Content('content/blog/blog');
+        $content->append('hallo', 'balli');
+        return $content;
+
         $entryId = $this->dto->getNumeric('id');
         $params = [$entryId];
         $stmt =
