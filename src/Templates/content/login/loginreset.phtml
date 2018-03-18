@@ -1,0 +1,200 @@
+<?php
+
+/**
+ *  SFW - SimpleFrameWork
+ *
+ *  Copyright (C) 2013  Stefan Paproth
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program. If not, see
+ *  http://www.gnu.org/licenses/agpl.txt.
+ *
+ */
+
+?>
+<div class="py-md-4 px-md-5">
+    <h1>Passwort rücksetzen</h1>
+    <?php if($this->state == 'start'): ?>
+    <p>
+        Du hast Dein Passwort verbaselt? Hier hast Du die Möglichkeit, es wieder
+        rückzusetzen.
+    </p>
+    <?php if($this->showError): ?>
+    <div class="alert alert-danger" role="alert">
+        <strong>Achtung: </strong> Die Anmeldung schlug fehl! Bitte prüfe Deine Zugangsdaten.
+    </div>
+    <?php endif;?>
+    <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+        <form method="POST" action="?do="></form>
+        <div class="form-group row">
+            <label
+                for="usr"
+                class="form-control-label col-sm-2"
+            >
+                Benutzername
+            </label>
+            <div class="col-sm-4">
+                <input
+                    id="usr"
+                    class="<?php if($this->showError): ?> is-invalid <?php endif; ?> form-control form-control-sm"
+                    type="text"
+                    name="usr"
+                    size="30"
+                    maxlength="30"
+                    value=""
+                    title="Gib hier bitte Deinen Loginnamen ein"
+                />
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <label
+                for="addr"
+                class="form-control-label col-sm-2"
+            >
+                E-Mail
+            </label>
+            <div class="col-sm-4">
+                <input
+                    id="addr"
+                    class="<?php if($this->showError): ?> is-invalid <?php endif; ?> form-control form-control-sm"
+                    type="text"
+                    name="addr"
+                    size="30"
+                    maxlength="30"
+                    value=""
+                    title="Gib hier bitte Deine E-Mail-Adresse ein"
+                />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button
+                    class="btn btn-success btn-sm"
+                    id="btnUploadbulletinBoardArticle_"
+                >
+                    anfordern
+                </button>
+                <button
+                    class="btn btn-danger btn-sm"
+                    id="btnCancelbulletinBoardArticle_"
+                >
+                    abbrechen
+                </button>
+            </div>
+        </div>
+    </div>
+    <?php elseif($this->state == 'send'): ?>
+    <header>
+        <p>
+            Bestätigungsnachricht wurde erfolgreich an
+            <strong><?php echo($this->name); ?></strong>
+            verschickt.
+        </p>
+        <p>
+            Bitte klicke auf den Bestätigungslink den Du per E-Mail erhälst
+            um Dein neues Passwort eingeben zu können.
+        </p>
+        <div class="alert alert-warning" role="alert">
+            Der Bestätigungslink ist <strong><?php echo($this->expire); ?></strong>
+            gültig. Solltest Du nicht innerhalb dieser Zeit auf den Link geklickt
+            haben so wird Deine Anfrage automatisch gelöscht und Du kannst kein
+            neues Passwort setzen!
+        </div>
+    </header>
+    <?php elseif($this->state == 'ok'): ?>
+    <div class="alert alert-info" role="alert">
+        <strong>Hinweis: </strong>
+        Gib hier bitte Dein neues Passwort ein und wiederhole es.
+    </div>
+    <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+        <form method="POST" action="?do="></form>
+        <div class="form-group row">
+            <label
+                for="usr"
+                class="form-control-label col-sm-2"
+            >
+                Passwort
+            </label>
+            <div class="col-sm-4">
+                <input
+                    id="usr"
+                    class="<?php if($this->showError): ?> is-invalid <?php endif; ?> form-control form-control-sm"
+                    type="password"
+                    name="usr"
+                    size="30"
+                    maxlength="30"
+                    value=""
+                    title="Gib hier bitte Dein neues Passwort ein"
+                />
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <label
+                for="addr"
+                class="form-control-label col-sm-2"
+            >
+                Passwort wiederholen
+            </label>
+            <div class="col-sm-4">
+                <input
+                    id="addr"
+                    class="<?php if($this->showError): ?> is-invalid <?php endif; ?> form-control form-control-sm"
+                    type="password"
+                    name="addr"
+                    size="30"
+                    maxlength="30"
+                    value=""
+                    title="Wiederhole hier bitte Dein Passwort"
+                />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button
+                    class="btn btn-success btn-sm"
+                    id="btnUploadbulletinBoardArticle_"
+                >
+                    setzen
+                </button>
+                <button
+                    class="btn btn-danger btn-sm"
+                    id="btnCancelbulletinBoardArticle_"
+                >
+                    abbrechen
+                </button>
+            </div>
+        </div>
+    </div>
+    <?php elseif($this->state == 'error'): ?>
+    <div class="alert alert-danger" role="alert">
+        <strong>Achtung: </strong>
+        Es konnte kein neues Passwort erzeugt werden!
+        Dies kann mehrere Ursachen haben:
+        <ul style="padding-left: 30px;">
+            <li>Es wurden ein ungültiger Hash übergeben.</li>
+            <li>Es wurde ein fehlerhafter Hash übergeben.</li>
+            <li>Das Ablaufdatum wurde überschritten. Bitte achte darauf das Du innerhalb von <?php echo($this->expire); ?> reagierst!</li>
+            <li>Es wurde bereits ein neues Passwort gesendet. Bitte Prüfe Dein E-Mail-Konto!</li>
+            <li>Es ist ein interner Fehler aufgetreten.</li>
+        </ul>
+        Versuche es bitte
+        <a
+            style="border-bottom: 1px dashed; color: #CD0A0A;"
+            href="?"
+        >erneut</a>.
+        Sollte das Problem weiterhin bestehen dann melde Dich bitte.
+    </div>
+    <?php endif; ?>
+</div>

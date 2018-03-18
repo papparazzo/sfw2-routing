@@ -1,0 +1,97 @@
+<?php
+/**
+ *  SFW - SimpleFrameWork
+ *
+ *  Copyright (C) 2015  Stefan Paproth
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
+ *
+ */
+?>
+<div class="py-md-4 mx-auto" style="width: 35rem;">
+
+  <?php /*
+<div class="px-md-5">
+   *     <h1>Anmelden</h1>
+
+    <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+        <div style="padding-bottom: 1rem;">
+            Hallo <strong>Stefan</strong><?php #echo($this->firstname); ?>,<br />
+            Du wurdest erfolgreich angemeldet. Zum Abmelden klicke bitte oben rechts auf "<strong>abmelden</strong>".
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-success btn-sm" id="btnLogin">
+                    okay
+                </button>
+            </div>
+        </div>
+    </div>
+
+*/?>
+    <?php if($this->showError): ?>
+    <div class="alert alert-danger" role="alert">
+        <strong>Achtung: </strong> Die Anmeldung schlug fehl! Bitte prüfe Deine Zugangsdaten.
+    </div>
+    <?php elseif($this->isAllreadyLoggedIn): ?>
+    <div class="alert alert-warning" role="alert">
+        <strong>Hinweis: </strong> Du bist bereits als <strong><?php echo($this->firstname); ?></strong>
+        angemeldet. Wenn Du Dich abmelden möchtest klicke bitte oben rechts auf <strong>abmelden</strong>.
+    </div>
+    <?php endif; ?>
+    <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+        <h3 style="margin-bottom: 1.5rem;">Melde dich in deinem Konto an...</h3>
+        <div class="row">
+            <label for="usr" class="col-sm-4 col-form-label">Benutzername</label>
+            <div class="col-sm-7">
+                <input
+                    class="form-control form-control-sm"
+                    type="text"
+                    name="usr"
+                    size="30"
+                    maxlength="30"
+                    value=""
+                />
+            </div>
+        </div>
+        <div class="row">
+            <label for="pwd" class="col-sm-4 col-form-label">Passwort</label>
+            <div class="col-sm-7">
+                <input
+                    class="form-control form-control-sm"
+                    type="password"
+                    name="pwd"
+                    size="30"
+                    maxlength="30"
+                    value=""
+                />
+            </div>
+        </div>
+        <div class="modal-footer" style="border: 0; margin-top: 12px;">
+            <button type="button" class="btn btn-success btn-sm submit-form">
+                okay
+            </button>
+            <button type="reset" class="btn btn-danger btn-sm">
+                abbrechen
+            </button>
+        </div>
+        <?php if($this->loginResetPath != ''): ?>
+        <div class="row">
+            <div class="col-sm-7">
+                <a class="loginLnk" href="<?php echo($this->loginResetPath); ?>">Passwort vergessen?</a>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>

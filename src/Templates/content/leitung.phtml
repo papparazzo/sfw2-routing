@@ -1,0 +1,34 @@
+<h1>Vorstand / Spartenleitung</h1>
+<p>
+    Auf dieser Seite findest Du den Vorstand bzw. die Spartenleiter der
+    einzelnen Sparten.
+</p>
+<div class="alert alert-dark" role="alert">
+    <strong>Anmerkung</strong>
+    <p style="margin-bottom: 0">
+    Eine Auflistung sämtlicher Leiter (Übungsleiter etc.) findest Du in der
+    <a class="link" href="/verein/kontakt">Kontaktliste</a>
+    </p>
+</div>
+
+<div style="min-height: 40px;"></div>
+
+<?php foreach($this->data ?? [] as $k => $v): ?>
+<h3><?php echo($k); ?></h3>
+<hr />
+<?php foreach($v as $v1): ?>
+<div style="display: inline-block;margin-bottom: 35px; background-color: #fff; background-clip: border-box; border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; width: 600px;">
+    <img class="rounded-left float-left" src="<?php echo($v1['image']); ?>" alt="<?php echo($v1['position']);?>" />
+     <div style="margin-left: 12rem; margin-top: 0.5rem;">
+        <h5><?php echo($v1['position']);?></h5>
+        <p style="margin-bottom: 0"><?php echo($v1['name']);?></p>
+        <p style="margin-bottom: 0"><?php echo($v1['phone1']);?> <?php echo($v1['phone2']);?></p>
+        <p style="margin-bottom: 0"><?php echo($v1['emailaddr']);?></p>
+    </div>
+</div>
+<?php endforeach; ?>
+<br />
+<?php endforeach; ?>
+<div class="modificationDate">
+    Stand: <time pubdate="pubdate"><?php echo($this->modificationDate); ?></time>
+</div>

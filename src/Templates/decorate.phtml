@@ -1,0 +1,218 @@
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#252e39"
+    },
+    "button": {
+      "background": "#14a7d0"
+    }
+  },
+  "theme": "classic",
+  "position": "top",
+  "static": true
+})});
+</script>
+
+<style>
+    #myul {
+        list-style: none;
+        font-weight: normal;
+        display: flex;
+        padding-left: 0;
+        margin-bottom: 0;
+        font-size: 1.5em;
+        flex-direction: row;
+    }
+
+    #mynav {
+        padding: .5rem 1rem;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        position: relative;
+        display: flex;
+    }
+</style>
+
+<div class="modal fade" id="loginDialogModalCenter" tabindex="-1" role="dialog" aria-labelledby="acceptDialogModalCenter" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " style="max-width: 560px;" role="document">
+        <div class="modal-content" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+            <h3 style="margin-bottom: 1.5rem;">Melde dich in deinem Konto an...</h3>
+            <div class="row">
+                <label for="usr" class="col-sm-4 col-form-label">Benutzername</label>
+                <div class="col-sm-7">
+                    <input
+                        class="form-control form-control-sm"
+                        type="text"
+                        name="usr"
+                        size="30"
+                        maxlength="30"
+                        value=""
+                    />
+                </div>
+            </div>
+            <div class="row">
+                <label for="pwd" class="col-sm-4 col-form-label">Passwort</label>
+                <div class="col-sm-7">
+                    <input
+                        class="form-control form-control-sm"
+                        type="password"
+                        name="pwd"
+                        size="30"
+                        maxlength="30"
+                        value=""
+                    />
+                </div>
+            </div>
+            <div class="modal-footer" style="border: 0; margin-top: 12px;">
+                <button type="button" class="btn btn-success btn-sm submit-form">okay</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">abbrechen</button>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-7">
+                    <a class="loginLnk" href="/">Passwort vergessen?</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="acceptDialogModalCenter" tabindex="-1" role="dialog" aria-labelledby="acceptDialogModalCenter" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Eintrag löschen?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Soll der Eintrag <strong class="modal-content-title"></strong> wirklich gelöscht werden?
+            </div>
+            <div class="modal-footer">
+                <button id="suuuuuuu" type="button" class="btn btn-success btn-sm">Okay</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page" >
+    <header style="background-color: #f8f9fa;">
+        <div class="container-fluid" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            <div class="login">
+                <?php if($this->authenticated): ?>
+                <a href="#">abmelden</a>
+                <?php else: ?>
+                <a href="#">Login</a>
+                <?php endif; ?>
+            </div>
+            <nav class="navbar navbar-expand bg-light">
+                <a class="navbar-brand" href="/" style="margin-right: 2rem; margin-left: 1.2rem;">
+                    <img src="/public/layout/logo.png" style="height: 85px;" alt="logo" />
+                </a>
+                <div class="navbar-nav-scroll" id="navbarNav">
+                    <ul class="navbar-nav" style="font-weight: normal; margin-bottom: 1rem;" >
+                        <?php foreach($this->mainMenu as $item): ?>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link <?php if($item->getChecked()):?>active<?php endif; ?>"
+                                href="<?php echo($item->getURL());?>"
+                            >
+                                <?php echo($item->getDisplayName());?>
+                                <?php if($item->isRrecentlyModified()): ?><span class="badge badge-secondary">neu!</span><?php endif;?>
+                            </a>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <?php if(empty($this->sideMenu)): ?>
+    <?php echo($this->content); ?>
+    <?php else: ?>
+    <div class="content container-fluid" style="margin-top: 20px;">
+        <div id="pagecontent" class="row">
+            <div class="col-12 col-md-3 col-xl-2 pl-md-4 py-md-4" style="/*background-color: #f8f9fa;*/">
+                <nav style="line-height: 1.2em;">
+                    <ul class="section-nav">
+                        <?php foreach($this->sideMenu as $item): ?>
+                        <li class="toc-entry toc-h2">
+                            <?php if($item->getURL() == ''):?>
+                            <?php echo($item->getDisplayName());?>
+                            <?php else: ?>
+                            <a <?php if($item->getChecked()):?>class="active"<?php endif; ?> href="<?php echo($item->getURL());?>">
+                                <?php echo($item->getDisplayName());?>
+                            </a>
+                            <?php if($item->isRrecentlyModified()): ?>
+                            <span class="badge badge-secondary">neu!</span>
+                            <?php endif; ?>
+                            <?php endif; ?>
+                            <ul>
+                                <?php foreach($item->getSubMenu() as $subMenu): ?>
+                                <li class="toc-entry toc-h3">
+                                    <?php if($subMenu->getURL() != ''):?>
+                                    <a <?php if($subMenu->getChecked()):?>class="active"<?php endif; ?> href="<?php echo($subMenu->getURL());?>">
+                                        <?php echo($subMenu->getDisplayName());?>
+                                    </a>
+                                    <?php if($subMenu->isRrecentlyModified()): ?>
+                                    <span class="badge badge-secondary">neu!</span>
+                                    <?php endif; ?>
+                                    <?php endif; ?>
+                                </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </nav>
+            </div>
+            <main id="reloadcontent" class="col-12 col-md-9 col-xl-8 pl-md-5 py-md-4" role="main">
+                <?php /** / ?>
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">Well done!</h4>
+                    <p style="margin-bottom: 0">Deine Änderungen wurden erfolgreich gespeichert.</p>
+                </div>
+                <?php //*/ ?>
+                <?php echo($this->content); ?>
+                <input type="hidden" name="xsrftoken" value="" />
+            </main>
+            <div class="col-12 col-md-3 col-xl-2 pl-md-4 py-md-4" style="/*background-color: #f8f9fa;*/">
+<?php /*
+                    <nav style="line-height: 1.2em;">
+                        <ul class="section-nav" style="font-size: .75rem;">
+                            <li><a href="#section1">&#x00A7;1 Zweck des Vereins</a></li>
+                            <li><a href="#section2">&#x00A7;2 Name, Sitz, Geschäftsjahr</a></li>
+                            <li><a href="#section3">&#x00A7;3 Gliederung des Vereins</a></li>
+                            <li><a href="#section4">&#x00A7;4 Mitgliedschaft</a></li>
+                            <li><a href="#section5">&#x00A7;5 Rechte und Pflichten der Mitglieder</a></li>
+                            <li><a href="#section6">&#x00A7;6 Beginn und Ende der Mitgliedschaft</a></li>
+                            <li><a href="#section7">&#x00A7;7 Jahresbeitrag</a></li>
+                            <li><a href="#section8">&#x00A7;8 Organe des Vereins</a></li>
+                        </ul>
+                    </nav>
+*/ ?>
+
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: left; color: #6b6b6b;">
+                | <a href="/verein/info/sitemap">Sitemap</a>
+                | <a href="/verein/info/impressum">Impressum</a>
+                | <a href="/verein/info/datenschutz">Datenschutz</a>
+                | <a href="/verein/kontakt/ansprechpartner">Kontakt</a>
+            </div>
+            <div class="copyright">
+                VfV Concordia Alvesrode von 1919 e. V.; Neuer Wiesenweg 1; 31832 Springe
+            </div>
+        </div>
+    </footer>
+</div>

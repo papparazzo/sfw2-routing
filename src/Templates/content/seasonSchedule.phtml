@@ -1,0 +1,139 @@
+<?php
+
+/**
+ *  SFW - SimpleFrameWork
+ *
+ *  Copyright (C) 2013  Stefan Paproth
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program. If not, see
+ *  http://www.gnu.org/licenses/agpl.txt.
+ *
+ */
+
+?><?php if(!count($this->dates) && !$this->permission->createAllowed()): ?>
+<?php echo($this->showNoData());?>
+<?php else: ?>
+<?php if($this->permission->createAllowed()): ?>
+<input id="path" type="hidden" name="path" value="/verein/allgemein/aktuelles" />
+<form style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9; border-radius: .25rem;">
+    <div class="row">
+        <label for="startDate" class="col-sm-2 col-form-label">Datum</label>
+        <div class="col-sm-3">
+            <input
+                type="date"
+                class="form-control form-control-sm"
+                placeholder="Hier kommt das Datum hin..."
+                maxlength="100"
+                title="Gib hier bitte den Tag ein"
+                name="startDate"
+                value=""
+            />
+        </div>
+    </div>
+    <div class="row">
+        <label for="startTime" class="col-sm-2 col-form-label">Uhrzeit</label>
+        <div class="col-sm-2">
+            <input
+                type="time"
+                class="form-control form-control-sm"
+                placeholder="Hier kommt die Uhrzeit hin..."
+                maxlength="100"
+                title="Die Startzeit"
+                name="startTime"
+                value=""
+            />
+        </div>
+    </div>
+    <div class="row">
+        <label for="home" class="col-sm-2 col-form-label">Heim</label>
+        <div class="col-sm-5">
+            <input
+                type="text"
+                class="form-control form-control-sm"
+                placeholder="Hier kommt die Beschreibung hin..."
+                maxlength="100"
+                title="Gib hier bitte eine kurze Beschreibung der Datei ein."
+                name="home"
+                value=""
+            />
+        </div>
+    </div>
+    <div class="row">
+        <label for="guest" class="col-sm-2 col-form-label">Gast</label>
+        <div class="col-sm-5">
+            <input
+                type="text"
+                class="form-control form-control-sm"
+                placeholder="Hier kommt die Beschreibung hin..."
+                maxlength="100"
+                title="Gib hier bitte eine kurze Beschreibung der Datei ein."
+                name="guest"
+                value=""
+                required
+            />
+        </div>
+    </div>
+    <div class="modal-footer" style="border: 0; margin-top: 12px;">
+        <button type="button" class="btn btn-success btn-sm submit-form">
+            speichern
+        </button>
+        <button type="reset" class="btn btn-danger btn-sm">
+            abbrechen
+        </button>
+    </div>
+</form>
+<?php endif;?>
+<div style="min-height: 44px;"></div>
+<table class="nowrap table-sm table table-striped" style="border-top:0; border-bottom: 0;">
+    <tbody class="nowrap">
+        <thead class="thead-dark">
+            <tr>
+                <th style="color: #e8e8e8;;background-color: #898989; border-top:0; border-bottom: 0;" scope="col">Datum</th>
+                <th style="color: #e8e8e8;;background-color: #898989; border-top:0; border-bottom: 0;" scope="col">Uhrzeit</th>
+                <th style="color: #e8e8e8;;background-color: #898989; border-top:0; border-bottom: 0;" scope="col">Heim</th>
+                <th style="color: #e8e8e8;;background-color: #898989; border-top:0; border-bottom: 0;" scope="col"></th>
+                <th style="color: #e8e8e8;;background-color: #898989; border-top:0; border-bottom: 0;" scope="col">Gast</th>
+                <?php if($this->permission->createAllowed()): ?>
+                <th style="color: #e8e8e8;;background-color: #898989; border-top:0; border-bottom: 0;" scope="col"></th>
+                <?php endif;?>
+            </tr>
+        </thead>
+        <?php foreach($this->dates as $v1): ?>
+        <tr>
+            <td style="text-align:left; padding-left: 5px;">
+                <?php echo($v1['startDate']);?>
+            </td>
+            <td><?php echo($v1['startTime']);?> Uhr</td>
+            <td><?php echo($v1['desc1']);?></td>
+            <td style="text-align:center; padding-left: 5px;">-</td>
+            <td><?php echo($v1['desc2']);?></td>
+            <?php if($this->permission->createAllowed()): ?>
+            <td style="width: 100px; border-top:0; border-bottom: 0;">
+                <input type="hidden" id="title_<?php echo($v1['id']);?>" value="<?php echo($v1['startDate'] . '; ' . $v1['startTime'] . ' Uhr ' . $v1['desc1'] . ' - ' . $v1['desc2']);?>" />
+                <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    data-toggle="modal"
+                    data-target="#acceptDialogModalCenter"
+                    data-item-id="<?php echo($v1['id']);?>"
+                >
+                    löschen
+                </button>
+            </td>
+            <?php endif; ?>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php endif;
