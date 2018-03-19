@@ -26,6 +26,7 @@ use SFW2\Routing\Resolver\Exception as ResolverException;
 use SFW2\Routing\Result\Content;
 
 use SFW2\Core\Config;
+use SFW2\Core\Session;
 use SFW2\Core\SFW2Exception;
 
 use Throwable;
@@ -37,13 +38,30 @@ class ResponseHandler {
      */
     protected $config;
 
-    public function __construct(Config $config) {
+    /**
+     * @var \SFW2\Core\Session
+     */
+    protected $session;
+
+    public function __construct(Config $config, Session $session) {
         $this->config = $config;
+        $this->session = $session;
     }
 
     public function getContent(Request $request, Resolver $resolver) : Result {
         try {
-            return $resolver->getResult($request);
+            $tmp = $resolver->getResult($request);
+            if($request->getRequestType() != Request::REQUEST_TYPE_HTML) {
+                return $tmp;
+            }
+            $current = $this->session->getGlobalEntry('current_path');
+            $path = $request->getPath();
+            if($current === $path) {
+                return $tmp;
+            }
+            $this->session->setGlobalEntry('previous_path', $current);
+            $this->session->setGlobalEntry('current_path', $path);
+            return $tmp;
         } catch(ResolverException $exception) {
             switch($exception->getCode()) {
                 case ResolverException::PAGE_NOT_FOUND:
