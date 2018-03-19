@@ -19,32 +19,25 @@
  *
  */
 ?>
-<div class="py-md-4 mx-auto" style="width: 35rem;">
 
-  <?php /*
-<div class="px-md-5">
-   *     <h1>Anmelden</h1>
-
-    <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
-        <div style="padding-bottom: 1rem;">
-            Hallo <strong>Stefan</strong><?php #echo($this->firstname); ?>,<br />
-            Du wurdest erfolgreich angemeldet. Zum Abmelden klicke bitte oben rechts auf "<strong>abmelden</strong>".
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-success btn-sm" id="btnLogin">
-                    okay
-                </button>
+<div class="modal fade" id="loginDialogModalCenter" tabindex="-1" role="dialog" aria-labelledby="acceptDialogModalCenter" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " style="max-width: 560px;" role="document">
+        <div class="modal-content" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+            <h3 style="margin-bottom: 1.5rem;">Anmelden</h3>
+            <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
+                <div style="padding-bottom: 1rem;">
+                    Hallo <strong>Stefan</strong><?php #echo($this->firstname); ?>,<br />
+                    Du wurdest erfolgreich angemeldet. Zum Abmelden klicke bitte oben rechts auf "<strong>abmelden</strong>".
+                </div>
+            </div>
+            <div class="modal-footer" style="border: 0; margin-top: 12px;">
+                <button type="button" class="btn btn-success btn-sm submit-form">okay</button>
             </div>
         </div>
     </div>
-
-*/?>
-    <?php if($this->showError): ?>
-    <div class="alert alert-danger" role="alert">
-        <strong>Achtung: </strong> Die Anmeldung schlug fehl! Bitte prüfe Deine Zugangsdaten.
-    </div>
-    <?php elseif($this->isAllreadyLoggedIn): ?>
+</div>
+<div class="py-md-4 mx-auto" style="width: 35rem; padding-top: 3.5rem !important;">
+    <?php if($this->isAllreadyLoggedIn): ?>
     <div class="alert alert-warning" role="alert">
         <strong>Hinweis: </strong> Du bist bereits als <strong><?php echo($this->firstname); ?></strong>
         angemeldet. Wenn Du Dich abmelden möchtest klicke bitte oben rechts auf <strong>abmelden</strong>.
@@ -56,6 +49,7 @@
             <label for="usr" class="col-sm-4 col-form-label">Benutzername</label>
             <div class="col-sm-7">
                 <input
+                    id="usr"
                     class="form-control form-control-sm"
                     type="text"
                     name="usr"
@@ -69,6 +63,7 @@
             <label for="pwd" class="col-sm-4 col-form-label">Passwort</label>
             <div class="col-sm-7">
                 <input
+                    id="pwd"
                     class="form-control form-control-sm"
                     type="password"
                     name="pwd"
@@ -76,13 +71,16 @@
                     maxlength="30"
                     value=""
                 />
+                <div class="hide invalid-feedback">
+                    Die Anmeldung schlug fehl!
+                </div>
             </div>
         </div>
         <div class="modal-footer" style="border: 0; margin-top: 12px;">
-            <button type="button" class="btn btn-success btn-sm submit-form">
+            <button id="btnLogin" type="button" class="btn btn-success btn-sm submit-form">
                 okay
             </button>
-            <button type="reset" class="btn btn-danger btn-sm">
+            <button id="btnCancel" type="button" class="btn btn-danger btn-sm">
                 abbrechen
             </button>
         </div>
@@ -95,3 +93,124 @@
         <?php endif; ?>
     </div>
 </div>
+<script>
+    $("#usr").focus();
+    $('#pwd').keyup(function(e) {
+        if(e.keyCode === 13) {
+            $('#btnLogin').trigger('click');
+        }
+    });
+
+    $('#btnLogin').click(doLogin);
+    $('#btnCancel').click(function() {
+        var url = window.location.href.split('?');
+        if(url.length != 1){
+            window.location.href = url[0];
+            return true;
+        }
+        window.location.reload();
+    });
+
+    function doLogin() {
+        $('#btnLogin').prop('disabled', true);
+        $('#btnCancel').prop('disabled', true);
+
+        $.post('?do=authenticate', {usr: 'blab', pwd: 'bamm'}, success, "json");
+    }
+
+    function success(data, textStatus) {
+        console.log(data);
+        console.log(textStatus);
+    }
+
+
+
+
+
+(function(window, document, $, undefined) {
+
+    function loginReady(data) {
+        $('#ajaxloader').hide();
+
+        var msg;
+        if(data.error === undefined || data.error) {
+            msg =
+                '<strong>Achtung!</strong>' +
+                '<p>' +
+                'Die Anmeldung schlug fehl! Bitte prüfe Deine Zugangsdaten.' +
+                '</p>';
+            sfw_dialogbox.showOKDialogBox('Login', msg, function() {});
+            $('#btnLogin').removeAttr('disabled');
+            $('#btnCancel').removeAttr('disabled');
+            $('#token').val(data.token);
+            return;
+        }
+        msg =
+            'Hallo ' + data.firstname + ',' +
+            '<p>' +
+            'Du wurdest erfolgreich angemeldet. ' +
+            'Zum Abmelden klicke bitte oben rechts auf ' +
+            '<strong>Logout</strong>.' +
+            '</p>';
+        sfw_dialogbox.showOKDialogBox('Login', msg, function() {
+            var url = window.location.href.split('?');
+            if(url.length == 1) {
+                window.location.reload();
+            } else {
+                window.location.href = url[0];
+            }
+        });
+        return;
+    }
+
+    function doLogoff() {
+        var msg =
+            'Du wurdest erfolgreich abgemeldet.' +
+            'Um Dich erneut anzumelden klicke bitte oben ' +
+            'rechts auf <strong>Login</strong>.';
+
+        $.get(
+            '/',
+            {auth : 'logoff'},
+            function() {
+                sfw_dialogbox.showOKDialogBox(
+                    'Logout',
+                    msg,
+                    function() {
+                        window.location.reload();
+                    }
+                );
+                return;
+            }
+        );
+    }
+
+    window.sfw_login = {
+        isLoggedIn: function() {
+            var msg =
+                'Du wurdest nach längerer Inaktivität automatich abgemeldet.' +
+                'Um Dich erneut anzumelden klicke bitte oben rechts auf ' +
+                '<strong>Login</strong>.';
+
+            $.getJSON(
+                '/',
+                {auth : 'check'},
+                function(data){
+                    if(data.islin) {
+                        return;
+                    }
+                    window.sfw_dialogbox.showOKDialogBox(
+                        'Automatisch abgemeldet',
+                        msg,
+                        function() {
+                            window.location.reload();
+                        }
+                    );
+                }
+            );
+        }
+    };
+})(window, document, jQuery);
+
+</script>
+
