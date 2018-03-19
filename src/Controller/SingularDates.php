@@ -29,6 +29,9 @@ use SFW2\Routing\Controller\Helper\RemoveExhaustedDatesTrait;
 use SFW2\Core\Database;
 use SFW2\Core\Config;
 
+use DateTime;
+use DateTimeZone;
+
 class SingularDates extends Controller {
 
     use RemoveExhaustedDatesTrait;
@@ -75,10 +78,19 @@ class SingularDates extends Controller {
         $changeable = false;
         $rv = array();
         foreach($rs as $row) {
+            $sd = strftime(
+                '%a., %d. %B %G',
+                (new DateTime($row['StartDate'], new DateTimeZone('Europe/Berlin')))->getTimestamp()
+            );
+            $ed = strftime(
+                '%a., %d. %B %G',
+                (new DateTime($row['EndDate'], new DateTimeZone('Europe/Berlin')))->getTimestamp()
+            );
+
             $date = array();
             $date['id'        ] = $row['Id'];
-            $date['startDate' ] = new \SFW\View\Helper\Date($row['StartDate']);
-            $date['endDate'   ] = new \SFW\View\Helper\Date($row['EndDate'  ]);
+            $date['startDate' ] = $sd;#new \SFW\View\Helper\Date($row['StartDate']);
+            $date['endDate'   ] = $ed;#new \SFW\View\Helper\Date($row['EndDate'  ]);
             $date['startTime' ] = mb_substr($row['StartTime'], 0, -3);
             $date['endTime'   ] = mb_substr($row['EndTime'  ], 0, -3);
             $date['desc'      ] = $row['Description'];

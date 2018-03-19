@@ -29,6 +29,9 @@ use SFW2\Routing\Controller\Helper\RemoveExhaustedDatesTrait;
 use SFW2\Core\Database;
 use SFW2\Core\Config;
 
+use DateTime;
+use DateTimeZone;
+
 class PeriodicalDates extends Controller {
 
     use RemoveExhaustedDatesTrait;
@@ -73,8 +76,13 @@ class PeriodicalDates extends Controller {
         if(isset($rs[0]['Day'])) {
             $ld = $rs[0]['Day'];
         }
+
         $rv = array();
         foreach($rs as $row) {
+            $cd = strftime(
+                '%a.',
+                (new DateTime("Sunday +{$row['Day']} days", new DateTimeZone('Europe/Berlin')))->getTimestamp()
+            );
             if($ld != $row['Day']) {
                 $ld = $row['Day'];
                 $date = array();
@@ -86,7 +94,7 @@ class PeriodicalDates extends Controller {
 
             $date = array();
             $date['id'  ] = $row['Id'];
-            #$date['day' ] = $this->locale->getWeekdayName($row['Day'], true) . '.';
+            $date['day' ] = $cd; #$this->locale->getWeekdayName($row['Day'], true) . '.';
             $date['from'] = mb_substr($row['StartTime'], 0, -3);
             $date['till'] = mb_substr($row['EndTime'], 0, -3);
             $date['desc'] = $row['Description'];

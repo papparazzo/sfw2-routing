@@ -46,16 +46,22 @@ class LoginController extends Controller {
     }
 
     public function index($all = false) {
-        return $this->showLoginScreen();
+        $content = new Content('content/login/login');
+        $content->assign('loginResetPath', $this->loginResetPath);
+        $content->assign('isAllreadyLoggedIn', $this->user->isAuthenticated());
+        $content->assign('firstname', $this->user->getFirstName());
+        return $content;
     }
 
     public function authenticate() {
-        return $this->showLoginScreen(true);
+        $content = new Content();
+        $content->assign('error', false);
+        $content->assign('user', 'Stefan');
+        return $content;
 
-        $content = new Content('plain');
-        $content->assign('title', 'Hallo');
-        $content->assign('caption', 'Hallo Caption');
-        $content->assign('description', 'Hallo Des');
+
+
+
 
 /**
  *         $rv = array("error" => true);
@@ -78,14 +84,7 @@ class LoginController extends Controller {
         return $content;
     }
 
-    protected function showLoginScreen($showError = false) {
-        $content = new Content('content/login/login');
-        $content->assign('loginResetPath', $this->loginResetPath);
-        $content->assign('showError', $showError);
-        $content->assign('isAllreadyLoggedIn', $this->user->isAuthenticated());
-        $content->assign('firstname', $this->user->getFirstName());
-        $content->assign('title', 'Hallo');
-        return $content;
+    protected function showLoginScreen() {
     }
 
 /*
