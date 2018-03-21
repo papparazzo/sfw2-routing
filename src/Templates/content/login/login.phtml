@@ -21,17 +21,17 @@
 ?>
 
 <div class="modal fade" id="loginDialogModalCenter" tabindex="-1" role="dialog" aria-labelledby="acceptDialogModalCenter" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered " style="max-width: 560px;" role="document">
-        <div class="modal-content" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
-            <h3 style="margin-bottom: 1.5rem;">Anmelden</h3>
-            <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
-                <div style="padding-bottom: 1rem;">
-                    Hallo <strong>Stefan</strong><?php #echo($this->firstname); ?>,<br />
-                    Du wurdest erfolgreich angemeldet. Zum Abmelden klicke bitte oben rechts auf "<strong>abmelden</strong>".
-                </div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Anmelden</h5>
             </div>
-            <div class="modal-footer" style="border: 0; margin-top: 12px;">
-                <button type="button" class="btn btn-success btn-sm submit-form">okay</button>
+            <div class="modal-body">
+                Hallo <strong id="firstName"></strong>,<br />
+                Du wurdest erfolgreich angemeldet. Zum Abmelden klicke bitte oben rechts auf "<strong>abmelden</strong>".
+            </div>
+            <div class="modal-footer" margin-top: 12px;">
+                <button id="btnLoginSuccess" type="button" class="btn btn-success btn-sm submit-form">okay</button>
             </div>
         </div>
     </div>
@@ -71,9 +71,7 @@
                     maxlength="30"
                     value=""
                 />
-                <div class="hide invalid-feedback">
-                    Die Anmeldung schlug fehl!
-                </div>
+                <div class="invalid-feedback">Die Anmeldung schlug fehl!</div>
             </div>
         </div>
         <div class="modal-footer" style="border: 0; margin-top: 12px;">
@@ -93,97 +91,63 @@
         <?php endif; ?>
     </div>
 </div>
+<input type="hidden" id="lastPage" value="<?php echo($this->lastPage); ?>" />
 <script>
     $("#usr").focus();
+    $('#usr').keyup(function(e) {
+        $('#usr').removeClass('is-invalid');
+    });
+
     $('#pwd').keyup(function(e) {
+        $('#pwd').removeClass('is-invalid');
         if(e.keyCode === 13) {
             $('#btnLogin').trigger('click');
         }
     });
 
     $('#btnLogin').click(doLogin);
-    $('#btnCancel').click(function() {
-        var url = window.location.href.split('?');
-        if(url.length != 1){
-            window.location.href = url[0];
-            return true;
-        }
-        window.location.reload();
-    });
+    $('#btnCancel').click(returnToOrigin);
 
     function doLogin() {
         $('#btnLogin').prop('disabled', true);
         $('#btnCancel').prop('disabled', true);
 
-        $.post('?do=authenticate', {usr: 'blab', pwd: 'bamm'}, success, "json");
+        $.post(
+            '?do=authenticate',
+            {
+                usr: $('#usr').val(),
+                pwd: $('#pwd').val(),
+                xssToken: $('#xssToken').val()
+            },
+            success,
+            "json"
+        );
     }
 
     function success(data, textStatus) {
         console.log(data);
-        console.log(textStatus);
-    }
-
-
-
-
-
-(function(window, document, $, undefined) {
-
-    function loginReady(data) {
-        $('#ajaxloader').hide();
-
-        var msg;
-        if(data.error === undefined || data.error) {
-            msg =
-                '<strong>Achtung!</strong>' +
-                '<p>' +
-                'Die Anmeldung schlug fehl! Bitte prüfe Deine Zugangsdaten.' +
-                '</p>';
-            sfw_dialogbox.showOKDialogBox('Login', msg, function() {});
-            $('#btnLogin').removeAttr('disabled');
-            $('#btnCancel').removeAttr('disabled');
-            $('#token').val(data.token);
+        if(data.data.error) {
+            $('#btnLogin').prop('disabled', false);
+            $('#btnCancel').prop('disabled', false);
+            $('#usr').addClass('is-invalid');
+            $('#pwd').addClass('is-invalid');
             return;
         }
-        msg =
-            'Hallo ' + data.firstname + ',' +
-            '<p>' +
-            'Du wurdest erfolgreich angemeldet. ' +
-            'Zum Abmelden klicke bitte oben rechts auf ' +
-            '<strong>Logout</strong>.' +
-            '</p>';
-        sfw_dialogbox.showOKDialogBox('Login', msg, function() {
-            var url = window.location.href.split('?');
-            if(url.length == 1) {
-                window.location.reload();
-            } else {
-                window.location.href = url[0];
-            }
-        });
-        return;
+
+        $('#firstName').html(data.data.user);
+        $('#loginDialogModalCenter').modal({show: true})
+        $('#btnLoginSuccess').click(returnToOrigin);
     }
 
-    function doLogoff() {
-        var msg =
-            'Du wurdest erfolgreich abgemeldet.' +
-            'Um Dich erneut anzumelden klicke bitte oben ' +
-            'rechts auf <strong>Login</strong>.';
-
-        $.get(
-            '/',
-            {auth : 'logoff'},
-            function() {
-                sfw_dialogbox.showOKDialogBox(
-                    'Logout',
-                    msg,
-                    function() {
-                        window.location.reload();
-                    }
-                );
-                return;
-            }
-        );
+    function returnToOrigin() {
+        let url = $('#lastPage').val().split('?');
+        window.location.href = url[0];
     }
+
+
+/*
+
+(function(window, document, $, undefined) {
 
     window.sfw_login = {
         isLoggedIn: function() {
@@ -211,6 +175,6 @@
         }
     };
 })(window, document, jQuery);
-
+*/
 </script>
 

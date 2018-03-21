@@ -26,19 +26,26 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Path;
 use SFW2\Routing\User;
+use SFW2\Core\Session;
 
 class LoginController extends Controller {
 
     /**
-     * @var User
+     * @var \SFW2\Routing\User
      */
     protected $user;
 
+    /**
+     * @var \SFW2\Core\Session
+     */
+    protected $session;
+
     protected $loginResetPath = '';
 
-    public function __construct(int $pathId, User $user, Path $path, $loginResetPathId = null) {
+    public function __construct(int $pathId, User $user, Path $path, Session $session, $loginResetPathId = null) {
         parent::__construct($pathId);
         $this->user = $user;
+        $this->session = $session;
 
         if($loginResetPathId != null) {
             $this->loginResetPath = $path->getPath($loginResetPathId);
@@ -50,14 +57,23 @@ class LoginController extends Controller {
         $content->assign('loginResetPath', $this->loginResetPath);
         $content->assign('isAllreadyLoggedIn', $this->user->isAuthenticated());
         $content->assign('firstname', $this->user->getFirstName());
+        $content->assign('lastPage', (string)$this->session->getGlobalEntry('current_path'));
         return $content;
     }
 
     public function authenticate() {
         $content = new Content();
         $content->assign('error', false);
-        $content->assign('user', 'Stefan');
+        $content->assign('user', 'otto' .$this->user->getFirstName());
+        $content->assign('alles', print_r($_POST, true));
         return $content;
+    }
+
+    public function logoff() {
+        $content = new Content('content/login/logoff');
+        $content->assign('lastPage', (string)$this->session->getGlobalEntry('current_path'));
+        return $content;
+    }
 
 
 
@@ -81,18 +97,8 @@ class LoginController extends Controller {
 
  *
  */
-        return $content;
-    }
 
-    protected function showLoginScreen() {
-    }
 
-/*
-    public function logoff() {
-        $this->config->user->reset();
-        return array("error" => false);
-    }
-  */
 
 
 
