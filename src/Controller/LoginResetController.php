@@ -26,6 +26,7 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Core\Database;
 use SFW2\Core\Helper;
+use SFW2\Core\Session;
 
 class LoginResetController extends Controller {
 
@@ -41,14 +42,60 @@ class LoginResetController extends Controller {
      */
     protected $database;
 
-    public function __construct(int $pathId, Database $database) {
+    /**
+     * @var \SFW2\Core\Session
+     */
+    protected $session;
+
+    public function __construct(int $pathId, Database $database, Session $session) {
         parent::__construct($pathId);
         $this->database = $database;
+        $this->session = $session;
     }
 
     public function index($all = false) {
-        return $this->showResetScreen(self::STATE_START);
+        $content = new Content('content/loginreset/loginreset');
+        $content->assign('expire', $this->getExpireDate(self::EXPIRE_DATE_OFFSET));
+        $content->assign('lastPage', (string)$this->session->getGlobalEntry('current_path'));
+
+
+
+        $content->assign('name', 'Hans');
+        $content->assign('expire', '3 Wochen');
+
+
+        return $content;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $content = new Content('content/login/login');
+        $content->assign('loginResetPath', $this->loginResetPath);
+        $content->assign('isAllreadyLoggedIn', $this->user->isAuthenticated());
+        $content->assign('firstname', $this->user->getFirstName());
+
+        return $content;
     }
+
+
+
+
+
+
+
+
+
 
     public function reset() {
         $tmp = [];
@@ -74,16 +121,6 @@ class LoginResetController extends Controller {
     }
 
     protected function showResetScreen($state, $showError = false) {
-        $content = new Content('content/login/loginreset');
-        $content->assign('state', $state);
-        $content->assign('expire', $this->getExpireDate(self::EXPIRE_DATE_OFFSET));
-        $content->assign('showError', $showError);
-
-        $content->assign('name', 'Hans');
-        $content->assign('expire', '3 Wochen');
-        $content->assign('title', 'Hallo');
-        $content->assign('description', 'Hallo Des');
-        return $content;
     }
 
     public function confirm() {
