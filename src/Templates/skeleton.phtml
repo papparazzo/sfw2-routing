@@ -30,7 +30,7 @@
     </head>
     <body>
         <?php echo($this->content); ?>
-        <input type="hidden" name="xss_token" value="<?php echo($this->xssToken);?>" />
+        <input type="hidden" id="xssToken" value="<?php echo($this->xssToken);?>" />
         <?php foreach($this->jsFiles ?? [] as $file): ?>
         <script type="text/javascript" src="<?php echo($file); ?>"></script>
         <?php endforeach; ?>

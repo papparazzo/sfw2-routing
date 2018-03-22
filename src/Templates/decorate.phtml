@@ -37,51 +37,6 @@ window.cookieconsent.initialise({
     }
 </style>
 
-<div class="modal fade" id="loginDialogModalCenter" tabindex="-1" role="dialog" aria-labelledby="acceptDialogModalCenter" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered " style="max-width: 560px;" role="document">
-        <div class="modal-content" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
-            <h3 style="margin-bottom: 1.5rem;">Melde dich in deinem Konto an...</h3>
-            <div class="row">
-                <label for="usr" class="col-sm-4 col-form-label">Benutzername</label>
-                <div class="col-sm-7">
-                    <input
-                        class="form-control form-control-sm"
-                        type="text"
-                        name="usr"
-                        size="30"
-                        maxlength="30"
-                        value=""
-                    />
-                </div>
-            </div>
-            <div class="row">
-                <label for="pwd" class="col-sm-4 col-form-label">Passwort</label>
-                <div class="col-sm-7">
-                    <input
-                        class="form-control form-control-sm"
-                        type="password"
-                        name="pwd"
-                        size="30"
-                        maxlength="30"
-                        value=""
-                    />
-                </div>
-            </div>
-            <div class="modal-footer" style="border: 0; margin-top: 12px;">
-                <button type="button" class="btn btn-success btn-sm submit-form">okay</button>
-                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">abbrechen</button>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-7">
-                    <a class="loginLnk" href="/">Passwort vergessen?</a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="acceptDialogModalCenter" tabindex="-1" role="dialog" aria-labelledby="acceptDialogModalCenter" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -106,9 +61,9 @@ window.cookieconsent.initialise({
         <div class="container-fluid" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
             <div class="login">
                 <?php if($this->authenticated): ?>
-                <a href="#">abmelden</a>
+                <a href="/login?do=logOff">abmelden</a>
                 <?php else: ?>
-                <a href="#">Login</a>
+                <a href="/login">Login</a>
                 <?php endif; ?>
             </div>
             <nav class="navbar navbar-expand bg-light">
@@ -180,7 +135,6 @@ window.cookieconsent.initialise({
                 </div>
                 <?php //*/ ?>
                 <?php echo($this->content); ?>
-                <input type="hidden" name="xsrftoken" value="" />
             </main>
             <div class="col-12 col-md-3 col-xl-2 pl-md-4 py-md-4" style="/*background-color: #f8f9fa;*/">
 <?php /*
