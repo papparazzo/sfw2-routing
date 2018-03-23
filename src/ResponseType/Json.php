@@ -23,13 +23,29 @@
 namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
+use SFW2\Routing\Result;
+use SFW2\Routing\Permission\PagePermission;
+
+use SFW2\Core\Session;
+use SFW2\Core\Config;
 
 class Json extends ResponseType {
 
+    /**
+     * @var Session
+     */
+    protected $session;
+
+    public function __construct(Result $result, PagePermission $pagePermission, Config $config, Session $session) {
+       parent::__construct($result, $pagePermission, $config);
+       $this->session = $session;
+    }
+
     public function dispatch() {
         $data = [
-            'jsFiles' => $this->result->getJSFiles($this->config->getVal('path', 'jsPath')),
-            'cssFiles' => $this->result->getCSSFiles($this->config->getVal('path', 'cssPath')),
+            'js' => $this->result->getJSFiles($this->config->getVal('path', 'jsPath')),
+            'css' => $this->result->getCSSFiles($this->config->getVal('path', 'cssPath')),
+            'xss' => $this->session->generateToken(),
             'data' => $this->result->getData()
         ];
 

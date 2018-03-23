@@ -25,6 +25,7 @@ namespace SFW2\Routing;
 use SFW2\Routing\Result\File;
 use SFW2\Routing\Result\Redirect;
 use SFW2\Core\Config;
+use SFW2\Core\Session;
 use SFW2\Routing\Menu;
 
 use Dice\Dice;
@@ -54,7 +55,8 @@ class Dispatcher {
                 $response = new ResponseType\Json(
                     $result,
                     $dice->create(Permission::class)->getPagePermission($pathId),
-                    $dice->create(Config::class)
+                    $dice->create(Config::class),
+                    $dice->create(Session::class)
                 );
                 break;
 
@@ -71,7 +73,8 @@ class Dispatcher {
                     $result,
                     $dice->create(Permission::class)->getPagePermission($pathId),
                     $dice->create(Config::class),
-                    $dice->create(Menu::class)
+                    $dice->create(Menu::class),
+                    $dice->create(Session::class)
                 );
                 break;
         }
