@@ -70,7 +70,7 @@ class Path {
 
     public function getPathId(string $path) : int {
         if(!$this->isValidPath($path)) {
-            throw new PathException('pathId for path <' . $path . '> does not exists');
+            return -1;
         }
         return $this->pathMap[$path];
     }
