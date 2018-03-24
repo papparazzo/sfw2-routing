@@ -24,9 +24,12 @@ namespace SFW2\Routing\ResponseType;
 
 use SFW2\Routing\ResponseType;
 use SFW2\Routing\Result;
-use SFW2\Core\View;
 use SFW2\Routing\Menu;
+use SFW2\Routing\User;
 use SFW2\Routing\Permission\PagePermission;
+
+use SFW2\Core\Session;
+use SFW2\Core\View;
 use SFW2\Core\Config;
 
 class Html extends ResponseType {
@@ -40,9 +43,15 @@ class Html extends ResponseType {
      */
     protected $menu;
 
-    public function __construct(Result $result, PagePermission $pagePermission, Config $config, Menu $menu) {
+    /**
+     * @var Session
+     */
+    protected $session;
+
+    public function __construct(Result $result, PagePermission $pagePermission, Config $config, Menu $menu, Session $session) {
        parent::__construct($result, $pagePermission, $config);
        $this->menu = $menu;
+       $this->session = $session;
     }
 
     public function dispatch() {
@@ -61,6 +70,8 @@ class Html extends ResponseType {
         $view->append('jsFileStartUp', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js');
         $view->append('jsFileStartUp', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js');
 
+        $view->assign('xssToken', $this->session->generateToken());
+
         $view->appendArray(
             'jsFiles', array_merge([
                 '/' . $this->config->getVal('path', 'jsPath') . 'helper.js',
@@ -68,7 +79,6 @@ class Html extends ResponseType {
             ], $this->result->getJSFiles($this->config->getVal('path', 'jsPath')))
         );
 
-        #$view->assign('authenticated', $this->container['authenticated']);
         $this->result->assign('permission', $this->pagePermission);
 
         $title =
@@ -87,26 +97,7 @@ class Html extends ResponseType {
         $view0->assign('content', $view->getContent());
         $view0->assign('mainMenu', $this->menu->getMainMenu());
         $view0->assign('sideMenu', $this->menu->getSideMenu());
+        $view0->assign('authenticated', $this->session->getGlobalEntry(User::class)->isAuthenticated());
         return $view0->getContent();
     }
-
-    public function setHeader($header) {
-        /*
-        switch($headerType) {
-            case self::HTTP_STATUS_INTERNAL_SERVER_ERROR:
-                header("HTTP/1.0 500 Internal Server Error");
-                break;
-
-            case self::HTTP_STATUS_FORBIDDEN:
-                header("HTTP/1.0 403 Forbidden");
-                break;
-
-            case self::HTTP_STATUS_NOT_FOUND:
-                header("HTTP/1.0 404 Not Found");
-                break;
-        }
-         *
-         */
-    }
-
 }
