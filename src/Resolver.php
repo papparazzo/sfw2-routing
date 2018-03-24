@@ -97,7 +97,7 @@ class Resolver {
                 ResolverException::PAGE_NOT_FOUND,
                 $ex
             );
-        } catch(ReflectionException $ex) { // Use chained Exception as of 7.1
+        } catch(ReflectionException $ex) { // TODO: Use chained Exception as of 7.1
             throw new ResolverException(
                 $ex->getMessage(),
                 ResolverException::PAGE_NOT_FOUND,
