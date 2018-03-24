@@ -54,7 +54,7 @@ class ResponseHandler {
             if($request->getRequestType() != Request::REQUEST_TYPE_HTML) {
                 return $tmp;
             }
-            $current = $this->session->getGlobalEntry('current_path');
+            $current = $this->session->getGlobalEntry('current_path', '');
             $path = $request->getPath();
             if($current === $path) {
                 return $tmp;
@@ -145,6 +145,7 @@ class ResponseHandler {
     }
 
     public function getError(SFW2Exception $exception) {
+        header("HTTP/1.0 500 Internal Server Error");
         $title = 'Achtung!';
         $caption = 'Schwerwiegender Fehler aufgetreten!';
         $description =
@@ -164,7 +165,7 @@ class ResponseHandler {
     }
 
     protected function handle($title, $caption, $description, $debugData = null) : Result {
-        $result = new Content('plain');
+        $result = new Content('plain', true);
         $result->assignArray([
             'title'       => $title,
             'caption'     => $caption,
