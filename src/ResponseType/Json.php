@@ -46,6 +46,7 @@ class Json extends ResponseType {
             'js' => $this->result->getJSFiles($this->config->getVal('path', 'jsPath')),
             'css' => $this->result->getCSSFiles($this->config->getVal('path', 'cssPath')),
             'xss' => $this->session->generateToken(),
+            'error' => $this->result->getError(),
             'data' => $this->result->getData()
         ];
 

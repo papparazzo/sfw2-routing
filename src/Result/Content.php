@@ -32,8 +32,11 @@ class Content extends Result {
     protected $cssFiles = [];
     protected $vars     = [];
 
-    public function __construct($templateFile = null) {
+    protected $error   = false;
+
+    public function __construct($templateFile = null, $hasErrors = false) {
         $this->templateFile = $templateFile;
+        $this->error = $hasErrors;
     }
 
     public function appendJSFile($file) {
@@ -89,6 +92,14 @@ class Content extends Result {
 
     public function getTemplateFile() {
         return $this->templateFile;
+    }
+
+    public function setError(bool $error) {
+        $this->error = $error;
+    }
+
+    public function getError() {
+        return $this->error;
     }
 
     protected function appendPath(array &$items, string $path) {
