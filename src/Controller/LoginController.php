@@ -26,6 +26,7 @@ use SFW2\Routing\Controller;
 use SFW2\Routing\Result\Content;
 use SFW2\Routing\Path;
 use SFW2\Routing\User;
+
 use SFW2\Core\Session;
 
 class LoginController extends Controller {
@@ -42,9 +43,9 @@ class LoginController extends Controller {
 
     protected $loginResetPath = '';
 
-    public function __construct(int $pathId, User $user, Path $path, Session $session, $loginResetPathId = null) {
+    public function __construct(int $pathId, Path $path, Session $session, $loginResetPathId = null) {
         parent::__construct($pathId);
-        $this->user = $user;
+        $this->user = $session->getGlobalEntry(User::class);
         $this->session = $session;
 
         if($loginResetPathId != null) {
@@ -57,69 +58,36 @@ class LoginController extends Controller {
         $content->assign('loginResetPath', $this->loginResetPath);
         $content->assign('isAllreadyLoggedIn', $this->user->isAuthenticated());
         $content->assign('firstname', $this->user->getFirstName());
-        $content->assign('lastPage', (string)$this->session->getGlobalEntry('current_path'));
+        $content->assign('lastPage', $this->session->getGlobalEntry('current_path'), '');
         return $content;
     }
 
     public function authenticate() {
-        $content = new Content();
-        $content->assign('error', false);
-        $content->assign('user', 'otto' .$this->user->getFirstName());
-        $content->assign('alles', print_r($_POST, true));
+        $error = false;
+        if(!$this->user->authenticateUser(
+            filter_input(INPUT_POST, 'usr'),
+            filter_input(INPUT_POST, 'pwd')
+        )) {
+            $error = true;
+        }
+
+        if(!$this->session->compareToken(filter_input(INPUT_POST, 'xss'))) {
+            $error = true;
+        }
+
+        $this->session->setGlobalEntry(User::class, $this->user);
+        $this->session->regenerateSession();
+
+        $content = new Content(null, $error);
+        $content->assign('user', $this->user->getFirstName());
         return $content;
     }
 
     public function logoff() {
+        $this->user->reset();
+        $this->session->setGlobalEntry(User::class, $this->user);
         $content = new Content('content/login/logoff');
-        $content->assign('lastPage', (string)$this->session->getGlobalEntry('current_path'));
+        $content->assign('lastPage', $this->session->getGlobalEntry('current_path'), '');
         return $content;
     }
-
-
-
-
-
-/**
- *         $rv = array("error" => true);
-        $usr = $this->config->dto->getSimpleText('usr');
-        $pwd = $this->config->dto->getHash('pwd');
-
-        $user = new \SFW\User($this->config->database, $this->config->session);
-        if(!$user->authenticateUser($usr, $pwd)){
-            return $rv;
-        }
-        $this->config->session->regenerateSession();
-        $this->config->user = $user;
-        return array(
-            "error" => false,
-            "firstname" => $user->getFirstName()
-        );
-
- *
- */
-
-
-
-
-
-
-
-
-
-
-    public function gettoken() {
-        return array(
-            'error' => false,
-            'token' => $this->config->session->generateToken()
-        );
-    }
-
-    public function check() {
-        return array(
-            'error' => false,
-            'islin' => $this->config->user->isAuthenticated()
-        );
-    }
-
-
 }

@@ -42,7 +42,7 @@
         <strong>Hinweis: </strong> Du bist bereits als <strong><?php echo($this->firstname); ?></strong>
         angemeldet. Wenn Du Dich abmelden möchtest klicke bitte oben rechts auf <strong>abmelden</strong>.
     </div>
-    <?php endif; ?>
+    <?php else:?>
     <div class="card card-block" style="padding: .75rem 1.25rem; border: .0625rem solid #c6c8ca; background-color: #d6d8d9">
         <h3 style="margin-bottom: 1.5rem;">Melde dich in deinem Konto an...</h3>
         <div class="row">
@@ -90,6 +90,7 @@
         </div>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
 </div>
 <input type="hidden" id="lastPage" value="<?php echo($this->lastPage); ?>" />
 <script>
@@ -117,7 +118,7 @@
             {
                 usr: $('#usr').val(),
                 pwd: $('#pwd').val(),
-                xssToken: $('#xssToken').val()
+                xss: $('#xssToken').val()
             },
             success,
             "json"
@@ -125,8 +126,8 @@
     }
 
     function success(data, textStatus) {
-        console.log(data);
-        if(data.data.error) {
+        $('#xssToken').val(data.xss);
+        if(data.error) {
             $('#btnLogin').prop('disabled', false);
             $('#btnCancel').prop('disabled', false);
             $('#usr').addClass('is-invalid');
@@ -143,38 +144,5 @@
         let url = $('#lastPage').val().split('?');
         window.location.href = url[0];
     }
-
-
-/*
-
-(function(window, document, $, undefined) {
-
-    window.sfw_login = {
-        isLoggedIn: function() {
-            var msg =
-                'Du wurdest nach längerer Inaktivität automatich abgemeldet.' +
-                'Um Dich erneut anzumelden klicke bitte oben rechts auf ' +
-                '<strong>Login</strong>.';
-
-            $.getJSON(
-                '/',
-                {auth : 'check'},
-                function(data){
-                    if(data.islin) {
-                        return;
-                    }
-                    window.sfw_dialogbox.showOKDialogBox(
-                        'Automatisch abgemeldet',
-                        msg,
-                        function() {
-                            window.location.reload();
-                        }
-                    );
-                }
-            );
-        }
-    };
-})(window, document, jQuery);
-*/
 </script>
 
