@@ -61,11 +61,6 @@ class BlogController extends Controller {
     public function index($all = false) {
         $content = new Content('content/blog/blog');
         $content->appendJSFile('crud.js');
-        #$this->ctrl->addJSFile('ckeditor/ckeditor');
-        #$this->ctrl->addJSFile('slimbox2');
-        #$this->ctrl->addJSFile('jquery.comments');
-        #$this->ctrl->addCSSFile('slimbox2');
-        #$this->ctrl->addCSSFile('comments');
 
         $content->assign('divisions', $this->getDivisions());
         $content->assign('isAdmin', $this->user->isAdmin());
@@ -126,8 +121,10 @@ class BlogController extends Controller {
     }
 
     public function delete($all = false) {
-        #$entryId = $this->dto->getNumeric('id');
-        $entryId = -1;
+        $entryId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if($entryId === false) {
+            throw new ResolverException("invalid data given", ResolverException::INVALID_DATA_GIVEN);
+        }
         $stmt =
             "DELETE ".
             "FROM `sfw2_blog` " .
@@ -139,12 +136,10 @@ class BlogController extends Controller {
                 "AND `UserId` = '" .
                 $this->database->escape($this->user->getUserId()) . "'";
         }
-        if(!$this->database->delete($stmt, [$entryId, $this->pathId])) {
-            throw new ResolverException("no entry found", ResolverException::NO_PERMISSION);
-        }
-        $content = new Content('content/blog/blog');
-        $content->append('hallo', 'balli');
-        return $content;
+        #if(!$this->database->delete($stmt, [$entryId, $this->pathId])) {
+        #    throw new ResolverException("no entry found", ResolverException::NO_PERMISSION);
+        #}
+        return new Content();
     }
 
     public function create() {
@@ -167,8 +162,6 @@ class BlogController extends Controller {
                 $this->dto->getArrayValue('division', true, $this->sections)
             ]
         );
-
-        #$this->ctrl->updateModificationDate();
         return true;
     }
 }
