@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Bootstrap\Exception AS BootstrapException;
+use SFW2\Routing\User;
 
 use SFW2\Core\Database;
 use SFW2\Core\Session;
@@ -88,11 +89,12 @@ class Bootstrap {
         $this->loadConfig($configPath);
         $this->setUpEnvironment();
         $this->setUpContainer();
+        $this->setUpRuntime();
 
         $response = $this->container->create(ResponseHandler::class);
         $request = $this->container->create(Request::class);
 
-        if($this->isOffline()) {
+        if($this->isOffline($this->container->create(Session::class))) {
             $result = $response->getOffline();
         } else {
             $resolver = $this->container->create(Resolver::class);
@@ -174,12 +176,21 @@ class Bootstrap {
         ]);
     }
 
-    protected function isOffline() {
+    protected function setUpRuntime() {
+        $session = $this->container->create(Session::class);
+        $currentUser = $session->getGlobalEntry(User::class);
+        $this->container->addRules([
+            User::class => [
+                'shared' => true,
+                'constructParams' => [$currentUser]
+            ]
+        ]);
+    }
+
+    protected function isOffline(Session $session) {
         if(!$this->config->getVal('site', 'offline')) {
             return false;
         }
-
-        $session = $this->container->create(Session::class);
 
         if($session->isGlobalEntrySet('bypass')) {
             return false;

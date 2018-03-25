@@ -41,8 +41,36 @@ class User {
      */
     protected $database = null;
 
-    public function __construct(Database $database) {
+    public function __construct(Database $database, $userId = 0) {
         $this->database = $database;
+        $this->loadUserById($userId);
+    }
+
+    public function loadUserById($userId) {
+        if($userId == 0) {
+            $this->reset();
+            return true;
+        }
+
+        $stmt =
+            "SELECT `Id`, `FirstName`, `LastName`, `Email`, `Password`, `Admin` " .
+            "FROM `sfw2_user` " .
+            "WHERE `Id` = '%s' " .
+            "AND `Active` = '1'";
+
+        $rv = $this->database->select($stmt, [$userId]);
+
+        if(count($rv) != 1) {
+            return false;
+        }
+        $rv = $rv[0];
+        $this->firstName = $rv['FirstName'];
+        $this->lastName  = $rv['LastName'];
+        $this->mailAddr  = $rv['Email'];
+        $this->userid    = $rv['Id'];
+        $this->isAdmin   = $rv['Admin'] == '1' ? true : false;
+
+        return $this->authenticated = true;
     }
 
     public function authenticateUser($loginName, $pwd) {

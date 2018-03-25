@@ -43,9 +43,9 @@ class LoginController extends Controller {
 
     protected $loginResetPath = '';
 
-    public function __construct(int $pathId, Path $path, Session $session, $loginResetPathId = null) {
+    public function __construct(int $pathId, Path $path, User $user, Session $session, $loginResetPathId = null) {
         parent::__construct($pathId);
-        $this->user = $session->getGlobalEntry(User::class);
+        $this->user = $user;
         $this->session = $session;
 
         if($loginResetPathId != null) {
@@ -75,7 +75,7 @@ class LoginController extends Controller {
             $error = true;
         }
 
-        $this->session->setGlobalEntry(User::class, $this->user);
+        $this->session->setGlobalEntry(User::class, $this->user->getUserId());
         $this->session->regenerateSession();
 
         $content = new Content(null, $error);
@@ -85,7 +85,7 @@ class LoginController extends Controller {
 
     public function logoff() {
         $this->user->reset();
-        $this->session->setGlobalEntry(User::class, $this->user);
+        $this->session->setGlobalEntry(User::class, $this->user->getUserId());
         $content = new Content('content/login/logoff');
         $content->assign('lastPage', $this->session->getGlobalEntry('current_path'), '');
         return $content;

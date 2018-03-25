@@ -97,7 +97,7 @@ class Html extends ResponseType {
         $view0->assign('content', $view->getContent());
         $view0->assign('mainMenu', $this->menu->getMainMenu());
         $view0->assign('sideMenu', $this->menu->getSideMenu());
-        $view0->assign('authenticated', $this->session->getGlobalEntry(User::class)->isAuthenticated());
+        $view0->assign('authenticated', (bool)$this->session->getGlobalEntry(User::class));
         return $view0->getContent();
     }
 }
