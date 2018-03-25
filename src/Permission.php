@@ -53,6 +53,9 @@ class Permission {
     public function __construct(Database $database, User $user) {
         $this->user = $user;
         $this->database = $database;
+        if($this->user->isAdmin()) {
+            return;
+        }
         $this->loadRoles();
         $this->loadPermissions(0, $this->getInitPermission());
     }
