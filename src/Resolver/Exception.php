@@ -25,9 +25,10 @@ namespace SFW2\Routing\Resolver;
 use SFW2\Core\SFW2Exception;
 
 class Exception extends SFW2Exception {
-    const PAGE_NOT_FOUND = 1;
-    const UNKNOWN_ERROR  = 2;
-    const FILE_NOT_FOUND = 3;
-    const NO_DATA_FOUND  = 4;
-    const NO_PERMISSION  = 5;
+    const PAGE_NOT_FOUND     = 1;
+    const UNKNOWN_ERROR      = 2;
+    const FILE_NOT_FOUND     = 3;
+    const NO_DATA_FOUND      = 4;
+    const NO_PERMISSION      = 5;
+    const INVALID_DATA_GIVEN = 6;
 }

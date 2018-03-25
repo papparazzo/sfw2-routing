@@ -76,6 +76,9 @@ class ResponseHandler {
                 case ResolverException::NO_PERMISSION:
                     return $this->getNoPermission();
 
+                case ResolverException::INVALID_DATA_GIVEN:
+                    return $this->getInvalidDataGiven();
+                    
                 default:
                     return $this->getError($exception);
             }
@@ -141,6 +144,17 @@ class ResponseHandler {
             'Aufgrund von umfangreichen Wartungsarbeiten sind die ' .
             'Webseiten im Moment leider nicht zu erreichen. ' .
             'Bitte versuche es später noch einmal.';
+        return $this->handle($title, $caption, $description);
+    }
+
+    public function getInvalidDataGiven() {
+        header("HTTP/1.0 400 Bad Request");
+        $title = '400';
+        $caption = 'Ungültige Daten';
+        $description =
+            'Die Anfrage-Nachricht enthielt ungültige Daten. ' .
+            'Bitte prüfe die URL auf Fehler und ' .
+            'drücke dann den reload-Button in deinem Browser.';
         return $this->handle($title, $caption, $description);
     }
 
