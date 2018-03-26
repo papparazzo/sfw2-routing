@@ -50,6 +50,9 @@ class ResponseHandler {
 
     public function getContent(Request $request, Resolver $resolver) : Result {
         try {
+            if($request->hasPostParams() && !$this->session->compareToken(filter_input(INPUT_POST, 'xss'))) {
+                return $this->getInvalidDataGiven();
+            }
             $tmp = $resolver->getResult($request);
             if($request->getRequestType() != Request::REQUEST_TYPE_HTML) {
                 return $tmp;
@@ -78,7 +81,7 @@ class ResponseHandler {
 
                 case ResolverException::INVALID_DATA_GIVEN:
                     return $this->getInvalidDataGiven();
-                    
+
                 default:
                     return $this->getError($exception);
             }

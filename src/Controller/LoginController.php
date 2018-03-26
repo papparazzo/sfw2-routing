@@ -71,10 +71,6 @@ class LoginController extends Controller {
             $error = true;
         }
 
-        if(!$this->session->compareToken(filter_input(INPUT_POST, 'xss'))) {
-            $error = true;
-        }
-
         $this->session->setGlobalEntry(User::class, $this->user->getUserId());
         $this->session->regenerateSession();
 
