@@ -55,6 +55,14 @@ class Request {
         return $this->path;
     }
 
+    public function hasPostParams() : bool {
+        return (bool)count($this->post);
+    }
+
+    public function hasGetParams() : bool {
+        return (bool)count($this->get);
+    }
+
     public function getRequestType() {
         if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return self::REQUEST_TYPE_HTML;
