@@ -78,6 +78,125 @@ class GalleryController extends Controller {
         return $content;
     }
 
+    protected function getGallery($id, $page = 0) {
+        $stmt =
+            "SELECT `sfw_media`.`Name` AS `FileName`, " .
+            "`sfw_imagegalleries`.`Name`, `sfw_media`.`CreationDate`, " .
+            "`sfw_imagegalleries`.`Description`, `sfw_media`.`Token`, " .
+            "`sfw_media`.`Path`, `sfw_imagegalleries`.`PreviewImage`, " .
+            "`sfw_users`.`Email`,  " .
+            "CONCAT(`sfw_users`.`FirstName`, ' ', `sfw_users`.`LastName`) " .
+            "AS `Creator` " .
+            "FROM `sfw_imagegalleries` " .
+            "LEFT JOIN `sfw_media` " .
+            "ON `sfw_media`.`Id` = `sfw_imagegalleries`.`MediaId` " .
+            "LEFT JOIN `sfw_division` " .
+            "ON `sfw_division`.`DivisionId` = `sfw_media`.`DivisionId` " .
+            "LEFT JOIN `sfw_users` " .
+            "ON `sfw_users`.`Id` = `sfw_media`.`UserId` " .
+            "WHERE `sfw_imagegalleries`.`Id` = '%s' " .
+            "AND `sfw_division`.`Module` = '%s' ";
+
+        if(!$this->ctrl->isAdmin()) {
+            $stmt .= "AND `sfw_imagegalleries`.`Deleted` = '0'";
+        }
+
+        $rv = $this->database->selectRow($stmt, array($id, $this->category));
+
+        if(empty($rv)) {
+            throw new \SFW\Gallery\Exception(
+                'no gallery fetched!',
+                \SFW\Gallery\Exception::NO_GALLERY_FETCHED
+            );
+        }
+        if(!is_dir($rv['Path'] . '/thumb/')) {
+            throw new \SFW\Gallery\Exception(
+                'path <' . $rv['Path'] . '> is invalid',
+                \SFW\Gallery\Exception::INVALID_PATH
+            );
+        }
+
+        $dir = dir($rv['Path'] . '/thumb/');
+        $pics = array();
+
+        while(false !== ($entry = $dir->read())) {
+            if($entry == '.' || $entry == '..') {
+                continue;
+            }
+
+            $fi = pathinfo($rv['Path'] . '/thumb/' . $entry);
+
+            if(
+                strtolower($fi['extension']) != 'jpg' &&
+                strtolower($fi['extension']) != 'png'
+            ) {
+                continue;
+            }
+
+            $pic = array();
+            $pic['lnk'] = '/' . $rv['Path'] . '/high/' . $entry;
+            $pic['ttp'] = $entry;
+            $pic['src'] = '/' . $rv['Path'] . '/thumb/' . $entry;
+            $pic['pre'] = ($rv['PreviewImage'] == $entry);
+            $pics[] = $pic;
+        }
+
+        $dir->close();
+
+        rsort($pics);
+
+        $crDate = new \SFW\View\Helper\Date($rv['CreationDate'], new \SFW\Locale());
+        $view   = new \SFW\View();
+        $view->assign('name',              $rv['Name']);
+        $view->assign('filename',          $rv['FileName']);
+        $view->assign('page',              (int)$page);
+        $view->assign('description',       $rv['Description']);
+        $view->assign('creationDate',      $crDate);
+        $view->assign('pics',              $pics);
+        $view->assign('dllink',            '?getfile=' . $rv['Token']);
+        $view->assign('editable',          $this->ctrl->hasDeletePermission());
+        $view->assign('galId',             (int)$id);
+        $view->assign('maxFileUploads',    ini_get('max_file_uploads'));
+        $view->assign('mailaddr',          new \SFW\View\Helper\Obfuscator\EMail(
+            $rv['Email'],
+            $rv['Creator'],
+            'Galerie ' . $rv['Name'] . ' (' .
+            $crDate->getFormatedDate(true) . ')'
+        ));
+        $view->assign('image', '/public/content/users/' . \SFW\Helper::getImageFileName(
+ # FIXME: _No hardcoded path
+                    'public/content/users/',
+                    $row['FirstName'],
+                    $row['LastName']
+            ));
+        $view->assignTpl(
+            $this->conf->getTemplateFile('Gallery/Gallery')
+        );
+        return $view->getContent();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function create() {
         $tmp = [];
         $tmp['caption'] = $this->dto->getTitle('caption', true);
@@ -333,113 +452,6 @@ class GalleryController extends Controller {
 
 
 
-    protected function getGallery($id, $page = 0) {
-        $stmt =
-            "SELECT `sfw_media`.`Name` AS `FileName`, " .
-            "`sfw_imagegalleries`.`Name`, `sfw_media`.`CreationDate`, " .
-            "`sfw_imagegalleries`.`Description`, `sfw_media`.`Token`, " .
-            "`sfw_media`.`Path`, `sfw_imagegalleries`.`PreviewImage`, " .
-            "`sfw_users`.`Email`,  " .
-            "CONCAT(`sfw_users`.`FirstName`, ' ', `sfw_users`.`LastName`) " .
-            "AS `Creator` " .
-            "FROM `sfw_imagegalleries` " .
-            "LEFT JOIN `sfw_media` " .
-            "ON `sfw_media`.`Id` = `sfw_imagegalleries`.`MediaId` " .
-            "LEFT JOIN `sfw_division` " .
-            "ON `sfw_division`.`DivisionId` = `sfw_media`.`DivisionId` " .
-            "LEFT JOIN `sfw_users` " .
-            "ON `sfw_users`.`Id` = `sfw_media`.`UserId` " .
-            "WHERE `sfw_imagegalleries`.`Id` = '%s' " .
-            "AND `sfw_division`.`Module` = '%s' ";
-
-        if(!$this->ctrl->isAdmin()) {
-            $stmt .= "AND `sfw_imagegalleries`.`Deleted` = '0'";
-        }
-
-        $rv = $this->db->selectRow($stmt, array($id, $this->category));
-
-        if(empty($rv)) {
-            throw new \SFW\Gallery\Exception(
-                'no gallery fetched!',
-                \SFW\Gallery\Exception::NO_GALLERY_FETCHED
-            );
-        }
-        if(!is_dir($rv['Path'] . '/thumb/')) {
-            throw new \SFW\Gallery\Exception(
-                'path <' . $rv['Path'] . '> is invalid',
-                \SFW\Gallery\Exception::INVALID_PATH
-            );
-        }
-
-        $dir = dir($rv['Path'] . '/thumb/');
-        $pics = array();
-
-        while(false !== ($entry = $dir->read())) {
-            if($entry == '.' || $entry == '..') {
-                continue;
-            }
-
-            $fi = pathinfo($rv['Path'] . '/thumb/' . $entry);
-
-            if(
-                !$this->ctrl->hasDeletePermission() &&
-                strtolower($fi['extension']) != 'jpg' &&
-                strtolower($fi['extension']) != 'png'
-            ) {
-                continue;
-            }
-            if(
-                $this->ctrl->hasDeletePermission() &&
-                strtolower($fi['extension']) != 'jpg' &&
-                strtolower($fi['extension']) != 'png' &&
-                strtolower($fi['extension']) != 'del'
-            ) {
-                continue;
-            }
-            $pic = array();
-            $pic['lnk'] = '/' . $rv['Path'] . '/high/' . $entry;
-            $pic['ttp'] = $entry;
-            $pic['src'] = '/' . $rv['Path'] . '/thumb/' . $entry;
-            $pic['del'] = (strtolower($fi['extension']) == 'del');
-            $pic['pre'] = ($rv['PreviewImage'] == $entry);
-            $pics[] = $pic;
-        }
-
-        $dir->close();
-
-        rsort($pics);
-
-        $count = count($pics);
-
-        $crDate = new \SFW\View\Helper\Date($rv['CreationDate'], new \SFW\Locale());
-        $view   = new \SFW\View();
-        $view->assign('name',              $rv['Name']);
-        $view->assign('filename',          $rv['FileName']);
-        $view->assign('page',              (int)$page);
-        $view->assign('description',       $rv['Description']);
-        $view->assign('creationDate',      $crDate);
-        $view->assign('pics',              $pics);
-        $view->assign('dllink',            '?getfile=' . $rv['Token']);
-        $view->assign('editable',          $this->ctrl->hasDeletePermission());
-        $view->assign('galId',             (int)$id);
-        $view->assign('maxFileUploads',    ini_get('max_file_uploads'));
-        $view->assign('mailaddr',          new \SFW\View\Helper\Obfuscator\EMail(
-            $rv['Email'],
-            $rv['Creator'],
-            'Galerie ' . $rv['Name'] . ' (' .
-            $crDate->getFormatedDate(true) . ')'
-        ));
-        $view->assign('image', '/public/content/users/' . \SFW\Helper::getImageFileName(
- # FIXME: _No hardcoded path
-                    'public/content/users/',
-                    $row['FirstName'],
-                    $row['LastName']
-            ));
-        $view->assignTpl(
-            $this->conf->getTemplateFile('Gallery/Gallery')
-        );
-        return $view->getContent();
-    }
 
     protected function deleteImage($galid, $fileName) {
         if(!$this->ctrl->hasDeletePermission()) {
@@ -478,97 +490,6 @@ class GalleryController extends Controller {
         $this->dto->setSaveSuccess(treu);
 
         return true;
-    }
-
-    protected function loadSummary() {
-       $galleries = [];
-
-
-        $entry = [];
-        $entry['id'         ] = 123;
-        $entry['name'       ] = 'Name';
-        $entry['filename'   ] = 'FileName';
-        $entry['description'] = 'Description';
-        $entry['date'       ] = '19. Sept. 2015' ; #new \SFW\View\Helper\Date(
-#            $row['CreationDate'],
-#            new \SFW\Locale()
-#        );
-        $entry['preview'    ] = '/public/layout/IMG_1031.JPG'; #$this->getPreviewPath(
-#            $row['Path'],
-#            $row['PreviewImage']
-#        );
-        $entry['dllink'     ] = '?getfile=';# . $row['Token'];
-        $entry['creator'    ] = 'Hans Wurst'; /*new \SFW\View\Helper\Obfuscator\EMail(
-            $row['Email'],
-            $row['Creator'],
-            'Galerie ' . $row['Name'] . ' (' .
-            $entry['date']->getFormatedDate(true) . ")"
-        );*/
-
-        $galleries[] = $entry;
-
-        return $galleries;
-
-        return [];
-        $stmt =
-            "SELECT `sfw_imagegalleries`.`Id`, `sfw_imagegalleries`.`Name`, " .
-            "`sfw_media`.`Name` as `FileName`, " .
-            "`sfw_imagegalleries`.`Description`, " .
-            "`sfw_media`.`CreationDate`, `sfw_imagegalleries`.`Deleted`, " .
-            "`sfw_media`.`Path`, `sfw_users`.`Email`, `sfw_media`.`Token`, " .
-            "`sfw_imagegalleries`.`PreviewImage`, " .
-            "CONCAT(`sfw_users`.`FirstName`, ' ', `sfw_users`.`LastName`) " .
-            "AS `Creator` " .
-            "FROM `sfw_imagegalleries` " .
-            "LEFT JOIN `sfw_media` " .
-            "ON `sfw_media`.`Id` = `sfw_imagegalleries`.`MediaId` " .
-            "LEFT JOIN `sfw_users` " .
-            "ON `sfw_users`.`Id` = `sfw_media`.`UserId` " .
-            "LEFT JOIN `sfw_division` " .
-            "ON `sfw_division`.`DivisionId` = `sfw_media`.`DivisionId` " .
-            "WHERE `sfw_division`.`Module` = '%s' ";
-
-        if(!$this->ctrl->hasCreatePermission()) {
-            $stmt .= "AND `sfw_imagegalleries`.`PreviewImage` != '' ";
-        }
-
-        if(!$this->ctrl->isAdmin()) {
-            $stmt .= "AND `sfw_imagegalleries`.`Deleted` = '0' ";
-        }
-
-        $stmt .= "ORDER BY `sfw_imagegalleries`.`Id` DESC ";
-        $rows = $this->db->select(
-            $stmt,
-            array($this->category)
-        );
-
-        $galleries = array();
-
-        foreach($rows as $row) {
-            $entry = array();
-            $entry['id'         ] = $row['Id'];
-            $entry['name'       ] = $row['Name'];
-            $entry['filename'   ] = $row['FileName'];
-            $entry['description'] = $row['Description'];
-            $entry['date'       ] = new \SFW\View\Helper\Date(
-                $row['CreationDate'],
-                new \SFW\Locale()
-            );
-            $entry['preview'    ] = $this->getPreviewPath(
-                $row['Path'],
-                $row['PreviewImage']
-            );
-            $entry['dllink'     ] = '?getfile=' . $row['Token'];
-            $entry['creator'    ] = new \SFW\View\Helper\Obfuscator\EMail(
-                $row['Email'],
-                $row['Creator'],
-                'Galerie ' . $row['Name'] . ' (' .
-                $entry['date']->getFormatedDate(true) . ")"
-            );
-            $entry['deleted'    ] = $row['Deleted'] ? true : false;
-            $galleries[] = $entry;
-        }
-        return $galleries;
     }
 
     private function getPreviewPath($path, $file) {
