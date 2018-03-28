@@ -56,7 +56,7 @@ class LoginResetController extends Controller {
     public function index($all = false) {
         $content = new Content('content/loginreset/loginreset');
         $content->assign('expire', $this->getExpireDate(self::EXPIRE_DATE_OFFSET));
-        $content->assign('lastPage', (string)$this->session->getGlobalEntry('current_path'));
+        $content->assign('lastPage', $this->session->getGlobalEntry('current_path', ''));
 
 
 
