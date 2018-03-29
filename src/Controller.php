@@ -22,6 +22,8 @@
 
 namespace SFW2\Routing;
 
+use SFW2\Routing\Resolver\Exception as ResolverException;
+
 abstract class Controller {
 
     /**
@@ -37,30 +39,18 @@ abstract class Controller {
 
 
     public function create() {
-
+        throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
     public function delete($all = false) {
-
+        throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
     public function update($all = false) {
-
+        throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
-/*
-    protected $pathId       = -1;
 
     public function updateModificationDate() {
-        $stmt =
-            "UPDATE `sfw_path` " .
-            "SET `LastModified` = NOW() ".
-            "WHERE PathId = '%s'";
 
-        $this->registry->getDatabase()->update($stmt, array($this->pathId));
     }
-
-    protected function setPathId() {
-        $this->modiDate = new \SFW\View\Helper\Date($rv['LastModified']);
-    }
- */
 }
