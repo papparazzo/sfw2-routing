@@ -91,7 +91,12 @@ class Resolver {
             $rule = $this->controllers->getRulsetByPathId($pathId);
             $this->container->addRules($rule);
             $hasFullPermission = $this->permission->hasFullActionPermission($pathId, $action);
-            return $this->callMethode(key($rule), $action, $hasFullPermission);
+            $ctrl = $this->getController(key($rule), $action);
+            $res = call_user_func([$ctrl, $action], $hasFullPermission);
+            if($ctrl->hasModifiedData()) {
+                $this->path->updateModificationDateRecursive($path);
+            }
+            return $res;
         } catch(ControllerMapException $ex) {
             throw new ResolverException(
                 $ex->getMessage(),
@@ -107,7 +112,7 @@ class Resolver {
         }
     }
 
-    protected function callMethode(string $class, string $action, bool $hasFullPermission) {
+    protected function getController(string $class, string $action) {
         if(!class_exists($class)) {
             throw new ResolverException(
                 'class "' . $class . '" does not exists',
@@ -125,6 +130,12 @@ class Resolver {
         }
 
         $ctrl = $this->container->create($class);
-        return call_user_func([$ctrl, $action], $hasFullPermission);
+        if (!($ctrl instanceof Controller)) {
+            throw new ResolverException(
+                'class "' . $class . '" is no controller',
+                ResolverException::PAGE_NOT_FOUND
+            );
+        }
+        return $ctrl;
     }
 }
