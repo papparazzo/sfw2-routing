@@ -94,4 +94,25 @@ class Path {
     public function getPathIdOfCurrentPath() {
         return $this->getPathId($this->currentPath);
     }
+
+    public function updateModificationDateRecursive($path) {
+        $pathId = $this->getPathId($path);
+        $this->updateModificationDate($pathId);
+
+        $pos = strrpos($path, '/');
+        if($pos === false) {
+            return;
+        }
+        $path = substr($path, 0, $pos);
+        updateModificationDateRecursive($path);
+    }
+
+    protected function updateModificationDate($pathId) {
+        $stmt =
+            "UPDATE `sfw_path2` " .
+            "SET `ModificationDate` = NOW() ".
+            "WHERE PathId = '%s'";
+
+        $this->database->update($stmt, [$pathId]);
+    }
 }
