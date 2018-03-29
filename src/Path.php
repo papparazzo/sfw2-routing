@@ -104,14 +104,14 @@ class Path {
             return;
         }
         $path = substr($path, 0, $pos);
-        updateModificationDateRecursive($path);
+        $this->updateModificationDateRecursive($path);
     }
 
     protected function updateModificationDate($pathId) {
         $stmt =
-            "UPDATE `sfw_path2` " .
+            "UPDATE `sfw2_path` " .
             "SET `ModificationDate` = NOW() ".
-            "WHERE PathId = '%s'";
+            "WHERE `Id` = '%s'";
 
         $this->database->update($stmt, [$pathId]);
     }
