@@ -91,9 +91,9 @@ class Html extends ResponseType {
     }
 
     protected function getInnerContent( ) {
-        $view = new View(__DIR__ . '/../Templates/' . $this->result->getTemplateFile() . '.phtml');
+        $view = new View('web/templates/' . $this->result->getTemplateFile() . '.phtml');
         $view->assignArray($this->result->getData());
-        $view0 = new View(__DIR__ . '/../Templates/decorate.phtml');
+        $view0 = new View('web/templates/decorate.phtml');
         $view0->assign('content', $view->getContent());
         $view0->assign('mainMenu', $this->menu->getMainMenu());
         $view0->assign('sideMenu', $this->menu->getSideMenu());
