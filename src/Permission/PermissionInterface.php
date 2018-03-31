@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2017  Stefan Paproth
+ *  Copyright (C) 2018  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -22,8 +22,12 @@
 
 namespace SFW2\Routing\Permission;
 
-use SFW2\Core\SFW2Exception;
+interface PermissionInterface {
 
-class Exception extends SFW2Exception {
-    const NO_ROLES_DEFINED = 1;
+    public function getPagePermission($pathId) : PagePermission;
+
+    public function getActionPermission($pathId, $action = 'index') : bool;
+
+    public function hasFullActionPermission($pathId, $action = 'index') : bool;
+
 }

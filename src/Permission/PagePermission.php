@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2017  Stefan Paproth
+ *  Copyright (C) 2018  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -22,9 +22,8 @@
 
 namespace SFW2\Routing\Permission;
 
-use Exception;
-
 class PagePermission {
+
     const NO_PERMISSION = 0;
     const READ_OWN      = 1;
     const READ_ALL      = 2;
@@ -40,14 +39,14 @@ class PagePermission {
         $this->setPermissions($permissions);
     }
 
-    public function setAllPermissions() {
+    public function setAllPermissions() : PagePermission {
         $this->permission =
             self::READ_OWN | self::READ_ALL | self::CREATE | self::UPDATE_OWN |
             self::UPDATE_ALL | self::DELETE_OWN | self::DELETE_ALL;
         return $this;
     }
 
-    public function setPermissions($permissions) {
+    public function setPermissions($permissions) : PagePermission {
         $this->permission = self::NO_PERMISSION;
 
         foreach($permissions as $permission) {
@@ -84,37 +83,41 @@ class PagePermission {
                     break;
 
                 default:
-                    throw new Exception(); // TODO: Permission-Exception
+                    throw new PermissionException(
+                        'unknown permission-name "' . $permission . '"',
+                        PermissionException::INVALID_PERMISSION_NAME
+                    );
             }
         }
         return $this;
     }
 
-    public function readOwnAllowed() {
+    public function readOwnAllowed() : bool {
         return (bool)($this->permission & self::READ_OWN);
     }
 
-    public function readAllAllowed() {
+    public function readAllAllowed() : bool {
         return (bool)($this->permission & self::READ_ALL);
     }
 
-    public function createAllowed() {
+    public function createAllowed() : bool {
         return (bool)($this->permission & self::CREATE);
     }
 
-    public function updateOwnAllowed() {
+    public function updateOwnAllowed() : bool {
         return (bool)($this->permission & self::UPDATE_OWN);
     }
 
-    public function updateAllAllowed() {
+    public function updateAllAllowed() : bool {
         return (bool)($this->permission & self::UPDATE_ALL);
     }
 
-    public function deleteOwnAllowed() {
+    public function deleteOwnAllowed() : bool {
         return (bool)($this->permission & self::DELETE_OWN);
     }
 
-    public function deleteAllAllowed() {
+    public function deleteAllAllowed() : bool {
         return (bool)($this->permission & self::DELETE_ALL);
     }
+
 }
