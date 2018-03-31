@@ -26,10 +26,8 @@ class Request {
 
     const DEFAULT_ACTION = 'index';
 
-    const REQUEST_TYPE_AJAX_XML  = 1;
-    const REQUEST_TYPE_AJAX_JSON = 2;
-    const REQUEST_TYPE_HTML      = 3;
-    const REQUEST_TYPE_UNKNOWN   = 4;
+    const REQUEST_TYPE_AJAX    = 1;
+    const REQUEST_TYPE_HTML    = 2;
 
     protected $action = self::DEFAULT_ACTION;
 
@@ -47,11 +45,11 @@ class Request {
         $this->action = $this->getGetParam('do', self::DEFAULT_ACTION);
     }
 
-    public function getAction() {
+    public function getAction() : string {
         return $this->action;
     }
 
-    public function getPath() {
+    public function getPath() : string {
         return $this->path;
     }
 
@@ -63,14 +61,11 @@ class Request {
         return (bool)count($this->get);
     }
 
-    public function getRequestType() {
+    public function getRequestType() : int {
         if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return self::REQUEST_TYPE_HTML;
         }
-        if(strpos($this->server["HTTP_ACCEPT"], "application/json") !== false) {
-            return self::REQUEST_TYPE_AJAX_JSON;
-        }
-        return self::REQUEST_TYPE_AJAX_XML;
+        return self::REQUEST_TYPE_AJAX;
     }
 
     public function getGetParam($name, $def = null) {
@@ -87,7 +82,7 @@ class Request {
         return $this->post[$name];
     }
 
-    protected function checkPath($path) {
+    protected function checkPath($path): string {
         $pos = strpos($path, '?');
         if($pos !== false) {
             $path = mb_substr($path, 0, $pos);
