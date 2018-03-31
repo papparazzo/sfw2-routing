@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2017  Stefan Paproth
+ *  Copyright (C) 2018  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -24,7 +24,9 @@ namespace SFW2\Routing\ControllerMap;
 
 use SFW2\Core\SFW2Exception;
 
-class Exception extends SFW2Exception {
+class ControllerMapException extends SFW2Exception {
+
     const NO_RESULTSET_GIVEN = 1;
     const INVALID_PARAMS_GIVEN = 2;
+
 }
