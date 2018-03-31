@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2017  Stefan Paproth
+ *  Copyright (C) 2018  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -24,11 +24,13 @@ namespace SFW2\Routing\Resolver;
 
 use SFW2\Core\SFW2Exception;
 
-class Exception extends SFW2Exception {
+class ResolverException extends SFW2Exception {
+
     const PAGE_NOT_FOUND     = 1;
     const UNKNOWN_ERROR      = 2;
     const FILE_NOT_FOUND     = 3;
     const NO_DATA_FOUND      = 4;
     const NO_PERMISSION      = 5;
     const INVALID_DATA_GIVEN = 6;
+
 }
