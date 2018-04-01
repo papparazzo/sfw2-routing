@@ -22,8 +22,10 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\Resolver\Exception as ResolverException;
+use SFW2\Routing\Resolver\ResolverException;
+use SFW2\Routing\Resolver\Resolver;
 use SFW2\Routing\Result\Content;
+use SFW2\Routing\Result\AbstractResult;
 
 use SFW2\Core\Config;
 use SFW2\Core\Session;
@@ -48,7 +50,7 @@ class ResponseHandler {
         $this->session = $session;
     }
 
-    public function getContent(Request $request, Resolver $resolver) : Result {
+    public function getContent(Request $request, Resolver $resolver) : AbstractResult {
         try {
             if($request->hasPostParams() && !$this->session->compareToken(filter_input(INPUT_POST, 'xss'))) {
                 return $this->getInvalidDataGiven();
@@ -181,7 +183,7 @@ class ResponseHandler {
         return $this->handle($title, $caption, $description, $debug);
     }
 
-    protected function handle($title, $caption, $description, $debugData = null) : Result {
+    protected function handle($title, $caption, $description, $debugData = null) : AbstractResult {
         $result = new Content('plain', true);
         $result->assignArray([
             'title'       => $title,
@@ -227,5 +229,6 @@ class ResponseHandler {
         }
         return $data;
     }
+
 }
 
