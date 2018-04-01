@@ -40,7 +40,7 @@ abstract class AbstractPathMap {
         $this->loadPath($this->pathMap);
     }
 
-    public function isValidPath(string $path) : int {
+    public function isValidPath(string $path) : bool {
         return isset($this->pathMap[$path]);
     }
 
