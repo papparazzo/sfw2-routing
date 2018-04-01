@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2017  Stefan Paproth
+ *  Copyright (C) 2018  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -22,9 +22,9 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\Resolver\Exception as ResolverException;
+use SFW2\Routing\Resolver\ResolverException;
 
-abstract class Controller {
+abstract class AbstractController {
 
     /**
      * @var int
@@ -39,7 +39,6 @@ abstract class Controller {
 
     abstract function index($all = false);
 
-
     public function create() {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
@@ -52,11 +51,12 @@ abstract class Controller {
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    protected function dataIsModified() {
+    protected function dataWereModified() {
         $this->hasModifiedData = true;
     }
 
     public function hasModifiedData() {
         return $this->hasModifiedData;
     }
+
 }
