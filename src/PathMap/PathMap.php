@@ -22,7 +22,7 @@
 
 namespace SFW2\Routing\PathMap;
 
-abstract class AbstractPathMap {
+class PathMap {
 
     /**
      * @var string
@@ -34,10 +34,10 @@ abstract class AbstractPathMap {
      */
     protected $pathMap = [];
 
-    public function __construct(string $currentPath) {
+    public function __construct(string $currentPath, array $pathMap) {
         $this->currentPath = $currentPath;
+        $this->pathMap = $pathMap;
         $this->pathMap['/'] = 0;
-        $this->loadPath($this->pathMap);
     }
 
     public function isValidPath(string $path) : bool {
@@ -71,19 +71,4 @@ abstract class AbstractPathMap {
         return $this->getPathId($this->currentPath);
     }
 
-    public function updateModificationDateRecursive($path) {
-        $pathId = $this->getPathId($path);
-        $this->updateModificationDate($pathId);
-
-        $pos = strrpos($path, '/');
-        if($pos === false) {
-            return;
-        }
-        $path = substr($path, 0, $pos);
-        $this->updateModificationDateRecursive($path);
-    }
-
-    abstract protected function updateModificationDate($pathId);
-
-    abstract protected function loadPath(array &$map, int $parentId = 0, string $prefix = '/');
 }

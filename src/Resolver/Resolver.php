@@ -24,11 +24,12 @@ namespace SFW2\Routing\Resolver;
 
 use SFW2\Routing\ControllerMap\ControllerMapException;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
-use SFW2\Routing\Permission\PermissionInterface;
-use SFW2\Routing\PathMap\AbstractPathMap;
+use SFW2\Routing\PathMap\PathMap;
 use SFW2\Routing\Request;
-use SFW2\Routing\Result\AbstractResult;
+use SFW2\Routing\AbstractResult;
 use SFW2\Routing\AbstractController;
+
+use SFW2\Core\PermissionInterface;
 
 use Dice\Dice;
 
@@ -40,7 +41,7 @@ class Resolver {
     /**
      * @var \SFW2\Routing\ControllerMap\ControllerMapInterface
      */
-    protected $controllers = null;
+    protected $controllerMap = null;
 
     /**
      * @var \SFW2\Routing\Permission\PermissionInterface
@@ -48,20 +49,20 @@ class Resolver {
     protected $permission = null;
 
     /**
-     * @var \SFW2\Routing\PathMap\AbstractPathMap
+     * @var \SFW2\Routing\PathMap\PathMap
      */
-    protected $path;
+    protected $pathMap;
 
     /**
      * @var \Dice\Dice
      */
     protected $container = null;
 
-    public function __construct(ControllerMapInterface $controllers, PermissionInterface $permission, AbstractPathMap $path, Dice $container) {
-        $this->controllers = $controllers;
-        $this->permission = $permission;
-        $this->path = $path;
+    public function __construct(ControllerMapInterface $controllerMap, PathMap $pathMap, Dice $container, PermissionInterface $permission) {
+        $this->controllerMap = $controllerMap;
+        $this->pathMap = $pathMap;
         $this->container = $container;
+        $this->permission = $permission;
     }
 
     public function getResult(Request $request) : AbstractResult {
@@ -77,7 +78,7 @@ class Resolver {
         $action = $request->getAction();
 
         $msg = $path . '-' . $action;
-        if(!$this->path->isValidPath($path)) {
+        if(!$this->pathMap->isValidPath($path)) {
             throw new ResolverException(
                 'could not load "' . $msg . '"',
                 ResolverException::PAGE_NOT_FOUND
@@ -85,7 +86,7 @@ class Resolver {
         }
 
         try {
-            $pathId = $this->path->getPathId($path);
+            $pathId = $this->pathMap->getPathId($path);
             if(!$this->permission->getActionPermission($pathId, $action)) {
                 throw new ResolverException(
                     'permission not allowed',
@@ -93,14 +94,11 @@ class Resolver {
                 );
             }
 
-            $rule = $this->controllers->getRulsetByPathId($pathId);
+            $rule = $this->controllerMap->getRulsetByPathId($pathId);
             $this->container->addRules($rule);
             $hasFullPermission = $this->permission->hasFullActionPermission($pathId, $action);
             $ctrl = $this->getController(key($rule), $action);
             $res = call_user_func([$ctrl, $action], $hasFullPermission);
-            if($ctrl->hasModifiedData()) {
-                $this->path->updateModificationDateRecursive($path);
-            }
             return $res;
         } catch(ControllerMapException $ex) {
             throw new ResolverException(

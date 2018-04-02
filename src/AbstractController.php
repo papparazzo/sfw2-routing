@@ -31,8 +31,6 @@ abstract class AbstractController {
      */
     protected $pathId;
 
-    private $hasModifiedData = false;
-
     public function __construct(int $pathId) {
         $this->pathId = $pathId;
     }
@@ -49,14 +47,6 @@ abstract class AbstractController {
 
     public function update($all = false) {
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
-    }
-
-    protected function dataWereModified() {
-        $this->hasModifiedData = true;
-    }
-
-    public function hasModifiedData() {
-        return $this->hasModifiedData;
     }
 
 }

@@ -20,8 +20,32 @@
  *
  */
 
-namespace SFW2\Routing\Result;
+namespace SFW2\Routing;
 
 abstract class AbstractResult {
+
+    protected $error   = false;
+
+    private $hasModifiedData = false;
+    
+    public function __construct($hasErrors = false) {
+        $this->error = $hasErrors;
+    }
+
+    protected function dataWereModified() {
+        $this->hasModifiedData = true;
+    }
+
+    public function hasModifiedData() : bool {
+        return $this->hasModifiedData;
+    }
+
+    public function setError(bool $error) {
+        $this->error = $error;
+    }
+
+    public function getError() : bool {
+        return $this->error;
+    }
 
 }

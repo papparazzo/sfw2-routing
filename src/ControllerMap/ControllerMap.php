@@ -22,41 +22,33 @@
 
 namespace SFW2\Routing\ControllerMap;
 
-use SFW2\Core\Database;
-
-class ControllerMapByDatabase implements ControllerMapInterface {
+class ControllerMap implements ControllerMapInterface {
 
     /**
-     * @var \SFW2\Core\Database
+     * @var array
      */
-    protected $database = null;
+    protected $controllerMap = [];
 
-    public function __construct(Database $database) {
-        $this->database = $database;
+    public function __construct(array $controllerMap) {
+        $this->controllerMa = $controllerMap;
     }
 
     public function getRulsetByPathId($pathId) : array {
-        $stmt =
-            "SELECT `ClassName`, `JsonData` " .
-            "FROM `sfw2_path` AS `ctrlMap` " .
-            "LEFT JOIN `sfw2_controller_template` AS `ctrlTempl` " .
-            "ON `ctrlMap`.`ControllerTemplateId` = `ctrlTempl`.`Id` " .
-            "WHERE `ctrlMap`.`Id` = '%s' ";
 
-        $res = $this->database->selectRow($stmt, [$pathId]);
-
-        if(empty($res)) {
+        if(!isset($this->controllerMap[$pathId])) {
             throw new ControllerMapException(
-                'found no entry for <' . $pathId . '>',
+                'found no entry for "' . $pathId . '"',
                 ControllerMapException::NO_RESULTSET_GIVEN
             );
         }
 
-        $params = json_decode($res['JsonData'], true);
+        $res = $this->controllerMap[$pathId];
+
+        $params = $res['data'];
 
         if(!is_array($params)) {
             throw new ControllerMapException(
-                'invalid params given <' . $res['JsonData'] . '>',
+                'invalid params given "' . $res['JsonData'] . '"',
                 ControllerMapException::INVALID_PARAMS_GIVEN
             );
         }
@@ -64,7 +56,7 @@ class ControllerMapByDatabase implements ControllerMapInterface {
         array_unshift($params, $pathId);
 
         return [
-            $res['ClassName'] => [
+            $res['className'] => [
                 'constructParams' => $params
             ]
         ];
