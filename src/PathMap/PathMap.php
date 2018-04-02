@@ -22,6 +22,8 @@
 
 namespace SFW2\Routing\PathMap;
 
+use SFW2\Routing\Request;
+
 class PathMap {
 
     /**
@@ -34,9 +36,9 @@ class PathMap {
      */
     protected $pathMap = [];
 
-    public function __construct(string $currentPath, array $pathMap) {
-        $this->currentPath = $currentPath;
-        $this->pathMap = $pathMap;
+    public function __construct(Request $request, PathMapLoaderInterface $pathMapLoader) {
+        $this->currentPath = $request->getPath();
+        $this->pathMap = $pathMapLoader->getPathMap();
         $this->pathMap['/'] = 0;
     }
 
