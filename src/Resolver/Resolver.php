@@ -29,7 +29,7 @@ use SFW2\Routing\Request;
 use SFW2\Routing\AbstractResult;
 use SFW2\Routing\AbstractController;
 
-use SFW2\Core\PermissionInterface;
+use SFW2\Core\Permission\PermissionInterface;
 
 use Dice\Dice;
 
