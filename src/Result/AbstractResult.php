@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2017  Stefan Paproth
+ *  Copyright (C) 2018  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -20,14 +20,14 @@
  *
  */
 
-namespace SFW2\Routing;
+namespace SFW2\Routing\Result;
 
 abstract class AbstractResult {
 
     protected $error   = false;
 
     private $hasModifiedData = false;
-    
+
     public function __construct($hasErrors = false) {
         $this->error = $hasErrors;
     }
