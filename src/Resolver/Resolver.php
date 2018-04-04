@@ -26,7 +26,7 @@ use SFW2\Routing\ControllerMap\ControllerMapException;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use SFW2\Routing\PathMap\PathMap;
 use SFW2\Routing\Request;
-use SFW2\Routing\AbstractResult;
+use SFW2\Routing\Result\AbstractResult;
 use SFW2\Routing\AbstractController;
 
 use SFW2\Core\Permission\PermissionInterface;
