@@ -68,21 +68,21 @@ class Request {
         return self::REQUEST_TYPE_AJAX;
     }
 
-    public function getGetParam($name, $def = null) {
+    public function getGetParam(string $name, $def = null) {
         if(!isset($this->get[$name])) {
             return $def;
         }
         return $this->get[$name];
     }
 
-    public function getPostParam($name, $def = null) {
+    public function getPostParam(string $name, $def = null) {
         if(!isset($this->post[$name])) {
             return $def;
         }
         return $this->post[$name];
     }
 
-    protected function checkPath($path): string {
+    protected function checkPath(string $path): string {
         $pos = strpos($path, '?');
         if($pos !== false) {
             $path = mb_substr($path, 0, $pos);
