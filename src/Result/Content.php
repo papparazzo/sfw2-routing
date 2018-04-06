@@ -24,22 +24,22 @@ namespace SFW2\Routing\Result;
 
 class Content extends AbstractResult {
 
-    protected $templateFile = null;
+    protected $templateFile = '';
 
     protected $jsFiles  = [];
     protected $cssFiles = [];
     protected $vars     = [];
 
-    public function __construct($templateFile = null, $hasErrors = false) {
+    public function __construct(string $templateFile = '', bool $hasErrors = false) {
         parent::__construct($hasErrors);
         $this->templateFile = $templateFile;
     }
 
-    public function appendJSFile($file) {
+    public function appendJSFile(string $file) {
         $this->jsFiles[] = $file;
     }
 
-    public function appendCSSFile($file) {
+    public function appendCSSFile(string $file) {
         $this->cssFiles[] = $file;
     }
 
@@ -79,14 +79,14 @@ class Content extends AbstractResult {
         return $this->vars;
     }
 
-    public function getValue($name, $def = null) {
+    public function getValue(string $name, $def = null) {
         if(isset($this->vars[$name])) {
             return $this->vars[$name];
         }
         return $def;
     }
 
-    public function getTemplateFile() {
+    public function getTemplateFile() : string {
         return $this->templateFile;
     }
 
