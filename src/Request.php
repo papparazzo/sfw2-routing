@@ -26,8 +26,9 @@ class Request {
 
     const DEFAULT_ACTION = 'index';
 
-    const REQUEST_TYPE_AJAX    = 1;
-    const REQUEST_TYPE_HTML    = 2;
+    const REQUEST_TYPE_AJAX_XML  = 1;
+    const REQUEST_TYPE_AJAX_JSON = 2;
+    const REQUEST_TYPE_HTML      = 3;
 
     protected $action = self::DEFAULT_ACTION;
 
@@ -65,7 +66,10 @@ class Request {
         if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return self::REQUEST_TYPE_HTML;
         }
-        return self::REQUEST_TYPE_AJAX;
+        if(strpos($this->server["HTTP_ACCEPT"], "application/json") !== false) {
+            return self::REQUEST_TYPE_AJAX_JSON;
+        }
+        return self::REQUEST_TYPE_AJAX_XML;
     }
 
     public function getGetParam(string $name, $def = null) {
