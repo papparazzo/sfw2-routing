@@ -41,12 +41,16 @@ abstract class AbstractController {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function delete($all = false) {
-        throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
+    public function read($all = false) {
+        throw new ResolverException('read-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
     public function update($all = false) {
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
+    }
+
+    public function delete($all = false) {
+        throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
 }
