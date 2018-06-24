@@ -98,8 +98,7 @@ class Resolver {
             $this->container->addRules($rule);
             $hasFullPermission = $this->permission->hasFullActionPermission($pathId, $action);
             $ctrl = $this->getController(key($rule), $action);
-            $res = call_user_func([$ctrl, $action], $hasFullPermission);
-            return $res;
+            return call_user_func([$ctrl, $action], $hasFullPermission);
         } catch(ControllerMapException $ex) {
             throw new ResolverException(
                 $ex->getMessage(),
