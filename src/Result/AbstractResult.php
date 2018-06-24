@@ -24,15 +24,16 @@ namespace SFW2\Routing\Result;
 
 abstract class AbstractResult {
 
-    protected $error   = false;
+    protected $error = false;
 
-    private $hasModifiedData = false;
+    protected $hasModifiedData = false;
 
-    public function __construct($hasErrors = false) {
+    public function __construct($hasErrors = false, $hasModifiedData = false) {
         $this->error = $hasErrors;
+        $this->hasModifiedData = $hasModifiedData;
     }
 
-    protected function dataWereModified() {
+    public function dataWereModified() {
         $this->hasModifiedData = true;
     }
 
