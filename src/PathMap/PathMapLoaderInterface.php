@@ -26,4 +26,6 @@ interface PathMapLoaderInterface {
 
     public function getPathMap() : array;
 
+    public function updateModificationDateRecursive(string $path);
+
 }
