@@ -23,8 +23,14 @@
 namespace SFW2\Routing\PathMap;
 
 use SFW2\Routing\Request;
+use SFW2\Core\Session;
 
 class PathMap {
+
+    /**
+     * @var \SFW2\Core\Session
+     */
+    protected $session;
 
     /**
      * @var string
@@ -36,10 +42,12 @@ class PathMap {
      */
     protected $pathMap = [];
 
-    public function __construct(Request $request, PathMapLoaderInterface $pathMapLoader) {
+    public function __construct(Request $request, PathMapLoaderInterface $pathMapLoader, Session $session) {
         $this->currentPath = $request->getPath();
         $this->pathMap = $pathMapLoader->getPathMap();
         $this->pathMap['/'] = 0;
+        $this->session = $session;
+        $this->session->setGlobalEntry($this->currentPath, time());
     }
 
     public function isValidPath(string $path) : bool {
@@ -59,6 +67,14 @@ class PathMap {
             throw new PathMapException('path for id <' . $pathId . '> does not exists');
         }
         return $res;
+    }
+
+    public function getPathLastVisitedByPath(string $path) : int {
+        return $this->session->getGlobalEntry($path, -1);
+    }
+
+    public function getPathLastVisitedById(int $pathId) : int {
+        return $this->getPathLastVisitedByPath($this->getPath($pathId));
     }
 
     public function getPathIdOfCurrentTopPath() {
