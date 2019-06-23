@@ -73,25 +73,19 @@ class Resolver {
         return $data;
     }
 
-    protected function getData(Request $request) {
+    protected function getData(Request $request) : AbstractResult {
         $path = $request->getPath();
         $action = $request->getAction();
 
         $msg = $path . '-' . $action;
         if(!$this->pathMap->isValidPath($path)) {
-            throw new ResolverException(
-                'could not load "' . $msg . '"',
-                ResolverException::PAGE_NOT_FOUND
-            );
+            throw new ResolverException("could not load <$msg>", ResolverException::PAGE_NOT_FOUND);
         }
 
         try {
             $pathId = $this->pathMap->getPathId($path);
             if(!$this->permission->getActionPermission($pathId, $action)) {
-                throw new ResolverException(
-                    'permission not allowed',
-                    ResolverException::NO_PERMISSION
-                );
+                throw new ResolverException('permission not allowed', ResolverException::NO_PERMISSION);
             }
 
             $rule = $this->controllerMap->getRulsetByPathId($pathId);
@@ -99,44 +93,25 @@ class Resolver {
             $hasFullPermission = $this->permission->hasFullActionPermission($pathId, $action);
             $ctrl = $this->getController(key($rule), $action);
             return call_user_func([$ctrl, $action], $hasFullPermission);
-        } catch(ControllerMapException $ex) {
-            throw new ResolverException(
-                $ex->getMessage(),
-                ResolverException::PAGE_NOT_FOUND,
-                $ex
-            );
-        } catch(ReflectionException $ex) { // TODO: Use chained Exception as of 7.1
-            throw new ResolverException(
-                $ex->getMessage(),
-                ResolverException::PAGE_NOT_FOUND,
-                $ex
-            );
+        } catch(ControllerMapException | ReflectionException $ex) {
+            throw new ResolverException($ex->getMessage(), ResolverException::PAGE_NOT_FOUND, $ex);
         }
     }
 
-    protected function getController(string $class, string $action) {
+    protected function getController(string $class, string $action) : object {
         if(!class_exists($class)) {
-            throw new ResolverException(
-                'class "' . $class . '" does not exists',
-                ResolverException::PAGE_NOT_FOUND
-            );
+            throw new ResolverException("class <$class> does not exists", ResolverException::PAGE_NOT_FOUND);
         }
 
         $refl = new ReflectionMethod($class, $action);
 
         if(!$refl->isPublic()) {
-            throw new ResolverException(
-                'method "' . $action . '" is not public',
-                ResolverException::PAGE_NOT_FOUND
-            );
+            throw new ResolverException("method <$action> is not public", ResolverException::PAGE_NOT_FOUND);
         }
 
         $ctrl = $this->container->create($class);
         if (!($ctrl instanceof AbstractController)) {
-            throw new ResolverException(
-                'class "' . $class . '" is no controller',
-                ResolverException::PAGE_NOT_FOUND
-            );
+            throw new ResolverException("class <$class> is no controller", ResolverException::PAGE_NOT_FOUND);
         }
         return $ctrl;
     }
