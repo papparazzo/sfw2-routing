@@ -35,11 +35,11 @@ class Content extends AbstractResult {
         $this->templateFile = $templateFile;
     }
 
-    public function appendJSFile(string $file) {
+    public function appendJSFile(string $file) : void {
         $this->jsFiles[] = $file;
     }
 
-    public function appendCSSFile(string $file) {
+    public function appendCSSFile(string $file) : void {
         $this->cssFiles[] = $file;
     }
 
@@ -53,29 +53,29 @@ class Content extends AbstractResult {
         return $this->cssFiles;
     }
 
-    public function assign(string $name, $val) {
+    public function assign(string $name, $val) : void {
         $this->vars[$name] = $val;
     }
 
-    public function assignArray(array $values) {
+    public function assignArray(array $values) : void {
         $this->vars += $values;
     }
 
-    public function append(string $name, $val) {
+    public function append(string $name, $val) : void {
         if(!isset($this->vars[$name])) {
             $this->vars[$name] = [];
         }
         $this->vars[$name][] = $val;
     }
 
-    public function appendArray(string $name, array $values) {
+    public function appendArray(string $name, array $values) : void {
         if(!isset($this->vars[$name])) {
             $this->vars[$name] = [];
         }
         $this->vars[$name] += $values;
     }
 
-    public function getData() {
+    public function getData() : array {
         return $this->vars;
     }
 
@@ -90,7 +90,7 @@ class Content extends AbstractResult {
         return $this->templateFile;
     }
 
-    protected function appendPath(array &$items, string $path) {
+    protected function appendPath(array &$items, string $path) : void {
         array_walk(
             $items,
             function(&$item, $key, $path) {
