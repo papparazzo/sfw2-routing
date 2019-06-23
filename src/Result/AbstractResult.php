@@ -45,7 +45,7 @@ abstract class AbstractResult {
         $this->error = $error;
     }
 
-    public function getError() : bool {
+    public function hasErrors() : bool {
         return $this->error;
     }
 
