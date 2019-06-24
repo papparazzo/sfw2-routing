@@ -22,6 +22,8 @@
 
 namespace SFW2\Routing\Result;
 
+use SFW2\Routing\Resolver\ResolverException;
+
 class File extends AbstractResult {
 
     protected $path = '';
@@ -33,6 +35,7 @@ class File extends AbstractResult {
     protected $isTemp = false;
 
     public function __construct(string $path, string $file, string $alias = '', bool $isTemp = false) {
+
         if($alias == '') {
             $alias = $file;
         }
@@ -40,11 +43,11 @@ class File extends AbstractResult {
         $this->path = $path . DIRECTORY_SEPARATOR;
         $this->file = $file;
         $this->isTemp = $isTemp;
+
+        if(!file_exists($this->getFilePathName())) {
+            throw new ResolverException("file <{$this->getFilePathName()}> does not exists", ResolverException::FILE_NOT_FOUND);
+        }
     }
-
-     protected $isTempFile = false;
-
-    #$file = $this->data['path'] . $this->data['fileName'];
 
     public function __destruct() {
         if($this->isTemp) {
@@ -52,21 +55,25 @@ class File extends AbstractResult {
         }
     }
 
+    public function getFilePathName() : string {
+        return $this->path . $this->file;
+    }
+
     public function getAliasName() : string {
         return $this->alias;
     }
 
     public function isTempFile() : bool {
-        return $this->isTempFile();
+        return $this->isTemp;
     }
 
     public function getFileSize() : int {
-        #filesize($file)
+        return filesize($this->path . $this->file);
     }
 
     public function getMimeType() : string {
         $finfo = finfo_open(FILEINFO_MIME);
-        $mimetype = finfo_file($finfo, $file);
+        $mimetype = finfo_file($finfo, $this->path . $this->file);
         finfo_close($finfo);
         return $mimetype;
     }
