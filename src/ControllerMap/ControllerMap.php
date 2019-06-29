@@ -36,10 +36,7 @@ class ControllerMap implements ControllerMapInterface {
     public function getRulsetByPathId($pathId) : array {
 
         if(!isset($this->controllerMap[$pathId])) {
-            throw new ControllerMapException(
-                'found no entry for "' . $pathId . '"',
-                ControllerMapException::NO_RESULTSET_GIVEN
-            );
+            throw new ControllerMapException("found no entry for <$pathId>", ControllerMapException::NO_RESULTSET_GIVEN);
         }
 
         $res = $this->controllerMap[$pathId];
@@ -47,10 +44,7 @@ class ControllerMap implements ControllerMapInterface {
         $params = $res['data'];
 
         if(!is_array($params)) {
-            throw new ControllerMapException(
-                'invalid params given "' . $res['JsonData'] . '"',
-                ControllerMapException::INVALID_PARAMS_GIVEN
-            );
+            throw new ControllerMapException("invalid params given <{$res['JsonData']}>", ControllerMapException::INVALID_PARAMS_GIVEN);
         }
 
         array_unshift($params, $pathId);
