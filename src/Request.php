@@ -54,6 +54,10 @@ class Request {
         return $this->path;
     }
 
+    public function getPathSimplified() : string {
+        return 'P_' . str_replace('/', '_', $this->path);
+    }
+
     public function hasPostParams() : bool {
         return (bool)count($this->post);
     }
