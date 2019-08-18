@@ -22,57 +22,18 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\View\ViewException;
+use SFW2\Core\View as BaseView;
 
 use DateTime;
 use DateTimeZone;
 
-class View {
+class View extends BaseView {
 
-    protected $vars = [];
-    protected $template;
     protected $request;
 
-    public function __construct(string $template = null, Request $request = '/') {
-        $this->template = $template;
+    public function __construct(string $template, Request $request) {
+        parent::__construct($template);
         $this->request  = $request;
-    }
-
-    public function assign(string $name, $val) {
-        $this->vars[$name] = $val;
-    }
-
-    public function assignArray(array $values) {
-        $this->vars = array_merge($this->vars, $values);
-    }
-
-    public function append(string $name, $val) {
-        if(!isset($this->vars[$name])) {
-            $this->vars[$name] = [];
-        }
-        $this->vars[$name][] = $val;
-    }
-
-    public function appendArray(string $name, array $values) {
-     if(!isset($this->vars[$name])) {
-            $this->vars[$name] = [];
-        }
-        $this->vars[$name] = array_merge($this->vars[$name], $values);
-    }
-
-    public function __toString() : string {
-        return $this->getContent();
-    }
-
-    public function __isset(string $name) : bool {
-        return isset($this->vars[$name]);
-    }
-
-    public function __get(string $name) {
-        if(isset($this->vars[$name])) {
-            return $this->vars[$name];
-        }
-        throw new ViewException("template-var <$name> not set", ViewException::VARIABLE_MISSING);
     }
 
     public function getCurrentPath() : string {
@@ -83,17 +44,7 @@ class View {
         return $this->request->getPathSimplified();
     }
 
-    public function getContent() {
-        ob_start();
-        $this->showContent();
-        return ob_get_clean();
-    }
-
     protected function showContent() {
-        if(!file_exists($this->template) || !is_readable($this->template)) {
-            throw new ViewException("Could not find template <{$this->template}>", ViewException::TEMPLATE_MISSING);
-        }
-
         if(!isset($this->vars['modificationDate']) || $this->vars['modificationDate'] == '') {
             $this->vars['modificationDate'] = new DateTime('@' . filemtime($this->template), new DateTimeZone('Europe/Berlin'));
         }
@@ -104,8 +55,6 @@ class View {
 
         #Mi., 11. Mai. 2016
         $this->vars['modificationDate'] = strftime('%a., %d. %b. %Y', $this->vars['modificationDate']->getTimestamp());
-
-        include($this->template);
+        parent::showContent();
     }
-
 }
