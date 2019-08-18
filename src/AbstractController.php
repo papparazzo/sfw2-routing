@@ -35,21 +35,21 @@ abstract class AbstractController {
         $this->pathId = $pathId;
     }
 
-    abstract function index($all = false);
+    abstract function index(bool $all = false);
 
     public function create() {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function read($all = false) {
+    public function read(bool $all = false) {
         throw new ResolverException('read-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function update($all = false) {
+    public function update(bool $all = false) {
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function delete($all = false) {
+    public function delete(bool $all = false) {
         throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
