@@ -64,7 +64,7 @@ class PathMap {
     public function getPath(int $pathId) : string {
         $res = array_search($pathId, $this->pathMap);
         if($res === false) {
-            throw new PathMapException('path for id <' . $pathId . '> does not exists');
+            throw new PathMapException("path for id <$pathId> does not exists");
         }
         return $res;
     }
