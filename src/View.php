@@ -53,7 +53,7 @@ class View extends BaseView {
         return $this->pathMap->getPath($pathId);
     }
 
-    protected function showContent() {
+    protected function showContent() : void {
         if(!isset($this->vars['modificationDate']) || $this->vars['modificationDate'] == '') {
             $this->vars['modificationDate'] = new DateTime('@' . filemtime($this->template), new DateTimeZone('Europe/Berlin'));
         }
