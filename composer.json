@@ -5,11 +5,23 @@
 
     "require": {
         "php": "^7.3",
-        "level-2/dice": "^3.0"
+        "level-2/dice": "^3.0",
+        "sfw2/validator": "^1.0",
+        "sfw2/core": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "SFW2\\Routing\\": "src/"
         }
-    }
+    },
+    "repositories" : [
+        {
+            "type": "vcs",
+            "url": "https://github.com/papparazzo/sfw2-validator.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/papparazzo/sfw2-core.git"
+        }
+    ]
 }
