@@ -4,10 +4,10 @@
     "license": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3",
 
     "require": {
-        "php": "^7.3",
+        "php": "^7.4",
         "level-2/dice": "^3.0",
-        "sfw2/validator": "^1.0",
-        "sfw2/core": "^1.0"
+        "sfw2/validator": "^2.0",
+        "sfw2/core": "^2.0"
     },
     "autoload": {
         "psr-4": {

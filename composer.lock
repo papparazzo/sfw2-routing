@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ef92e98a3b6308f0d74438f5921fbd57",
+    "content-hash": "2de50d43f136a6da5e41c99c9d4660d1",
     "packages": [
         {
             "name": "level-2/dice",
@@ -54,20 +54,20 @@
         },
         {
             "name": "sfw2/core",
-            "version": "1.0.1",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/papparazzo/sfw2-core.git",
-                "reference": "18748c4d38f4bb11bd2b4cef0458fc5c630658da"
+                "reference": "debf202aae355efd32b080dc4640b39ab369465a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/18748c4d38f4bb11bd2b4cef0458fc5c630658da",
-                "reference": "18748c4d38f4bb11bd2b4cef0458fc5c630658da",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/debf202aae355efd32b080dc4640b39ab369465a",
+                "reference": "debf202aae355efd32b080dc4640b39ab369465a",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3"
+                "php": "^7.4"
             },
             "type": "library",
             "autoload": {
@@ -79,27 +79,27 @@
                 "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
             ],
             "support": {
-                "source": "https://github.com/papparazzo/sfw2-core/tree/1.0.1",
+                "source": "https://github.com/papparazzo/sfw2-core/tree/2.0.0",
                 "issues": "https://github.com/papparazzo/sfw2-core/issues"
             },
-            "time": "2019-11-15T10:00:04+00:00"
+            "time": "2019-11-29T21:05:55+00:00"
         },
         {
             "name": "sfw2/validator",
-            "version": "1.0.1",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/papparazzo/sfw2-validator.git",
-                "reference": "7efc1f30c3a0e6393a0f2542376932a811dd2434"
+                "reference": "38290ccaef1c82a62b96f3f4370a0fffaa38f10e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-validator/zipball/7efc1f30c3a0e6393a0f2542376932a811dd2434",
-                "reference": "7efc1f30c3a0e6393a0f2542376932a811dd2434",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-validator/zipball/38290ccaef1c82a62b96f3f4370a0fffaa38f10e",
+                "reference": "38290ccaef1c82a62b96f3f4370a0fffaa38f10e",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3"
+                "php": "^7.4"
             },
             "type": "library",
             "autoload": {
@@ -110,11 +110,12 @@
             "license": [
                 "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
             ],
+            "description": "simple validation library",
             "support": {
-                "source": "https://github.com/papparazzo/sfw2-validator/tree/1.0.1",
+                "source": "https://github.com/papparazzo/sfw2-validator/tree/2.0.0",
                 "issues": "https://github.com/papparazzo/sfw2-validator/issues"
             },
-            "time": "2019-11-15T09:53:10+00:00"
+            "time": "2019-11-24T19:29:25+00:00"
         }
     ],
     "packages-dev": [],
@@ -124,7 +125,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3"
+        "php": "^7.4"
     },
     "platform-dev": []
 }
