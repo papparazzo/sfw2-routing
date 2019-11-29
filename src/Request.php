@@ -30,7 +30,7 @@ class Request {
     const REQUEST_TYPE_AJAX_JSON = 2;
     const REQUEST_TYPE_HTML      = 3;
 
-    protected int $action = self::DEFAULT_ACTION;
+    protected string $action = self::DEFAULT_ACTION;
 
     protected array $server = [];
     protected array $get    = [];

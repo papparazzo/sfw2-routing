@@ -41,12 +41,12 @@ class Resolver {
     /**
      * @var \SFW2\Routing\ControllerMap\ControllerMapInterface
      */
-    protected ControllerMapInterface $controllerMap = null;
+    protected ControllerMapInterface $controllerMap;
 
     /**
      * @var \SFW2\Routing\Permission\PermissionInterface
      */
-    protected PermissionInterface $permission = null;
+    protected PermissionInterface $permission;
 
     /**
      * @var \SFW2\Routing\PathMap\PathMap
@@ -56,7 +56,7 @@ class Resolver {
     /**
      * @var \Dice\Dice
      */
-    protected Dice $container = null;
+    protected Dice $container;
 
     public function __construct(ControllerMapInterface $controllerMap, PathMap $pathMap, Dice $container, PermissionInterface $permission) {
         $this->controllerMap = $controllerMap;
