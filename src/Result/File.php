@@ -26,13 +26,13 @@ use SFW2\Routing\Resolver\ResolverException;
 
 class File extends AbstractResult {
 
-    protected $path = '';
+    protected string $path = '';
 
-    protected $file = '';
+    protected string $file = '';
 
-    protected $alias = '';
+    protected string $alias = '';
 
-    protected $isTemp = false;
+    protected bool $isTemp = false;
 
     public function __construct(string $path, string $file, string $alias = '', bool $isTemp = false) {
 

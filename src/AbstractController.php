@@ -29,7 +29,7 @@ abstract class AbstractController {
     /**
      * @var int
      */
-    protected $pathId;
+    protected int $pathId;
 
     public function __construct(int $pathId) {
         $this->pathId = $pathId;

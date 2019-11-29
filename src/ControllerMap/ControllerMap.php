@@ -27,13 +27,13 @@ class ControllerMap implements ControllerMapInterface {
     /**
      * @var array
      */
-    protected $controllerMap = [];
+    protected array $controllerMap = [];
 
     public function __construct(array $controllerMap) {
         $this->controllerMa = $controllerMap;
     }
 
-    public function getRulsetByPathId($pathId) : array {
+    public function getRulsetByPathId(string $pathId) : array {
 
         if(!isset($this->controllerMap[$pathId])) {
             throw new ControllerMapException("found no entry for <$pathId>", ControllerMapException::NO_RESULTSET_GIVEN);

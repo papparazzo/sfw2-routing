@@ -30,17 +30,17 @@ class PathMap {
     /**
      * @var \SFW2\Core\Session
      */
-    protected $session;
+    protected Session $session;
 
     /**
      * @var string
      */
-    protected $currentPath = '';
+    protected string $currentPath = '';
 
     /**
      * @var array
      */
-    protected $pathMap = [];
+    protected array $pathMap = [];
 
     public function __construct(Request $request, PathMapLoaderInterface $pathMapLoader, Session $session) {
         $this->currentPath = $request->getPath();

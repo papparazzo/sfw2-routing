@@ -24,11 +24,11 @@ namespace SFW2\Routing\Result;
 
 class Content extends AbstractResult {
 
-    protected $templateFile = '';
+    protected string $templateFile = '';
 
-    protected $jsFiles  = [];
-    protected $cssFiles = [];
-    protected $vars     = [];
+    protected array $jsFiles  = [];
+    protected array $cssFiles = [];
+    protected array $vars     = [];
 
     public function __construct(string $templateFile = '', bool $hasErrors = false) {
         parent::__construct($hasErrors);
