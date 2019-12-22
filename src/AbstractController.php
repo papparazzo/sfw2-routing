@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use SFW2\Routing\Resolver\ResolverException;
+use SFW2\Routing\Result\AbstractResult;
 
 abstract class AbstractController {
 
