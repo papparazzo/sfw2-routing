@@ -27,30 +27,30 @@ use SFW2\Routing\Result\AbstractResult;
 
 abstract class AbstractController {
 
-    /**
-     * @var int
-     */
     protected int $pathId;
 
     public function __construct(int $pathId) {
         $this->pathId = $pathId;
     }
 
-    abstract function index(bool $all = false) : AbstractResult;
+    abstract function index(bool $all = false): AbstractResult;
 
-    public function create() : AbstractResult {
+    public function create(): AbstractResult {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function read(bool $all = false) : AbstractResult {
+    public function read(bool $all = false): AbstractResult {
+        unset($all);
         throw new ResolverException('read-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function update(bool $all = false) : AbstractResult {
+    public function update(bool $all = false): AbstractResult {
+        unset($all);
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
-    public function delete(bool $all = false) : AbstractResult {
+    public function delete(bool $all = false): AbstractResult {
+        unset($all);
         throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
