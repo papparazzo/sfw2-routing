@@ -24,8 +24,6 @@ namespace SFW2\Routing;
 
 use SFW2\Core\View as BaseView;
 
-use SFW2\Routing\PathMap\PathMap;
-
 use DateTime;
 use DateTimeZone;
 
@@ -33,12 +31,9 @@ class View extends BaseView {
 
     protected $request;
 
-    protected $pathMap;
-
-    public function __construct(string $template, Request $request, PathMap $pathMap) {
+    public function __construct(string $template, Request $request) {
         parent::__construct($template);
         $this->request  = $request;
-        $this->pathMap = $pathMap;
     }
 
     public function getCurrentPath() : string {
@@ -47,10 +42,6 @@ class View extends BaseView {
 
     public function getPathSimplified() : string {
         return $this->request->getPathSimplified();
-    }
-
-    public function getPathById(int $pathId) : string {
-        return $this->pathMap->getPath($pathId);
     }
 
     protected function showContent() : void {

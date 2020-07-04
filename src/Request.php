@@ -46,27 +46,27 @@ class Request {
         $this->action = $this->getGetParam('do', self::DEFAULT_ACTION);
     }
 
-    public function getAction() : string {
+    public function getAction(): string {
         return $this->action;
     }
 
-    public function getPath() : string {
+    public function getPath(): string {
         return $this->path;
     }
 
-    public function getPathSimplified() : string {
+    public function getPathSimplified(): string {
         return 'P_' . str_replace('/', '_', $this->path);
     }
 
-    public function hasPostParams() : bool {
+    public function hasPostParams(): bool {
         return (bool)count($this->post);
     }
 
-    public function hasGetParams() : bool {
+    public function hasGetParams(): bool {
         return (bool)count($this->get);
     }
 
-    public function getRequestType() : int {
+    public function getRequestType(): int {
         if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return self::REQUEST_TYPE_HTML;
         }
