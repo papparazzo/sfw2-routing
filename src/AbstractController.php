@@ -35,20 +35,32 @@ abstract class AbstractController {
 
     abstract function index(bool $all = false): AbstractResult;
 
+    /**
+     * @throws \SFW2\Routing\Resolver\Exception
+     */
     public function create(): AbstractResult {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
+    /**
+     * @throws \SFW2\Routing\Resolver\Exception
+     */
     public function read(bool $all = false): AbstractResult {
         unset($all);
         throw new ResolverException('read-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
+    /**
+     * @throws \SFW2\Routing\Resolver\Exception
+     */
     public function update(bool $all = false): AbstractResult {
         unset($all);
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
+    /**
+     * @throws \SFW2\Routing\Resolver\Exception
+     */
     public function delete(bool $all = false): AbstractResult {
         unset($all);
         throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
