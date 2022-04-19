@@ -38,6 +38,13 @@ abstract class AbstractController {
     /**
      * @throws \SFW2\Routing\Resolver\Exception
      */
+    public function preview(bool $all = false): AbstractResult {
+        throw new ResolverException('preview-method not implemented', ResolverException::PAGE_NOT_FOUND);
+    }
+
+    /**
+     * @throws \SFW2\Routing\Resolver\Exception
+     */
     public function create(): AbstractResult {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
