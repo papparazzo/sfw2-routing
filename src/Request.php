@@ -36,7 +36,7 @@ class Request {
     protected array $get    = [];
     protected array $post   = [];
 
-    protected $path = '';
+    protected string $path = '';
 
     public function __construct(array $server, array $get = [], array $post = []) {
         $this->server = $server;
@@ -70,7 +70,7 @@ class Request {
         if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
             return self::REQUEST_TYPE_HTML;
         }
-        if(strpos($this->server["HTTP_ACCEPT"], "application/json") !== false) {
+        if(str_contains($this->server["HTTP_ACCEPT"], "application/json")) {
             return self::REQUEST_TYPE_AJAX_JSON;
         }
         return self::REQUEST_TYPE_AJAX_XML;
@@ -96,8 +96,8 @@ class Request {
             $path = mb_substr($path, 0, $pos);
         }
         $path = strtolower($path);
-        $path = preg_replace('#[^A-Za-z0-9/]#', '', $path);
-        $path = '/' . trim($path, '/');
-        return $path;
+        $path = preg_replace('#[^A-Za-z\d/]#', '', $path);
+
+        return '/' . trim($path, '/');
     }
 }

@@ -34,7 +34,11 @@ class File extends AbstractResult {
 
     protected bool $isTemp = false;
 
+    /**
+     * @throws \SFW2\Routing\Resolver\Exception
+     */
     public function __construct(string $path, string $file, string $alias = '', bool $isTemp = false) {
+        parent::__construct();
 
         if($alias == '') {
             $alias = $file;

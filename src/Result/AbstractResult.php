@@ -37,15 +37,15 @@ abstract class AbstractResult {
         $this->hasModifiedData = true;
     }
 
-    public function hasModifiedData() : bool {
+    public function hasModifiedData(): bool {
         return $this->hasModifiedData;
     }
 
-    public function setError(bool $error) {
+    public function setError(bool $error): void {
         $this->error = $error;
     }
 
-    public function hasErrors() : bool {
+    public function hasErrors(): bool {
         return $this->error;
     }
 
