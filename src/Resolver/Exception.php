@@ -26,11 +26,10 @@ use Exception as BaseException;
 
 class Exception extends BaseException {
 
-    const PAGE_NOT_FOUND     = 1;
-    const UNKNOWN_ERROR      = 2;
-    const FILE_NOT_FOUND     = 3;
-    const NO_DATA_FOUND      = 4;
-    const NO_PERMISSION      = 5;
-    const INVALID_DATA_GIVEN = 6;
-    
+    final public const INVALID_DATA_GIVEN = 400;  // Bad Request
+    final public const NO_PERMISSION      = 403;  // Forbidden;
+    final public const PAGE_NOT_FOUND     = 404;  // Not Found
+
+    final public const UNKNOWN_ERROR      = 500;  // Internal Server Error
+
 }
