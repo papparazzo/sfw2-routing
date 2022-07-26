@@ -22,15 +22,11 @@
 
 namespace SFW2\Routing;
 
+use RequestException;
+use SFW2\Routing\Enumerations\MethodType;
+use SFW2\Routing\Enumerations\RequestType;
+
 class Request {
-
-    const DEFAULT_ACTION = 'index';
-
-    const REQUEST_TYPE_AJAX_XML  = 1;
-    const REQUEST_TYPE_AJAX_JSON = 2;
-    const REQUEST_TYPE_HTML      = 3;
-
-    protected string $action = self::DEFAULT_ACTION;
 
     protected array $server = [];
     protected array $get    = [];
@@ -43,11 +39,6 @@ class Request {
         $this->get    = $get;
         $this->post   = $post;
         $this->path   = $this->checkPath($server['REQUEST_URI']);
-        $this->action = $this->getGetParam('do', self::DEFAULT_ACTION);
-    }
-
-    public function getAction(): string {
-        return $this->action;
     }
 
     public function getPath(): string {
@@ -56,24 +47,6 @@ class Request {
 
     public function getPathSimplified(): string {
         return 'P_' . str_replace('/', '_', $this->path);
-    }
-
-    public function hasPostParams(): bool {
-        return (bool)count($this->post);
-    }
-
-    public function hasGetParams(): bool {
-        return (bool)count($this->get);
-    }
-
-    public function getRequestType(): int {
-        if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
-            return self::REQUEST_TYPE_HTML;
-        }
-        if(str_contains($this->server["HTTP_ACCEPT"], "application/json")) {
-            return self::REQUEST_TYPE_AJAX_JSON;
-        }
-        return self::REQUEST_TYPE_AJAX_XML;
     }
 
     public function getGetParam(string $name, $def = null) {
@@ -88,6 +61,28 @@ class Request {
             return $def;
         }
         return $this->post[$name];
+    }
+
+    public function getRequestType(): RequestType {
+        if(!isset($this->server['HTTP_X_REQUESTED_WITH'])) {
+            return RequestType::HTML;
+        }
+        if(str_contains($this->server["HTTP_ACCEPT"], "application/json")) {
+            return RequestType::AJAX_JSON;
+        }
+        return RequestType::AJAX_XML;
+    }
+
+    /**
+     * @throws \RequestException
+     */
+    public function getMethodType(): MethodType {
+        foreach(MethodType::cases() as $type) {
+            if($type->value == $_SERVER['REQUEST_METHOD']) {
+                return $type;
+            }
+        }
+        throw new RequestException("unknown method type given");
     }
 
     protected function checkPath(string $path): string {
