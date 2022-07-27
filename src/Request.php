@@ -22,9 +22,9 @@
 
 namespace SFW2\Routing;
 
-use RequestException;
-use SFW2\Routing\Enumerations\MethodType;
-use SFW2\Routing\Enumerations\RequestType;
+use SFW2\Routing\Request\Exception as RequestException;
+use SFW2\Routing\Request\MethodType;
+use SFW2\Routing\Request\RequestType;
 
 class Request {
 
@@ -34,11 +34,24 @@ class Request {
 
     protected string $path = '';
 
+    /**
+     * @throws \SFW2\Routing\Request\Exception
+     */
     public function __construct(array $server, array $get = [], array $post = []) {
         $this->server = $server;
         $this->get    = $get;
         $this->post   = $post;
         $this->path   = $this->checkPath($server['REQUEST_URI']);
+
+        if($this->getMethodType() == MethodType::PUT) {
+            $input = [];
+
+            parse_str(file_get_contents("php://input"), $input);
+
+            foreach ($input as $name => $value) {
+                $this->post[$name] = $value;
+            }
+        }
     }
 
     public function getPath(): string {
@@ -74,7 +87,7 @@ class Request {
     }
 
     /**
-     * @throws \RequestException
+     * @throws \SFW2\Routing\Request\Exception
      */
     public function getMethodType(): MethodType {
         foreach(MethodType::cases() as $type) {
