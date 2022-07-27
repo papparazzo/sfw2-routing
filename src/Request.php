@@ -91,7 +91,7 @@ class Request {
      */
     public function getMethodType(): MethodType {
         foreach(MethodType::cases() as $type) {
-            if($type->value == $_SERVER['REQUEST_METHOD']) {
+            if($type->name == $_SERVER['REQUEST_METHOD']) {
                 return $type;
             }
         }
