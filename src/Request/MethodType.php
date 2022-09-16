@@ -23,8 +23,8 @@
 namespace SFW2\Routing\Request;
 
 enum MethodType: string {
-    case GET    = 'GET';
-    case POST   = 'POST';
-    case PUT    = 'PUT';
-    case DELETE = 'DELETE';
+    case GET    = 'read';
+    case POST   = 'create';
+    case PUT    = 'update';
+    case DELETE = 'delete';
 }
