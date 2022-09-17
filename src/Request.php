@@ -22,8 +22,6 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\Request\Exception as RequestException;
-use SFW2\Routing\Request\MethodType;
 use SFW2\Routing\Request\RequestType;
 
 class Request {
@@ -32,26 +30,22 @@ class Request {
     protected array $get    = [];
     protected array $post   = [];
 
+    private const DEFAULT_ACTION = 'index';
+
+    protected string $action = self::DEFAULT_ACTION;
+
     protected string $path = '';
 
-    /**
-     * @throws \SFW2\Routing\Request\Exception
-     */
     public function __construct(array $server, array $get = [], array $post = []) {
         $this->server = $server;
         $this->get    = $get;
         $this->post   = $post;
         $this->path   = $this->checkPath($server['REQUEST_URI']);
+        $this->action = $this->getGetParam('do', self::DEFAULT_ACTION);
+    }
 
-        if($this->getMethodType() == MethodType::PUT) {
-            $input = [];
-
-            parse_str(file_get_contents("php://input"), $input);
-
-            foreach ($input as $name => $value) {
-                $this->post[$name] = $value;
-            }
-        }
+    public function getAction() : string {
+        return $this->action;
     }
 
     public function getPath(): string {
@@ -84,18 +78,6 @@ class Request {
             return RequestType::AJAX_JSON;
         }
         return RequestType::AJAX_XML;
-    }
-
-    /**
-     * @throws \SFW2\Routing\Request\Exception
-     */
-    public function getMethodType(): MethodType {
-        foreach(MethodType::cases() as $type) {
-            if($type->name == $_SERVER['REQUEST_METHOD']) {
-                return $type;
-            }
-        }
-        throw new RequestException("unknown method type given");
     }
 
     protected function checkPath(string $path): string {
