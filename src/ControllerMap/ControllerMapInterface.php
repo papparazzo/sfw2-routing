@@ -24,7 +24,5 @@ namespace SFW2\Routing\ControllerMap;
 
 interface ControllerMapInterface {
 
-    public function getControllerRulsetByPathId(string $path): array;
-
-    public function isValidPath(string $path): bool;
+    public function getControllerRulsetByPathId(int $pathId): array;
 }
