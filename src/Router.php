@@ -24,14 +24,24 @@ namespace SFW2\Routing;
 
 use ReflectionMethod;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
+use SFW2\Routing\PathMap\PathMap;
 use SFW2\Routing\Router\Exception as RouterException;
 
 class Router {
 
     protected ControllerMapInterface $controllerMap;
 
-    public function __construct(ControllerMapInterface $controllerMap) {
+    protected PathMap $pathMap;
+
+    protected array $middlewareHandlers;
+
+    public function __construct(PathMap $pathMap, ControllerMapInterface $controllerMap) {
         $this->controllerMap = $controllerMap;
+        $this->pathMap = $pathMap;
+    }
+
+    public function addMiddlewareHandler(MiddlewareInterface $handler): void {
+        $this->middlewareHandlers[] = $handler;
     }
 
     /**
@@ -45,19 +55,15 @@ class Router {
 
         $action = $request->getAction();
 
-        /* TODO XSRF-Check! FIXME Middelware
-        if($request->hasPostParams() && !$this->session->compareToken((string)filter_input(INPUT_POST, 'xss'))) {
-           throw new ResolverException("class <$class> does not exists", ResolverException::INVALID_DATA_GIVEN);
+        foreach($this->middlewareHandlers as $handler) {
+            $handler->handle($request);
         }
-        */
 
-        if(!$this->controllerMap->isValidPath($path)) {
+        if(!$this->pathMap->isValidPath($path)) {
             throw new RouterException("could not load <$path>", RouterException::NOT_FOUND);
         }
-        $controller = $this->controllerMap->getControllerRulsetByPathId($path);
 
-        // TODO Permission Check! FIXME Middelware
-        #$hasFullPermission = $this->hasFullPermission($controller['PathId'], $action);
+        $controller = $this->controllerMap->getControllerRulsetByPathId($this->pathMap->getPathId($path));
 
         $ctrl = $this->getController(key($controller['Controller']), $action);
         return call_user_func([$ctrl, $action]);
