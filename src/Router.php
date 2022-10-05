@@ -22,10 +22,12 @@
 
 namespace SFW2\Routing;
 
+use DI\Container;
 use ReflectionMethod;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use SFW2\Routing\PathMap\PathMap;
 use SFW2\Routing\Router\Exception as RouterException;
+use Throwable;
 
 class Router {
 
@@ -35,9 +37,13 @@ class Router {
 
     protected array $middlewareHandlers;
 
+    protected Container $container;
+
     public function __construct(PathMap $pathMap, ControllerMapInterface $controllerMap) {
         $this->controllerMap = $controllerMap;
         $this->pathMap = $pathMap;
+
+        $this->container = new Container();
     }
 
     public function addMiddlewareHandler(MiddlewareInterface $handler): void {
@@ -48,7 +54,7 @@ class Router {
      * @throws \ReflectionException
      * @throws \SFW2\Routing\Router\Exception
      */
-    public function handleRequest(Request $request): Result {
+    public function handleRequest(Request $request): Content {
         $path = $request->getPath();
 
         #$action preview, show (index), getContent (read), delete, update, create
@@ -90,7 +96,12 @@ class Router {
         #     ]
         # ]);
 
-        #$ctrl = $this->container->create($class);
+        try {
+            $ctrl = $this->container->get($class);
+        } catch (Throwable $exc) {
+            throw new RouterException("container exception <{$exc->getMessage()}> cathced", RouterException::INTERNAL_SERVER_ERROR, $exc);
+        }
+
         if(!($ctrl instanceof AbstractController)) {
             throw new RouterException("class <$class> is no controller", RouterException::NOT_FOUND);
         }
