@@ -23,6 +23,7 @@
 namespace SFW2\Routing;
 
 use DI\Container;
+use DI\ContainerBuilder;
 use ReflectionMethod;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use SFW2\Routing\PathMap\PathMap;
@@ -90,21 +91,18 @@ class Router {
             throw new RouterException("method <$action> is not public", RouterException::NOT_FOUND);
         }
 
-        # $this->container->addRules([
-        #     $controller['Controller'] => [
-        #         'constructParams' => $controller['AdditionalParams']
-        #     ]
-        # ]);
-
         try {
             $ctrl = $this->container->get($class);
         } catch (Throwable $exc) {
-            throw new RouterException("container exception <{$exc->getMessage()}> cathced", RouterException::INTERNAL_SERVER_ERROR, $exc);
+            throw new RouterException("container exception <{$exc->getMessage()}> catched", RouterException::INTERNAL_SERVER_ERROR, $exc);
         }
 
         if(!($ctrl instanceof AbstractController)) {
             throw new RouterException("class <$class> is no controller", RouterException::NOT_FOUND);
         }
+
+        //$ctrl->
+
         return $ctrl;
     }
 }

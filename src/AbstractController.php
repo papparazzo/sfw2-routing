@@ -22,9 +22,6 @@
 
 namespace SFW2\Routing;
 
-use SFW2\Routing\Resolver\Exception as ResolverException;
-use SFW2\Routing\Result\AbstractResult;
-
 abstract class AbstractController {
 
     protected int $pathId;
@@ -33,25 +30,33 @@ abstract class AbstractController {
         $this->pathId = $pathId;
     }
 
+    public function appendAdditionalData(array $data): void {
+
+    }
+
+
+
+    /*
+
     abstract function index(bool $all = false): AbstractResult;
 
     /**
      * @throws \SFW2\Routing\Resolver\Exception
-     */
+     * /
     public function preview(bool $all = false): AbstractResult {
         throw new ResolverException('preview-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
     /**
      * @throws \SFW2\Routing\Resolver\Exception
-     */
+     * /
     public function create(): AbstractResult {
         throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
 
     /**
      * @throws \SFW2\Routing\Resolver\Exception
-     */
+     * /
     public function read(bool $all = false): AbstractResult {
         unset($all);
         throw new ResolverException('read-method not implemented', ResolverException::PAGE_NOT_FOUND);
@@ -59,7 +64,7 @@ abstract class AbstractController {
 
     /**
      * @throws \SFW2\Routing\Resolver\Exception
-     */
+     * /
     public function update(bool $all = false): AbstractResult {
         unset($all);
         throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
@@ -67,10 +72,10 @@ abstract class AbstractController {
 
     /**
      * @throws \SFW2\Routing\Resolver\Exception
-     */
+     * /
     public function delete(bool $all = false): AbstractResult {
         unset($all);
         throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
     }
-
+    */
 }
