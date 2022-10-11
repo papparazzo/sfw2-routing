@@ -33,7 +33,6 @@ class PathMap {
     public function __construct(string $currentPath, PathMapLoaderInterface $pathMapLoader) {
         $this->currentPath = $currentPath;
         $this->pathMap = $pathMapLoader->getPathMap();
-        $this->pathMap['/'] = 0;
     }
 
     public function isValidPath(string $path): bool {
