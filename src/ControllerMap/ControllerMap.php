@@ -27,19 +27,12 @@ use OutOfRangeException;
 
 class ControllerMap implements ControllerMapInterface {
 
-    /**
-     * @var array
-     */
     protected array $controllerMap = [];
 
     public function __construct(array $controllerMap) {
         $this->controllerMap = $controllerMap;
     }
 
-    /**
-     * @param int $pathId
-     * @return array[]
-     */
     public function getControllerRulsetByPathId(int $pathId): array {
 
         if(!isset($this->controllerMap[$pathId])) {

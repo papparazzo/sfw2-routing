@@ -16,7 +16,7 @@
  *  GNU Affero General Public License for more details.
  *
  *  You should have received a copy of the GNU Affero General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
+ *  along with this program. If not, see <https://www.gnu.org/licenses/agpl.txt>.
  *
  */
 
@@ -34,48 +34,45 @@ abstract class AbstractController {
 
     }
 
-
-
-    /*
-
-    abstract function index(bool $all = false): AbstractResult;
+    abstract public function index(): Content;
 
     /**
-     * @throws \SFW2\Routing\Resolver\Exception
-     * /
+     * @throws HttpNotFoundException
+     *
+     * Übersicht auf Landingpage
+     */
     public function preview(bool $all = false): AbstractResult {
-        throw new ResolverException('preview-method not implemented', ResolverException::PAGE_NOT_FOUND);
+        throw new HttpNotFoundException();
     }
 
     /**
-     * @throws \SFW2\Routing\Resolver\Exception
-     * /
+     * @throws HttpNotFoundException
+     */
     public function create(): AbstractResult {
-        throw new ResolverException('create-method not implemented', ResolverException::PAGE_NOT_FOUND);
+        throw new HttpNotFoundException();
     }
 
     /**
-     * @throws \SFW2\Routing\Resolver\Exception
-     * /
+     * @throws HttpNotFoundException
+     */
     public function read(bool $all = false): AbstractResult {
         unset($all);
-        throw new ResolverException('read-method not implemented', ResolverException::PAGE_NOT_FOUND);
+        throw new HttpNotFoundException();
     }
 
     /**
-     * @throws \SFW2\Routing\Resolver\Exception
-     * /
+     * @throws HttpNotFoundException
+     */
     public function update(bool $all = false): AbstractResult {
         unset($all);
-        throw new ResolverException('update-method not implemented', ResolverException::PAGE_NOT_FOUND);
+        throw new HttpNotFoundException();
     }
 
     /**
-     * @throws \SFW2\Routing\Resolver\Exception
-     * /
+     * @throws HttpNotFoundException
+     */
     public function delete(bool $all = false): AbstractResult {
         unset($all);
-        throw new ResolverException('delete-method not implemented', ResolverException::PAGE_NOT_FOUND);
+        throw new HttpNotFoundException();
     }
-    */
 }

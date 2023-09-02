@@ -52,8 +52,8 @@ class Router {
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \SFW2\Routing\Router\Exception
+     * @throws ReflectionException
+     * @throws RouterException
      */
     public function handleRequest(Request $request): Content {
         $path = $request->getPath();
