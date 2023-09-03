@@ -41,19 +41,15 @@ class ControllerMap implements ControllerMapInterface {
 
         $res = $this->controllerMap[$pathId];
 
-        $params = $res['data'];
-
-        if(!is_array($params)) {
+        if(
+            !is_array($res) &&
+            !isset($res[self::CLASS_NAME]) && !is_string($res[self::CLASS_NAME]) &&
+            !isset($res[self::ADDITIONAL_DATA]) && !is_array($res[self::ADDITIONAL_DATA])
+        ) {
             throw new InvalidArgumentException("invalid params given <{$res['JsonData']}>");
         }
 
-        array_unshift($params, $pathId);
-
-        return [
-            $res['className'] => [
-                'constructParams' => $params
-            ]
-        ];
+        return $res;
     }
 }
 
