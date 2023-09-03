@@ -24,5 +24,8 @@ namespace SFW2\Routing\ControllerMap;
 
 interface ControllerMapInterface {
 
+    public const CLASS_NAME      = 'className';
+    public const ADDITIONAL_DATA = 'additionalData';
+
     public function getControllerRulsetByPathId(int $pathId): array;
 }
