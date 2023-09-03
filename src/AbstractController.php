@@ -22,57 +22,56 @@
 
 namespace SFW2\Routing;
 
+use Slim\Exception\HttpNotFoundException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 abstract class AbstractController {
 
     protected int $pathId;
 
-    public function __construct(int $pathId) {
+    public function setPathId(int $pathId): void {
         $this->pathId = $pathId;
     }
 
-    public function appendAdditionalData(array $data): void {
+    abstract public function index(): ResponseInterface;
 
-    }
-
-    abstract public function index(): Content;
+   # , bool $all = false
 
     /**
      * @throws HttpNotFoundException
      *
      * Übersicht auf Landingpage
      */
-    public function preview(bool $all = false): AbstractResult {
-        throw new HttpNotFoundException();
+    public function preview(ServerRequestInterface $request): ResponseInterface {
+        throw new HttpNotFoundException($request);
     }
 
     /**
      * @throws HttpNotFoundException
      */
-    public function create(): AbstractResult {
-        throw new HttpNotFoundException();
+    public function create(ServerRequestInterface $request): ResponseInterface {
+        throw new HttpNotFoundException($request);
     }
 
     /**
      * @throws HttpNotFoundException
      */
-    public function read(bool $all = false): AbstractResult {
-        unset($all);
-        throw new HttpNotFoundException();
+    public function read(ServerRequestInterface $request): ResponseInterface {
+        throw new HttpNotFoundException($request);
     }
 
     /**
      * @throws HttpNotFoundException
      */
-    public function update(bool $all = false): AbstractResult {
-        unset($all);
-        throw new HttpNotFoundException();
+    public function update(ServerRequestInterface $request): ResponseInterface {
+        throw new HttpNotFoundException($request);
     }
 
     /**
      * @throws HttpNotFoundException
      */
-    public function delete(bool $all = false): AbstractResult {
-        unset($all);
-        throw new HttpNotFoundException();
+    public function delete(ServerRequestInterface $request): ResponseInterface {
+        throw new HttpNotFoundException($request);
     }
 }
