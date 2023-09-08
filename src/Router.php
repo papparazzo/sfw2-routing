@@ -16,93 +16,34 @@
  *  GNU Affero General Public License for more details.
  *
  *  You should have received a copy of the GNU Affero General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
+ *  along with this program. If not, see <https://www.gnu.org/licenses/agpl.txt>.
  *
  */
 
+declare(strict_types=1);
+
 namespace SFW2\Routing;
 
-use DI\Container;
-use DI\ContainerBuilder;
-use ReflectionMethod;
-use SFW2\Routing\ControllerMap\ControllerMapInterface;
-use SFW2\Routing\PathMap\PathMap;
-use SFW2\Routing\Router\Exception as RouterException;
-use Throwable;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Router {
+class Router implements RequestHandlerInterface {
 
-    protected ControllerMapInterface $controllerMap;
+    private RequestHandlerInterface $top;
 
-    protected PathMap $pathMap;
-
-    protected array $middlewareHandlers;
-
-    protected Container $container;
-
-    public function __construct(PathMap $pathMap, ControllerMapInterface $controllerMap) {
-        $this->controllerMap = $controllerMap;
-        $this->pathMap = $pathMap;
-
-        $this->container = new Container();
+    public function __construct(RequestHandlerInterface $core) {
+        $this->top = $core;
     }
 
-    public function addMiddlewareHandler(MiddlewareInterface $handler): void {
-        $this->middlewareHandlers[] = $handler;
+    public function addMiddleware(MiddlewareInterface $middleware): self {
+        $tmp = $this->top;
+        $this->top = new RequestHandler($middleware, $tmp);
+        return $this;
     }
 
-    /**
-     * @throws ReflectionException
-     * @throws RouterException
-     */
-    public function handleRequest(Request $request): Content {
-        $path = $request->getPath();
-
-        #$action preview, show (index), getContent (read), delete, update, create
-
-        $action = $request->getAction();
-
-        foreach($this->middlewareHandlers as $handler) {
-            $handler->handle($request);
-        }
-
-        if(!$this->pathMap->isValidPath($path)) {
-            throw new RouterException("could not load <$path>", RouterException::NOT_FOUND);
-        }
-
-        $controller = $this->controllerMap->getControllerRulsetByPathId($this->pathMap->getPathId($path));
-
-        $ctrl = $this->getController(key($controller['Controller']), $action);
-        return call_user_func([$ctrl, $action]);
-    }
-
-    /**
-     * @throws \ReflectionException
-     * @throws \SFW2\Routing\Router\Exception
-     */
-    protected function getController(string $class, string $action): AbstractController {
-        if(!class_exists($class)) {
-            throw new RouterException("class <$class> does not exists", RouterException::NOT_FOUND);
-        }
-
-        $refl = new ReflectionMethod($class, $action);
-
-        if(!$refl->isPublic()) {
-            throw new RouterException("method <$action> is not public", RouterException::NOT_FOUND);
-        }
-
-        try {
-            $ctrl = $this->container->get($class);
-        } catch (Throwable $exc) {
-            throw new RouterException("container exception <{$exc->getMessage()}> catched", RouterException::INTERNAL_SERVER_ERROR, $exc);
-        }
-
-        if(!($ctrl instanceof AbstractController)) {
-            throw new RouterException("class <$class> is no controller", RouterException::NOT_FOUND);
-        }
-
-        //$ctrl->
-
-        return $ctrl;
+    public function handle(ServerRequestInterface $request): ResponseInterface {
+        return $this->top->handle($request);
     }
 }
