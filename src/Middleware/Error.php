@@ -28,6 +28,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use SFW2\Core\HttpExceptions\HttpInternalServerError;
 use SFW2\Core\SFW2Exception;
 use SFW2\Routing\Router\Exception;
 use SFW2\Routing\Router\Exception as RouterException;
@@ -57,15 +58,11 @@ class Error implements MiddlewareInterface
     protected function handleException(Throwable $exception): ResponseInterface {
 
         if (!$exception instanceof SFW2Exception) {
-            $exception = new SFW2Exception($exception->getMessage(), RouterException::INTERNAL_SERVER_ERROR, $exception);
+            $exception = new HttpInternalServerError($exception->getMessage(), $exception);
             $this->logger->critical($exception->getMessage());
+        } else {
+            $this->logger->warning($exception->getMessage());
         }
-
-    #    switch($exception->getCode()) {
-    #        case
-    #    }
-
-
 /*
         $this->assignArray([
             'title' => $exception->getCode(),
