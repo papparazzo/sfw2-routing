@@ -9,20 +9,22 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
+use SFW2\Core\HttpExceptions\HttpServiceUnavailable;
 
 class Offline implements MiddlewareInterface
 {
-    private string $bypassToken;
+    private const BY_PASS_TOKEN_KEY = 'bypass';
 
-    private bool $offline;
+    private CacheInterface $bypassTokenCache;
 
     private ContainerInterface $container;
 
-    public function __construct(bool $offline, string $bypassToken = '', ContainerInterface $container)
+    public function __construct(CacheInterface $bypassTokenCache, ContainerInterface $container)
     {
-        $this->bypassToken = $bypassToken;
-        $this->offline = $offline;
         $this->container = $container;
+        $this->bypassTokenCache = $bypassTokenCache;
     }
 
     /**
@@ -31,6 +33,7 @@ class Offline implements MiddlewareInterface
      * @return ResponseInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws InvalidArgumentException|HttpServiceUnavailable
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -38,18 +41,34 @@ class Offline implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if($session->isGlobalEntrySet('bypass')) {
+        $tokenFromConfig = $this->getBypassTokenFromConfig();
+
+        if(
+            $this->bypassTokenCache->has(self::BY_PASS_TOKEN_KEY) &&
+            $tokenFromConfig == $this->bypassTokenCache->get(self::BY_PASS_TOKEN_KEY)
+        ) {
             return $handler->handle($request);
-            return;
         }
 
-        if(isset($this->get['bypass']) && $this->get['bypass'] == $this->container->get('site.offlineBypassToken')) {
-            $session->setGlobalEntry('bypass', true);
-            return;
+        $tokenFromRequest = $request->getAttribute(self::BY_PASS_TOKEN_KEY);
+
+        if($tokenFromRequest != $tokenFromConfig) {
+            # 503 Service Unavailable
+            throw new HttpServiceUnavailable("website offline");
         }
 
-       # 503 Service Unavailable
+        $this->bypassTokenCache->set(self::BY_PASS_TOKEN_KEY, $tokenFromConfig);
+        return $handler->handle($request);
+    }
 
-        throw new RouterException("offline", RouterException::SERVICE_UNAVAILABLE);
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    private function getBypassTokenFromConfig(): string {
+        if(!$this->container->has('site.offlineBypassToken')) {
+            return '';
+        }
+        return (string)$this->container->get('site.offlineBypassToken');
     }
 }
