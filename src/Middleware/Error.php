@@ -59,6 +59,9 @@ class Error implements MiddlewareInterface
 
         if (!$exception instanceof SFW2Exception) {
             $exception = new HttpInternalServerError($exception->getMessage(), $exception);
+        }
+
+        if ($exception->getCode() >= 500) {
             $this->logger->critical($exception->getMessage());
         } else {
             $this->logger->warning($exception->getMessage());
