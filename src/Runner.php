@@ -24,16 +24,17 @@ declare(strict_types=1);
 
 namespace SFW2\Routing;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use SFW2\Core\HttpExceptions\HttpNotFound;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use SFW2\Routing\PathMap\PathMap;
 use ReflectionException;
 use ReflectionMethod;
-use SFW2\Routing\Router\Exception as RouterException;
-use Throwable;
 
 class Runner implements RequestHandlerInterface
 {
@@ -43,16 +44,21 @@ class Runner implements RequestHandlerInterface
 
     protected ContainerInterface $container;
 
-     public function __construct(PathMap $pathMap, ControllerMapInterface $controllerMap, ContainerInterface $container)
+    protected ResponseFactoryInterface $responseFactory;
+
+    public function __construct(PathMap $pathMap, ControllerMapInterface $controllerMap, ContainerInterface $container, ResponseFactoryInterface $responseFactory)
     {
         $this->controllerMap = $controllerMap;
         $this->pathMap = $pathMap;
         $this->container = $container;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
      * @inheritDoc
-     * @throws RouterException
+     * @throws HttpNotFound
+     * @throws ContainerExceptionInterface
+     * @throws ReflectionException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -61,46 +67,43 @@ class Runner implements RequestHandlerInterface
         #$action preview, show (index), getContent (read), delete, update, create
 
         if (!$this->pathMap->isValidPath($path)) {
-            throw new RouterException("could not load <$path>", RouterException::NOT_FOUND);
+            throw new HttpNotFound("could not load <$path>");
         }
 
         $pathId = $this->pathMap->getPathId($path);
 
         $controller = $this->controllerMap->getControllerRulsetByPathId($pathId);
 
-        $action = $request->getAction();
+        $action = 'index'; #$request->getAction();
         $ctrl = $this->getController($controller[ControllerMapInterface::CLASS_NAME], $action);
 
         $ctrl->setPathId($pathId);
-        $ctrl->appendAdditionalData($controller[ControllerMapInterface::ADDITIONAL_DATA]);
+        #$ctrl->appendAdditionalData($controller[ControllerMapInterface::ADDITIONAL_DATA]);
 
-        return call_user_func([$ctrl, $action]);
+        return call_user_func([$ctrl, $action], $request, $this->responseFactory->createResponse());
     }
 
     /**
      * @throws ReflectionException
-     * @throws RouterException
+     * @throws HttpNotFound
+     * @throws ContainerExceptionInterface
      */
     protected function getController(string $class, string $action): AbstractController
     {
         if (!class_exists($class)) {
-            throw new RouterException("class <$class> does not exists", RouterException::NOT_FOUND);
+            throw new HttpNotFound("class <$class> does not exists");
         }
 
         $refl = new ReflectionMethod($class, $action);
 
         if (!$refl->isPublic()) {
-            throw new RouterException("method <$action> is not public", RouterException::NOT_FOUND);
+            throw new HttpNotFound("method <$action> is not public");
         }
 
-        try {
-            $ctrl = $this->container->get($class);
-        } catch (Throwable $exc) {
-            throw new RouterException("container exception <{$exc->getMessage()}> catched", RouterException::INTERNAL_SERVER_ERROR, $exc);
-        }
+        $ctrl = $this->container->get($class);
 
         if (!($ctrl instanceof AbstractController)) {
-            throw new RouterException("class <$class> is no controller", RouterException::NOT_FOUND);
+            throw new HttpNotFound("class <$class> is no controller");
         }
 
         return $ctrl;
