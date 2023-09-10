@@ -22,16 +22,15 @@
 
 namespace SFW2\Routing\Middleware;
 
+use ErrorException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use SFW2\Core\HttpExceptions\HttpException;
 use SFW2\Core\HttpExceptions\HttpInternalServerError;
-use SFW2\Core\SFW2Exception;
-use SFW2\Routing\Router\Exception;
-use SFW2\Routing\Router\Exception as RouterException;
 use Throwable;
 
 class Error implements MiddlewareInterface
@@ -56,83 +55,43 @@ class Error implements MiddlewareInterface
     }
 
     protected function handleException(Throwable $exception): ResponseInterface {
+        $exception = $this->convertException($exception);
+        return $this->createResponseFromException($exception);
+    }
 
-        if (!$exception instanceof SFW2Exception) {
-            $exception = new HttpInternalServerError($exception->getMessage(), $exception);
+    protected function convertException(Throwable $exc): HttpException {
+        if($exc instanceof ErrorException) {
+            // TODO: Write propper Error-Message
+            $this->logger->critical("Error on line: {$exc->getLine()}  {$exc->getMessage()}");
+            return new HttpInternalServerError($exc->getMessage(), $exc);
         }
 
-        if ($exception->getCode() >= 500) {
-            $this->logger->critical($exception->getMessage());
+        if (!$exc instanceof HttpException) {
+            $exc = new HttpInternalServerError($exc->getMessage(), $exc);
+        }
+
+        if ($exc->getCode() >= 500) {
+            $this->logger->critical($exc->getMessage());
         } else {
-            $this->logger->warning($exception->getMessage());
+            $this->logger->warning($exc->getMessage());
         }
-/*
+        return $exc;
+    }
+
+    protected function createResponseFromException(HttpException $exc): ResponseInterface {
+        /*
+         *
+
         $this->assignArray([
-            'title' => $exception->getCode(),
-            'caption' => $exception->getError(),
-            'description' => $exception->getMessage()
-        ]);*/
+            'title' => $exc->getTitle(),
+            'caption' => $exc->getCaption(),
+            'description' => $exc->getDescription(),
+            'identifier' => $exc->getIdentifier()
+            #'created'
+            #'updated'
+        ]);
+         */
         return $this->factory->createResponse();
-    }
-
-    public function getInvalidDataGiven() {
-        $title = '400';
-        $caption = 'Ungültige Daten';
-        $description = 'Die Anfrage-Nachricht enthielt ungültige Daten. Bitte prüfe die URL auf Fehler und drücke dann den reload-Button in deinem Browser.';
-
-        return $this->handle($title, $caption, $description);
-    }
-
-    public function getNoPermission() {
-        $title = '403';
-        $caption = 'Keine Berechtigung';
-        $description = 'Dir fehlt die Berechtigung für diese Seite. Bitte melde dich an und probiere es erneut.';
-
-        return $this->handle($title, $caption, $description);
-    }
-
-    public function getNoDataFound() {
-        $title = '404';
-        $caption = 'Daten nicht vorhanden';
-        $description =
-            'Die angeforderten Daten konnten nicht gefunden werden. Bitte prüfe die URL auf Fehler und drücke dann den reload-Button in deinem Browser.';
-
-        return $this->handle($title, $caption, $description);
-    }
-
-    public function getPageNotFound() {
-        $title = '404';
-        $caption = 'Seite nicht vorhanden';
-        $description =
-            'Die gewünschten Daten konnten nicht gefunden werden. Bitte prüfe die URL auf Fehler und drücke dann den reload-Button in deinem Browser.';
-
-        return $this->handle($title, $caption, $description);
-    }
-
-    public function getOffline() {
-        $title = '503';
-        $caption = 'Die Seiten sind aktuell offline';
-        $description =
-            'Aufgrund von umfangreichen Wartungsarbeiten sind die Webseiten im Moment leider nicht zu erreichen. Bitte versuche es sp�ter noch einmal.';
-
-        return $this->handle($title, $caption, $description);
-    }
-
-    public function getError() {
-        $title = '500';
-        $caption = 'Interner Fehler aufgetreten!';
-        $description = 'Es ist ein interner Fehler aufgetreten.';
-        # <br />[ID: {$exception->getIdentifier()}]";
-
-        return $this->handle($title, $caption, $description);
-    }
-
-    protected function handle($title, $caption, $description): AbstractResult
-    {
-        $result = new Content('plain', true);
-        $result->assignArray(['title' => $title, 'caption' => $caption, 'description' => $description]);
-
-        return $result;
     }
 }
 
