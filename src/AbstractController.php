@@ -22,9 +22,9 @@
 
 namespace SFW2\Routing;
 
-use Slim\Exception\HttpNotFoundException;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use SFW2\Core\HttpExceptions\HttpNotFound;
 
 abstract class AbstractController {
 
@@ -34,44 +34,44 @@ abstract class AbstractController {
         $this->pathId = $pathId;
     }
 
-    abstract public function index(): ResponseInterface;
+    abstract public function index(Request $request, Response $response): Response;
 
    # , bool $all = false
 
     /**
-     * @throws HttpNotFoundException
+     * @throws HttpNotFound
      *
      * Übersicht auf Landingpage
      */
-    public function preview(ServerRequestInterface $request): ResponseInterface {
-        throw new HttpNotFoundException($request);
+    public function preview(Request $request, Response $response): Response {
+        throw new HttpNotFound();
     }
 
     /**
-     * @throws HttpNotFoundException
+     * @throws HttpNotFound
      */
-    public function create(ServerRequestInterface $request): ResponseInterface {
-        throw new HttpNotFoundException($request);
+    public function create(Request $request, Response $response): Response {
+        throw new HttpNotFound();
     }
 
     /**
-     * @throws HttpNotFoundException
+     * @throws HttpNotFound
      */
-    public function read(ServerRequestInterface $request): ResponseInterface {
-        throw new HttpNotFoundException($request);
+    public function read(Request $request, Response $response): Response {
+        throw new HttpNotFound();
     }
 
     /**
-     * @throws HttpNotFoundException
+     * @throws HttpNotFound
      */
-    public function update(ServerRequestInterface $request): ResponseInterface {
-        throw new HttpNotFoundException($request);
+    public function update(Request $request, Response $response): Response {
+        throw new HttpNotFound("delete-action not found");
     }
 
     /**
-     * @throws HttpNotFoundException
+     * @throws HttpNotFound
      */
-    public function delete(ServerRequestInterface $request): ResponseInterface {
-        throw new HttpNotFoundException($request);
+    public function delete(Request $request, Response $response): Response {
+        throw new HttpNotFound("delete-action not found");
     }
 }
