@@ -32,7 +32,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SFW2\Core\HttpExceptions\HttpNotFound;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
-use SFW2\Routing\PathMap\PathMap;
+use SFW2\Routing\PathMap\PathMapInterface;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -40,13 +40,13 @@ class Runner implements RequestHandlerInterface
 {
     protected ControllerMapInterface $controllerMap;
 
-    protected PathMap $pathMap;
+    protected PathMapInterface $pathMap;
 
     protected ContainerInterface $container;
 
     protected ResponseFactoryInterface $responseFactory;
 
-    public function __construct(PathMap $pathMap, ControllerMapInterface $controllerMap, ContainerInterface $container, ResponseFactoryInterface $responseFactory)
+    public function __construct(PathMapInterface $pathMap, ControllerMapInterface $controllerMap, ContainerInterface $container, ResponseFactoryInterface $responseFactory)
     {
         $this->controllerMap = $controllerMap;
         $this->pathMap = $pathMap;
