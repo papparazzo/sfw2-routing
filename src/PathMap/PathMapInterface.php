@@ -16,16 +16,21 @@
  *  GNU Affero General Public License for more details.
  *
  *  You should have received a copy of the GNU Affero General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
+ *  along with this program. If not, see <https://www.gnu.org/licenses/agpl.txt>.
  *
  */
 
 namespace SFW2\Routing\PathMap;
 
-interface PathMapLoaderInterface {
+interface PathMapInterface {
 
-    public function getPathMap() : array;
+    public function isValidPath(string $path): bool;
+
+    public function getPathId(string $path): int;
+
+    public function getPath(int $pathId): string;
+
+    public function getPathIdOfParentPath(string $currentPath): int;
 
     public function updateModificationDateRecursive(string $path);
-
 }
