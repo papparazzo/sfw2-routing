@@ -49,14 +49,9 @@ class Error implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
-        } catch(Throwable $exc) {
-            return $this->handleException($exc);
-        }
-    }
-
-    protected function handleException(Throwable $exception): ResponseInterface {
-        $exception = $this->convertException($exception);
-        return $this->createResponseFromException($exception);
+        } catch(Throwable $exception) {
+            $exception = $this->convertException($exception);
+            return $this->createResponseFromException($exception);        }
     }
 
     protected function convertException(Throwable $exc): HttpException {
