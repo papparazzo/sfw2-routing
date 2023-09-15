@@ -93,5 +93,31 @@ class Error implements MiddlewareInterface
          */
         return $this->factory->createResponse();
     }
+
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
+    protected function sendMail(ServerRequestInterface $request, SFW2Exception $exception): bool
+    {
+        $content =
+            $request->getUri() . PHP_EOL . PHP_EOL .
+            $exception->getTimeStamp() . PHP_EOL . PHP_EOL .
+            $exception;
+
+        $header = [
+            'From:' . $this->config->get('defEMailAddr.name') . ' <' . $this->config->get('defEMailAddr.addr') . '>',
+            'MIME-Version: 1.0',
+            'Content-Type:text/html; charset=utf-8',
+            'Content-Transfer-Encoding: 8bit'
+        ];
+
+        return mail(
+            $this->config->get('project.eMailWebMaster'),
+            'Interner Fehler [ID: ' . $exception->getIdentifier() . ']',
+            nl2br($content),
+            implode("\r\n", $header)
+        );
+    }
 }
 
