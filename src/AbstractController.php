@@ -25,13 +25,15 @@ namespace SFW2\Routing;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use SFW2\Core\HttpExceptions\HttpNotFound;
+use SFW2\Routing\Render\RenderInterface;
 
 abstract class AbstractController {
 
-    protected int $pathId;
+    protected RenderInterface $renderEngine;
 
-    public function setPathId(int $pathId): void {
-        $this->pathId = $pathId;
+    public function __construct(RenderInterface $renderEngine)
+    {
+        $this->renderEngine = $renderEngine;
     }
 
     abstract public function index(Request $request, Response $response): Response;
