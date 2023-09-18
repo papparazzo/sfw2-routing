@@ -53,7 +53,6 @@ class Offline implements MiddlewareInterface
         $tokenFromRequest = $request->getAttribute(self::BY_PASS_TOKEN_KEY);
 
         if($tokenFromRequest != $tokenFromConfig) {
-            # 503 Service Unavailable
             throw new HttpServiceUnavailable("website offline");
         }
 
