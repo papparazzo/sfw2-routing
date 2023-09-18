@@ -37,7 +37,7 @@ class Offline implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if(!$this->container->has('site.offline') && !$this->container->get('site.offline')) {
+        if($this->container->has('site.offline') && !$this->container->get('site.offline')) {
             return $handler->handle($request);
         }
 
