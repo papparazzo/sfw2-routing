@@ -16,42 +16,46 @@
  *  GNU Affero General Public License for more details.
  *
  *  You should have received a copy of the GNU Affero General Public License
- *  along with this program. If not, see <httsp://www.gnu.org/licenses/agpl.txt>.
+ *  along with this program. If not, see <https://www.gnu.org/licenses/agpl.txt>.
  *
  */
 
 namespace SFW2\Routing\Middleware;
 
 use ErrorException;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use SFW2\Core\HttpExceptions\HttpException;
 use SFW2\Core\HttpExceptions\HttpInternalServerError;
+use SFW2\Core\SFW2Exception;
+use SFW2\Routing\ResponseEngine;
 use Throwable;
 
 class Error implements MiddlewareInterface
 {
-    protected ResponseFactoryInterface $factory;
-
-    protected LoggerInterface $logger;
-
-    public function __construct(ResponseFactoryInterface $factory, LoggerInterface $logger)
+    public function __construct(
+        protected ResponseEngine $responseEngine,
+        protected ContainerInterface $config,
+        protected LoggerInterface $logger = new NullLogger()
+    )
     {
-        $this->factory = $factory;
-        $this->logger = $logger;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(Request $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
             return $handler->handle($request);
         } catch(Throwable $exception) {
-            $exception = $this->convertException($exception);
-            return $this->createResponseFromException($exception);        }
+            var_dump($exception);
+            $exception = $this->convertException($request, $exception);
+            return $this->createResponseFromException($request, $exception);        }
     }
 
     protected function convertException(Request $request, Throwable $exception): HttpException {
@@ -74,27 +78,21 @@ class Error implements MiddlewareInterface
         return $exception;
     }
 
-    protected function createResponseFromException(HttpException $exc): ResponseInterface {
-        /*
-         *
-
-        $this->assignArray([
+    protected function createResponseFromException(Request $request, HttpException $exc): ResponseInterface {
+        $data = [
             'title' => $exc->getTitle(),
             'caption' => $exc->getCaption(),
             'description' => $exc->getDescription(),
-            'identifier' => $exc->getIdentifier()
-            #'created'
-            #'updated'
-        ]);
-         */
-        return $this->factory->createResponse();
+        ];
+
+        return $this->responseEngine->render($request, $data);
     }
 
     /**
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    protected function sendMail(ServerRequestInterface $request, SFW2Exception $exception): bool
+    protected function sendMail(Request $request, SFW2Exception $exception): bool
     {
         $content =
             $request->getUri() . PHP_EOL . PHP_EOL .
