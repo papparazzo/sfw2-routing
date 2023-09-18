@@ -54,23 +54,24 @@ class Error implements MiddlewareInterface
             return $this->createResponseFromException($exception);        }
     }
 
-    protected function convertException(Throwable $exc): HttpException {
-        if($exc instanceof ErrorException) {
+    protected function convertException(Request $request, Throwable $exception): HttpException {
+        if($exception instanceof ErrorException) {
             // TODO: Write propper Error-Message
-            $this->logger->critical("Error on line: {$exc->getLine()}  {$exc->getMessage()}");
-            return new HttpInternalServerError($exc->getMessage(), $exc);
+            $this->logger->critical("Error on line: {$exception->getLine()}  {$exception->getMessage()}");
+            return new HttpInternalServerError($exception->getMessage(), $exception);
         }
 
-        if (!$exc instanceof HttpException) {
-            $exc = new HttpInternalServerError($exc->getMessage(), $exc);
+        if (!$exception instanceof HttpException) {
+            $exception = new HttpInternalServerError($exception->getMessage(), $exception);
         }
 
-        if ($exc->getCode() >= 500) {
-            $this->logger->critical($exc->getMessage());
+        if ($exception->getCode() >= 500) {
+            $this->logger->critical($exception->getMessage());
+            $this->sendMail($request, $exception);
         } else {
-            $this->logger->warning($exc->getMessage());
+            $this->logger->warning($exception->getMessage());
         }
-        return $exc;
+        return $exception;
     }
 
     protected function createResponseFromException(HttpException $exc): ResponseInterface {
