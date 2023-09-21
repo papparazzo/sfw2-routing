@@ -53,9 +53,11 @@ class Error implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch(Throwable $exception) {
-            var_dump($exception);
             $exception = $this->convertException($request, $exception);
-            return $this->createResponseFromException($request, $exception);        }
+            $response = $this->createResponseFromException($request, $exception);
+            // FIXME Response-phrase missing!
+            return $response->withStatus($exception->getCode());
+        }
     }
 
     protected function convertException(Request $request, Throwable $exception): HttpException {
