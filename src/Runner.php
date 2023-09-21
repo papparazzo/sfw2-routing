@@ -38,20 +38,13 @@ use ReflectionMethod;
 
 class Runner implements RequestHandlerInterface
 {
-    protected ControllerMapInterface $controllerMap;
-
-    protected PathMapInterface $pathMap;
-
-    protected ContainerInterface $container;
-
-    protected ResponseFactoryInterface $responseFactory;
-
-    public function __construct(PathMapInterface $pathMap, ControllerMapInterface $controllerMap, ContainerInterface $container, ResponseFactoryInterface $responseFactory)
+    public function __construct(
+        protected  PathMapInterface $pathMap,
+        protected ControllerMapInterface $controllerMap,
+        protected ContainerInterface $container,
+        protected ResponseEngine $responseEngine
+    )
     {
-        $this->controllerMap = $controllerMap;
-        $this->pathMap = $pathMap;
-        $this->container = $container;
-        $this->responseFactory = $responseFactory;
     }
 
     /**
