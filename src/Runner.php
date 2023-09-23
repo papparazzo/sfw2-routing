@@ -26,7 +26,6 @@ namespace SFW2\Routing;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -70,10 +69,12 @@ class Runner implements RequestHandlerInterface
         $action = 'index'; #$request->getAction();
         $ctrl = $this->getController($controller[ControllerMapInterface::CLASS_NAME], $action);
 
-        $ctrl->setPathId($pathId);
+        #$ctrl->setPathId($pathId);
         #$ctrl->appendAdditionalData($controller[ControllerMapInterface::ADDITIONAL_DATA]);
 
-        return call_user_func([$ctrl, $action], $request, $this->responseFactory->createResponse());
+        # $this->responseFactory->createResponse()
+
+        return call_user_func([$ctrl, $action], $request, $this->responseEngine);
     }
 
     /**
