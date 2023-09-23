@@ -48,6 +48,13 @@ class Error implements MiddlewareInterface
     {
     }
 
+    /**
+     * @param Request $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function process(Request $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
@@ -60,6 +67,10 @@ class Error implements MiddlewareInterface
         }
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     protected function convertException(Request $request, Throwable $exception): HttpException {
         if($exception instanceof ErrorException) {
             // TODO: Write propper Error-Message
