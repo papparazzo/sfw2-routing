@@ -96,6 +96,7 @@ class Error implements MiddlewareInterface
             'title' => $exc->getTitle(),
             'caption' => $exc->getCaption(),
             'description' => $exc->getDescription(),
+            'identifier' => $exc->getIdentifier()
         ];
 
         return $this->responseEngine->render($request, $data);
