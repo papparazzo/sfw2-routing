@@ -99,7 +99,7 @@ class Error implements MiddlewareInterface
             'identifier' => $exc->getIdentifier()
         ];
 
-        return $this->responseEngine->render($request, $data);
+        return $this->responseEngine->render($request, "notice", $data);
     }
 
     /**
