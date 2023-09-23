@@ -63,7 +63,7 @@ abstract class AbstractController {
     /**
      * @throws HttpNotFound
      */
-    public function delete(Request $request, Response $response): Response {
+    public function delete(Request $request, ResponseEngine $responseEngine): Response {
         throw new HttpNotFound("delete-action not found");
     }
 }
