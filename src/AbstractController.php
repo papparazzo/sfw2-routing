@@ -25,48 +25,38 @@ namespace SFW2\Routing;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use SFW2\Core\HttpExceptions\HttpNotFound;
-use SFW2\Routing\Render\RenderInterface;
 
 abstract class AbstractController {
 
-    protected RenderInterface $renderEngine;
-
-    public function __construct(RenderInterface $renderEngine)
-    {
-        $this->renderEngine = $renderEngine;
-    }
-
-    abstract public function index(Request $request, Response $response): Response;
-
-   # , bool $all = false
+    abstract public function index(Request $request, ResponseEngine $responseEngine): Response;
 
     /**
      * @throws HttpNotFound
      *
      * Übersicht auf Landingpage
      */
-    public function preview(Request $request, Response $response): Response {
+    public function preview(Request $request, ResponseEngine $responseEngine): Response {
         throw new HttpNotFound();
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function create(Request $request, Response $response): Response {
+    public function create(Request $request, ResponseEngine $responseEngine): Response {
         throw new HttpNotFound();
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function read(Request $request, Response $response): Response {
+    public function read(Request $request, ResponseEngine $responseEngine): Response {
         throw new HttpNotFound();
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function update(Request $request, Response $response): Response {
+    public function update(Request $request, ResponseEngine $responseEngine): Response {
         throw new HttpNotFound("delete-action not found");
     }
 
