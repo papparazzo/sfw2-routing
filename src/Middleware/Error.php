@@ -123,9 +123,20 @@ class Error implements MiddlewareInterface
         return mail(
             $this->config->get('project.eMailWebMaster'),
             'Interner Fehler [ID: ' . $exception->getIdentifier() . ']',
-            nl2br($content),
+            nl2br($this->getContentString($request, $exception)),
             implode("\r\n", $header)
         );
+    }
+
+    protected function getContentString(Request $request, SFW2Exception $exception): string
+    {
+        $dateTimeObj = new DateTime();
+        $dateTimeObj->setTimestamp($exception->getTimeStamp());
+
+        return
+            $request->getUri() . ' ' . $dateTimeObj->format('Y-m-d H:i:s') . PHP_EOL . PHP_EOL .
+            $exception;
+
     }
 }
 
