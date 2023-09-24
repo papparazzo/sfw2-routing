@@ -22,6 +22,7 @@
 
 namespace SFW2\Routing\Middleware;
 
+use DateTime;
 use ErrorException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -99,6 +100,10 @@ class Error implements MiddlewareInterface
             'identifier' => $exception->getIdentifier()
         ];
 
+        if ($this->config->get('site.debugMode')) {
+            $data['debugData'] = $this->getContentString($request, $exception);
+        }
+
         return $this->responseEngine->render($request, "notice", $data);
     }
 
@@ -108,11 +113,6 @@ class Error implements MiddlewareInterface
      */
     protected function sendMail(Request $request, SFW2Exception $exception): bool
     {
-        $content =
-            $request->getUri() . PHP_EOL . PHP_EOL .
-            $exception->getTimeStamp() . PHP_EOL . PHP_EOL .
-            $exception;
-
         $header = [
             'From:' . $this->config->get('defEMailAddr.name') . ' <' . $this->config->get('defEMailAddr.addr') . '>',
             'MIME-Version: 1.0',
