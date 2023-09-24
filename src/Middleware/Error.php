@@ -91,12 +91,12 @@ class Error implements MiddlewareInterface
         return $exception;
     }
 
-    protected function createResponseFromException(Request $request, HttpException $exc): ResponseInterface {
+    protected function createResponseFromException(Request $request, HttpException $exception): ResponseInterface {
         $data = [
-            'title' => $exc->getTitle(),
-            'caption' => $exc->getCaption(),
-            'description' => $exc->getDescription(),
-            'identifier' => $exc->getIdentifier()
+            'title' => $exception->getTitle(),
+            'caption' => $exception->getCaption(),
+            'description' => $exception->getDescription(),
+            'identifier' => $exception->getIdentifier()
         ];
 
         return $this->responseEngine->render($request, "notice", $data);
