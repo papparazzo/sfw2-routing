@@ -118,10 +118,10 @@ class Error implements MiddlewareInterface
     protected function sendMail(Request $request, SFW2Exception $exception): bool
     {
         $header = [
-            'From:' . $this->config->get('defEMailAddr.name') . ' <' . $this->config->get('defEMailAddr.addr') . '>',
-            'MIME-Version: 1.0',
-            'Content-Type:text/html; charset=utf-8',
-            'Content-Transfer-Encoding: 8bit'
+            "From:{$this->config->get('defEMailAddr.name')} <{$this->config->get('defEMailAddr.addr')}>",
+            "MIME-Version: 1.0",
+            "Content-Type:text/html; charset=utf-8",
+            "Content-Transfer-Encoding: 8bit"
         ];
 
         return mail(
