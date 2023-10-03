@@ -125,10 +125,10 @@ class Error implements MiddlewareInterface
         ];
 
         return mail(
-            $this->config->get('project.eMailWebMaster'),
-            'Interner Fehler [ID: ' . $exception->getIdentifier() . ']',
-            nl2br($this->getContentString($request, $exception)),
-            implode("\r\n", $header)
+            to: $this->config->get('project.eMailWebMaster'),
+            subject: "Interner Fehler [ID: {$exception->getIdentifier()}]",
+            message: nl2br($this->getContentString($request, $exception)),
+            additional_headers: implode("\r\n", $header)
         );
     }
 
