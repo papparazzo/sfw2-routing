@@ -84,10 +84,10 @@ class Error implements MiddlewareInterface
         }
 
         if ($exception->getCode() >= 500) {
-            $this->logger->critical($exception->getMessage());
+            $this->logger->critical($message, $exception->getTrace());
             $this->sendMail($request, $exception);
         } else {
-            $this->logger->warning($exception->getMessage());
+            $this->logger->warning($message, $exception->getTrace());
         }
         return $exception;
     }
