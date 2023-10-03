@@ -92,6 +92,10 @@ class Error implements MiddlewareInterface
         return $exception;
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     protected function createResponseFromException(Request $request, HttpException $exception): ResponseInterface {
         $data = [
             'title' => $exception->getTitle(),
