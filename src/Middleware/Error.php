@@ -75,15 +75,15 @@ class Error implements MiddlewareInterface
      * @throws NotFoundExceptionInterface
      */
     protected function convertException(Request $request, Throwable $exception): HttpException {
-        if($exception instanceof ErrorException) {
-            // TODO: Write propper Error-Message
-            $this->logger->critical("Error on line: {$exception->getLine()}  {$exception->getMessage()}");
-            return new HttpInternalServerError($exception->getMessage(), $exception);
-        }
-
         if (!$exception instanceof HttpException) {
             $exception = new HttpInternalServerError($exception->getMessage(), $exception);
         }
+
+        // TODO: Reformat!
+        $message =
+            "Error <{$exception->getCode()}> on line: {$exception->getFile()}:{$exception->getLine()} " .
+            "{$exception->getMessage()}" . $request->getUri() . 'Interner Fehler [ID: ' . $exception->getIdentifier() . ']'
+        ;
 
         if ($exception->getCode() >= 500) {
             $this->logger->critical($message, $exception->getTrace());
