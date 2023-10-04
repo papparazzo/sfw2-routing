@@ -23,7 +23,6 @@
 namespace SFW2\Routing\Middleware;
 
 use DateTime;
-use ErrorException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -35,6 +34,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SFW2\Core\HttpExceptions\HttpException;
 use SFW2\Core\HttpExceptions\HttpInternalServerError;
+use SFW2\Core\Replacer\ReplaceInterface;
+use SFW2\Core\Replacer\SimpleReplacer;
 use SFW2\Core\SFW2Exception;
 use SFW2\Routing\ResponseEngine;
 use Throwable;
@@ -44,7 +45,8 @@ class Error implements MiddlewareInterface
     public function __construct(
         protected ResponseEngine $responseEngine,
         protected ContainerInterface $config,
-        protected LoggerInterface $logger = new NullLogger()
+        protected LoggerInterface $logger = new NullLogger(),
+        protected ReplaceInterface $replacer = new SimpleReplacer()
     )
     {
     }
