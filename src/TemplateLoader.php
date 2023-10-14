@@ -32,7 +32,7 @@ class TemplateLoader implements Loader
 
     public function __construct(
         private readonly array $templateFolders,
-        private string         $defaultNamespace = ''
+        private readonly string $defaultNamespace = ''
     )
     {
         if(empty($this->templateFolders)) {
