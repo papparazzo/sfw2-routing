@@ -85,7 +85,7 @@ class Error implements MiddlewareInterface
             "{$exception->getMessage()}" . $request->getUri() . 'Interner Fehler [ID: ' . $exception->getIdentifier() . ']'
         ;
 
-        if ($exception->getCode() >= 500) {
+        if ($exception->getCode() >= 500 && $exception->getCode() != 503) {
             $this->logger->critical($message, $exception->getTrace());
             $this->sendMail($request, $exception);
         } else {
