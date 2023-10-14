@@ -22,7 +22,6 @@
 
 namespace SFW2\Routing;
 
-use Exception;
 use Handlebars\Loader;
 use InvalidArgumentException;
 
