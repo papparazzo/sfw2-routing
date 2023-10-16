@@ -102,4 +102,14 @@ class Runner implements RequestHandlerInterface
 
         return $ctrl;
     }
+
+    protected function getAction(ServerRequestInterface $request): string
+    {
+        $request->getUri();
+        $params = $request->getQueryParams();
+        if(!isset($params['do'])) {
+            return 'index';
+        }
+        return $params['do'];
+    }
 }
