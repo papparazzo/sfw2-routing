@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace SFW2\Routing\ControllerMap;
 
-use InvalidArgumentException;
 use OutOfRangeException;
 
 class ControllerMap implements ControllerMapInterface {
@@ -35,23 +34,13 @@ class ControllerMap implements ControllerMapInterface {
         $this->controllerMap = $controllerMap;
     }
 
-    public function getControllerRulsetByPathId(int $pathId): array {
+    public function getControllerRulsetByPathId(int $pathId): ControllerData {
 
         if(!isset($this->controllerMap[$pathId])) {
             throw new OutOfRangeException("path <$pathId> not set");
         }
 
-        $res = $this->controllerMap[$pathId];
-
-        if(
-            !is_array($res) &&
-            !isset($res[self::CLASS_NAME]) && !is_string($res[self::CLASS_NAME]) &&
-            !isset($res[self::ADDITIONAL_DATA]) && !is_array($res[self::ADDITIONAL_DATA])
-        ) {
-            throw new InvalidArgumentException("invalid params given <{$res['JsonData']}>");
-        }
-
-        return $res;
+        return $this->controllerMap[$pathId];
     }
 }
 
