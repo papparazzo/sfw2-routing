@@ -65,16 +65,22 @@ class Runner implements RequestHandlerInterface
         $pathId = $this->pathMap->getPathId($path);
 
         $controller = $this->controllerMap->getControllerRulsetByPathId($pathId);
+        $action = $this->getAction($request);
 
-        $action = 'index'; #$request->getAction();
-        $ctrl = $this->getController($controller[ControllerMapInterface::CLASS_NAME], $action);
+        $requestData = [
+            RequestData::ACTION => $action,
+            RequestData::IS_HOME => $request->getUri()->getPath() == '/',
+            RequestData::PATH_ID => $pathId
+        ];
 
-        #$ctrl->setPathId($pathId);
-        #$ctrl->appendAdditionalData($controller[ControllerMapInterface::ADDITIONAL_DATA]);
+        $ctrl = $this->getController($controller->getClassName(), $action);
+        $ctrl->appendAdditionalData($controller->getAdditionalData());
 
-        # $this->responseFactory->createResponse()
-
-        return call_user_func([$ctrl, $action], $request, $this->responseEngine);
+        return call_user_func(
+            [$ctrl, $action],
+            $request->withAttribute('request', $requestData),
+            $this->responseEngine
+        );
     }
 
     /**
