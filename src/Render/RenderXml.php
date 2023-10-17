@@ -25,6 +25,8 @@ class RenderXml implements RenderInterface
             return $response;
         }
 
+        $data = array_merge($request->getAttributes(), $data);
+
         $payload =
             '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL .
             $this->handlebars->render($template, $data);
