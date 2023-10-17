@@ -38,7 +38,7 @@ use ReflectionMethod;
 class Runner implements RequestHandlerInterface
 {
     public function __construct(
-        protected  PathMapInterface $pathMap,
+        protected PathMapInterface $pathMap,
         protected ControllerMapInterface $controllerMap,
         protected ContainerInterface $container,
         protected ResponseEngine $responseEngine
