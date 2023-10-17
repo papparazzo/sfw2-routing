@@ -22,13 +22,20 @@
 
 namespace SFW2\Routing;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use SFW2\Core\HttpExceptions\HttpNotFound;
 
 abstract class AbstractController {
 
+    protected ContainerInterface $additionalData;
+
     abstract public function index(Request $request, ResponseEngine $responseEngine): Response;
+
+    public function appendAdditionalData(ContainerInterface $data): void {
+        $this->additionalData = $data;
+    }
 
     /**
      * @throws HttpNotFound
