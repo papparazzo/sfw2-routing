@@ -15,7 +15,14 @@
         "ext-mbstring": "*",
         "ext-fileinfo": "*",
 
-        "level-2/dice": "^3.0"
+        "sfw2/core": "^3.0",
+
+        "psr/http-server-middleware": "^1.0.2",
+        "psr/container": "^2.0",
+        "psr/http-factory": "^1.0",
+        "psr/simple-cache": "^3.0.0",
+        "psr/log": "^3.0.0",
+        "salesforce/handlebars-php": "^3.0.1"
     },
     "autoload": {
         "psr-4": {
