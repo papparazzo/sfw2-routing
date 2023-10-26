@@ -3,8 +3,7 @@
 namespace SFW2\Routing\ControllerMap;
 
 use Psr\Container\ContainerInterface;
-use SFW2\Core\Container;
-
+use SFW2\Routing\Container;
 
 class ControllerData
 {
