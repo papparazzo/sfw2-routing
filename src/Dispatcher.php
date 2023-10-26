@@ -10,9 +10,18 @@ class Dispatcher
     {
         if (headers_sent() === false) {
             $this->emitHeaders($response);
+            $this->emitStatusLine($response);
         }
 
         $this->emitBody($response);
+    }
+
+    private function emitStatusLine(ResponseInterface $response): void
+    {
+        $statusLine =
+            "HTTP/{$response->getProtocolVersion()} {$response->getStatusCode()} {$response->getReasonPhrase()}";
+
+        header($statusLine, true, $response->getStatusCode());
     }
 
     private function emitHeaders(ResponseInterface $response): void
