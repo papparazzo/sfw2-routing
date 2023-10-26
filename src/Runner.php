@@ -76,7 +76,7 @@ class Runner implements RequestHandlerInterface
 
         return call_user_func(
             [$ctrl, $action],
-            $request->withAttribute('request', $requestData),
+            $request->withAttribute('sfw2_routing', $requestData),
             $this->responseEngine
         );
     }
