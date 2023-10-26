@@ -22,7 +22,7 @@
 
 namespace SFW2\Routing;
 
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use SFW2\Routing\Render\RenderInterface;
