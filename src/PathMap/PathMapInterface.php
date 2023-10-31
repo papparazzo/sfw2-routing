@@ -22,9 +22,11 @@
 
 namespace SFW2\Routing\PathMap;
 
+// TODO: Outsource into sfw-core!
+
 interface PathMapInterface {
 
-    public function isValidPath(string $path): bool;
+    public function isValidPath(string $path): bool; // TODO Rename into hasPath(string...
 
     public function getPathId(string $path): int;
 
