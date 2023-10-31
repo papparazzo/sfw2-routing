@@ -69,7 +69,8 @@ class Runner implements RequestHandlerInterface
             RequestData::ACTION => $action,
             RequestData::IS_HOME => $request->getUri()->getPath() == '/',
             RequestData::PATH_ID => $pathId,
-            RequestData::PATH_SIMPLIFIED => strtolower('p_' . str_replace('/', '_', $path))
+            RequestData::PATH_SIMPLIFIED => strtolower('p_' . str_replace('/', '_', $path)),
+            RequestData::PATH => $path
         ];
 
         $ctrl = $this->getController($controller->getClassName(), $action);
