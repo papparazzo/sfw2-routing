@@ -73,4 +73,9 @@ abstract class AbstractController {
     public function delete(Request $request, ResponseEngine $responseEngine): Response {
         throw new HttpNotFound("delete-action not found");
     }
+
+    protected function getPathId(Request $request): int
+    {
+        return (int)$request->getAttribute('sfw2_routing')['path_id'];
+    }
 }
