@@ -27,10 +27,11 @@ final class RenderHtml implements RenderInterface
 
         $data = array_merge($request->getAttributes(), $data);
 
-        $payload = $this->handlebars->render($template, $data);
-        $data['content'] = $payload;
+        if($template !== null) {
+            $payload = $this->handlebars->render($template, $data);
+            $data['content'] = $payload;
+        }
         $payload = $this->handlebars->render($this->skeleton, $data);
-        
         $response->getBody()->write($payload);
 
         return $response;
