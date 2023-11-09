@@ -11,7 +11,7 @@ class RenderJson implements RenderInterface
     /**
      * @throws JsonException
      */
-    public function render(Request $request, Response $response, string $template, array $data = []): Response
+    public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         if ($request->getHeaderLine('Accept') !== 'application/json') {
             return $response;

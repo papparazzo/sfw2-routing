@@ -19,7 +19,7 @@ class RenderXml implements RenderInterface
         ]);
     }
 
-    public function render(Request $request, Response $response, string $template, array $data = []): Response
+    public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         if ($request->getHeaderLine('Accept') !== 'application/xml') {
             return $response;

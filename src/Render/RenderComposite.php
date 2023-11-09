@@ -22,10 +22,10 @@ class RenderComposite implements RenderInterface
         return $this;
     }
 
-    public function render(Request $request, Response $response, string $template, array $data = []): Response
+    public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         foreach ($this->engines as $engine) {
-            $response = $engine->render($request, $response, $template, $data);
+            $response = $engine->render($request, $response, $data, $template);
         }
         return $response;
     }

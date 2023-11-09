@@ -19,7 +19,7 @@ final class RenderHtml implements RenderInterface
         ]);
     }
 
-    public function render(Request $request, Response $response, string $template, array $data = []): Response
+    public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
             return $response;
