@@ -24,21 +24,10 @@ declare(strict_types=1);
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-trait getUrl
+trait getPathIdTrait
 {
-    protected function getUrl(Request $request): string
+    protected function getPathIdTrait(Request $request): int
     {
-        $uri = (string)$request->getUri();
-
-        $pos = strrpos($uri, '#');
-        if($pos !== false) {
-            $uri = substr($uri, 0, $pos);
-        }
-
-        $pos = strrpos($uri, '?');
-        if($pos !== false) {
-            $uri = substr($uri, 0, $pos);
-        }
-        return $uri;
+        return (int)$request->getAttribute('sfw2_routing')['path_id'];
     }
 }
