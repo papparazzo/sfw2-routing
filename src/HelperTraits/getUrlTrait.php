@@ -22,6 +22,8 @@
 
 declare(strict_types=1);
 
+namespace SFW2\Routing\HelperTraits;
+
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 trait getUrlTrait
