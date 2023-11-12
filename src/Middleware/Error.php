@@ -107,7 +107,7 @@ class Error implements MiddlewareInterface
             $data['debugData'] = $this->getContentString($request, $exception);
         }
 
-        return $this->responseEngine->render($request, "notice", $data);
+        return $this->responseEngine->render($request, $data, "notice");
     }
 
     /**
