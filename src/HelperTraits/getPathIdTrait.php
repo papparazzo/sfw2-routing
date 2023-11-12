@@ -28,7 +28,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 trait getPathIdTrait
 {
-    protected function getPathIdTrait(Request $request): int
+    protected function getPathId(Request $request): int
     {
         return (int)$request->getAttribute('sfw2_routing')['path_id'];
     }

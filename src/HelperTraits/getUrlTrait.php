@@ -28,7 +28,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 trait getUrlTrait
 {
-    protected function getUrlTrait(Request $request): string
+    protected function getUrl(Request $request): string
     {
         $uri = (string)$request->getUri();
 
