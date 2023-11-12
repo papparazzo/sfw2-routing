@@ -26,10 +26,15 @@ namespace SFW2\Routing\HelperTraits;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-trait getPathIdTrait
+trait getPathIdTrait // ToDo: Rename into getPathTrait
 {
     protected function getPathId(Request $request): int
     {
         return (int)$request->getAttribute('sfw2_routing')['path_id'];
+    }
+
+    protected function getPath(Request $request): string
+    {
+        return (string)$request->getAttribute('sfw2_routing')['path'];
     }
 }
