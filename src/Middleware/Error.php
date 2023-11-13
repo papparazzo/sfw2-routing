@@ -104,6 +104,7 @@ class Error implements MiddlewareInterface
             'title' => $exception->getTitle(),
             'caption' => $exception->getCaption(),
             'description' => $exception->getDescription(),
+            #TODO: use replacer to inject e-mail-address 'description' => $this->replacer->replace($exception->getDescription()),
             'identifier' => $exception->getIdentifier()
         ];
 
