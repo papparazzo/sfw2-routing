@@ -118,7 +118,7 @@ class Error implements MiddlewareInterface
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    protected function sendMail(Request $request, SFW2Exception $exception): bool
+    protected function sendMail(Request $request, SFW2Exception $exception): void
     {
         $header = [
             "From:{$this->config->get('project.default_sender_address')}",
@@ -127,7 +127,7 @@ class Error implements MiddlewareInterface
             "Content-Transfer-Encoding: 8bit"
         ];
 
-        return mail(
+         mail(
             to: $this->config->get('project.webmaster_mail_address'),
             subject: "Interner Fehler [ID: {$exception->getIdentifier()}]",
             message: nl2br($this->getContentString($request, $exception)),
