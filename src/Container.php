@@ -27,6 +27,7 @@ namespace SFW2\Routing;
 use Exception;
 use Psr\Container\ContainerInterface;
 
+// TODO Create a new sfw2_container package (consider to add sfw2_replacer and sfw2_config)
 class Container implements ContainerInterface
 {
     public function __construct(

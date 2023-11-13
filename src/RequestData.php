@@ -2,6 +2,8 @@
 
 namespace SFW2\Routing;
 
+// TODO: Rename class
+// TODO: make this a enum
 class RequestData
 {
     public const IS_HOME = 'is_home';
