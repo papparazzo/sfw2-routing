@@ -23,6 +23,7 @@
 namespace SFW2\Routing\Middleware;
 
 use DateTime;
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -82,7 +83,10 @@ class Error implements MiddlewareInterface
             "{$exception->getMessage()}" . $request->getUri() . 'Interner Fehler [ID: ' . $exception->getIdentifier() . ']'
         ;
 
-        if ($exception->getCode() >= 500 && $exception->getCode() != 503) {
+        if (
+            $exception->getCode() >= StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR &&
+            $exception->getCode() != StatusCodeInterface::STATUS_SERVICE_UNAVAILABLE
+        ) {
             $this->logger->critical($message, $exception->getTrace());
             $this->sendMail($request, $exception);
         } else {
