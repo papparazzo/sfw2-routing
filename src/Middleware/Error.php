@@ -121,14 +121,14 @@ class Error implements MiddlewareInterface
     protected function sendMail(Request $request, SFW2Exception $exception): bool
     {
         $header = [
-            "From:{$this->config->get('defEMailAddr.name')} <{$this->config->get('defEMailAddr.addr')}>",
+            "From:{$this->config->get('project.default_sender_address')}",
             "MIME-Version: 1.0",
             "Content-Type:text/html; charset=utf-8",
             "Content-Transfer-Encoding: 8bit"
         ];
 
         return mail(
-            to: $this->config->get('project.eMailWebMaster'),
+            to: $this->config->get('project.webmaster_mail_address'),
             subject: "Interner Fehler [ID: {$exception->getIdentifier()}]",
             message: nl2br($this->getContentString($request, $exception)),
             additional_headers: implode("\r\n", $header)
