@@ -26,7 +26,7 @@ namespace SFW2\Routing\PathMap;
 
 interface PathMapInterface {
 
-    public function isValidPath(string $path): bool; // TODO Rename into hasPath(string...
+    public function hasPath(string $path): bool;
 
     public function getPathId(string $path): int;
 

@@ -56,7 +56,7 @@ class Runner implements RequestHandlerInterface
     {
         $path = $request->getUri()->getPath();
 
-        if (!$this->pathMap->isValidPath($path)) {
+        if (!$this->pathMap->hasPath($path)) {
             throw new HttpNotFound("could not load <$path>");
         }
 
