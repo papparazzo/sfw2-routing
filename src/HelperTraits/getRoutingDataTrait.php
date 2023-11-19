@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace SFW2\Routing\HelperTraits;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
+use SFW2\Core\HttpExceptions\HttpNotFound;
 
 trait getRoutingDataTrait
 {
@@ -33,9 +34,17 @@ trait getRoutingDataTrait
         return (string)$request->getAttribute('sfw2_routing')['action'];
     }
 
+    /**
+     * @throws HttpNotFound
+     */
     protected function getPathId(Request $request): int
     {
-        return (int)$request->getAttribute('sfw2_routing')['path_id'];
+        $pathId = $request->getAttribute('sfw2_routing')['path_id'];
+
+        if (is_null($pathId)) {
+            throw new HttpNotFound("could not load <{$this->getPath($request)}>");
+        }
+        return (int)$pathId;
     }
 
     protected function getPath(Request $request): string
