@@ -31,7 +31,12 @@ trait getRoutingDataTrait
 {
     protected function getAction(Request $request): string
     {
-        return (string)$request->getAttribute('sfw2_routing')['action'];
+        $request->getUri();
+        $params = $request->getQueryParams();
+        if(!isset($params['do'])) {
+            return 'index';
+        }
+        return $params['do'];
     }
 
     /**
@@ -49,6 +54,6 @@ trait getRoutingDataTrait
 
     protected function getPath(Request $request): string
     {
-        return (string)$request->getAttribute('sfw2_routing')['path'];
+        return $request->getUri()->getPath();
     }
 }
