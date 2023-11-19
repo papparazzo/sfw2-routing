@@ -32,6 +32,7 @@ trait getPathTrait
      * @param Request $request
      * @return int
      * @deprecated use getRoutingDataTrait instead
+     * TODO remove!
      */
     protected function getPathId(Request $request): int
     {
@@ -42,6 +43,7 @@ trait getPathTrait
      * @param Request $request
      * @return string
      * @deprecated use getRoutingDataTrait instead
+     * TODO remove!
      */
     protected function getPath(Request $request): string
     {
