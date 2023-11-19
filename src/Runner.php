@@ -31,14 +31,15 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SFW2\Core\HttpExceptions\HttpNotFound;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
-use SFW2\Routing\PathMap\PathMapInterface;
+use SFW2\Routing\HelperTraits\getRoutingDataTrait;
 use ReflectionException;
 use ReflectionMethod;
 
 class Runner implements RequestHandlerInterface
 {
+    use getRoutingDataTrait;
+
     public function __construct(
-        protected PathMapInterface $pathMap,
         protected ControllerMapInterface $controllerMap,
         protected ContainerInterface $container,
         protected ResponseEngine $responseEngine
@@ -54,33 +55,15 @@ class Runner implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $path = $request->getUri()->getPath();
-
-        if (!$this->pathMap->hasPath($path)) {
-            throw new HttpNotFound("could not load <$path>");
-        }
-
-        $pathId = $this->pathMap->getPathId($path);
+        $pathId = $this->getPathId($request);
 
         $controller = $this->controllerMap->getControllerRulsetByPathId($pathId);
         $action = $this->getAction($request);
 
-        $requestData = [
-            RequestData::ACTION => $action,
-            RequestData::IS_HOME => $request->getUri()->getPath() == '/',
-            RequestData::PATH_ID => $pathId,
-            RequestData::PATH_SIMPLIFIED => strtolower('p_' . str_replace('/', '_', $path)),
-            RequestData::PATH => $path
-        ];
-
         $ctrl = $this->getController($controller->getClassName(), $action);
         $ctrl->appendAdditionalData($controller->getAdditionalData());
 
-        return call_user_func(
-            [$ctrl, $action],
-            $request->withAttribute('sfw2_routing', $requestData),
-            $this->responseEngine
-        );
+        return call_user_func([$ctrl, $action], $request, $this->responseEngine);
     }
 
     /**
@@ -107,15 +90,5 @@ class Runner implements RequestHandlerInterface
         }
 
         return $ctrl;
-    }
-
-    protected function getAction(ServerRequestInterface $request): string
-    {
-        $request->getUri();
-        $params = $request->getQueryParams();
-        if(!isset($params['do'])) {
-            return 'index';
-        }
-        return $params['do'];
     }
 }
