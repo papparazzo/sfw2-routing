@@ -28,13 +28,17 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use SFW2\Routing\HelperTraits\getRoutingDataTrait;
+use SFW2\Routing\PathMap\PathMapInterface;
 
 class Router implements RequestHandlerInterface {
 
-    private RequestHandlerInterface $top;
+    use getRoutingDataTrait;
 
-    public function __construct(RequestHandlerInterface $core) {
-        $this->top = $core;
+    public function __construct(
+        private RequestHandlerInterface $top,
+        private PathMapInterface $pathMap
+    ) {
     }
 
     public function addMiddleware(MiddlewareInterface $middleware): self {
@@ -44,6 +48,26 @@ class Router implements RequestHandlerInterface {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface {
-        return $this->top->handle($request);
+        return $this->top->handle($this->appendData($request));
+    }
+
+    private function appendData(ServerRequestInterface $request): ServerRequestInterface {
+
+        $path = $this->getPath($request);
+
+        $pathId = null;
+        if ($this->pathMap->hasPath($path)) {
+            $pathId = $this->pathMap->getPathId($path);
+        }
+
+        $requestData = [
+            RequestData::ACTION => $this->getAction($request),
+            RequestData::IS_HOME => $path == '/',
+            RequestData::PATH_ID => $pathId,
+            RequestData::PATH_SIMPLIFIED => strtolower('p_' . str_replace('/', '_', $path)),
+            RequestData::PATH => $path
+        ];
+
+        return $request->withAttribute('sfw2_routing', $requestData);
     }
 }
