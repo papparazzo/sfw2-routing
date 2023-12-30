@@ -37,7 +37,7 @@ class Router implements RequestHandlerInterface {
 
     public function __construct(
         private RequestHandlerInterface $top,
-        private PathMapInterface $pathMap
+        private readonly PathMapInterface $pathMap
     ) {
     }
 

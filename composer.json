@@ -15,7 +15,7 @@
         "ext-mbstring": "*",
         "ext-fileinfo": "*",
 
-        "sfw2/core": "^3.0",
+        "sfw2/core": "^4.0",
 
         "psr/http-server-middleware": "^1.0.2",
         "psr/container": "^2.0",

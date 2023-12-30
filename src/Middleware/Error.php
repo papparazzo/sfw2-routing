@@ -138,8 +138,7 @@ class Error implements MiddlewareInterface
 
     protected function getContentString(Request $request, SFW2Exception $exception): string
     {
-        $dateTimeObj = new DateTime();
-        $dateTimeObj->setTimestamp($exception->getTimeStamp());
+        $dateTimeObj = $exception->getTimeStamp();
 
         return
             $request->getUri() . ' ' . $dateTimeObj->format('Y-m-d H:i:s') . PHP_EOL . PHP_EOL .

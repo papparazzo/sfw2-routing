@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5109c8cae21dc41d0f7aeca3729db33b",
+    "content-hash": "db5ce374f53c535962de5a43ca78d625",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -496,24 +496,26 @@
         },
         {
             "name": "sfw2/core",
-            "version": "3.1.0",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:papparazzo/sfw2-core.git",
-                "reference": "69b67ba0f940248b3ae26df64cc33e5fce1d4d91"
+                "url": "https://github.com/papparazzo/sfw2-core.git",
+                "reference": "79badcecc17cf12d0803477b834796ab6af46ba2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/69b67ba0f940248b3ae26df64cc33e5fce1d4d91",
-                "reference": "69b67ba0f940248b3ae26df64cc33e5fce1d4d91",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/79badcecc17cf12d0803477b834796ab6af46ba2",
+                "reference": "79badcecc17cf12d0803477b834796ab6af46ba2",
                 "shasum": ""
             },
             "require": {
                 "ext-gd": "*",
+                "ext-intl": "*",
                 "ext-mbstring": "*",
                 "fig/http-message-util": "^1.1.5",
                 "php": "^8.1",
-                "psr/container": "^2.0.2"
+                "psr/container": "^2.0.2",
+                "salesforce/handlebars-php": "^3.0.1"
             },
             "type": "library",
             "autoload": {
@@ -524,22 +526,26 @@
             "license": [
                 "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
             ],
-            "time": "2023-10-28T07:19:33+00:00"
+            "support": {
+                "source": "https://github.com/papparazzo/sfw2-core/tree/4.1.0",
+                "issues": "https://github.com/papparazzo/sfw2-core/issues"
+            },
+            "time": "2023-12-30T09:13:41+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.41",
+            "version": "1.10.50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c6174523c2a69231df55bdc65b61655e72876d76"
+                "reference": "06a98513ac72c03e8366b5a0cb00750b487032e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6174523c2a69231df55bdc65b61655e72876d76",
-                "reference": "c6174523c2a69231df55bdc65b61655e72876d76",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/06a98513ac72c03e8366b5a0cb00750b487032e4",
+                "reference": "06a98513ac72c03e8366b5a0cb00750b487032e4",
                 "shasum": ""
             },
             "require": {
@@ -588,7 +594,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-05T12:57:57+00:00"
+            "time": "2023-12-13T10:59:42+00:00"
         }
     ],
     "aliases": [],
