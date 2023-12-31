@@ -12,12 +12,14 @@ class RenderComposite implements RenderInterface
      */
     protected array $engines = [];
 
-    public function add(RenderInterface $engine): self {
+    public function add(RenderInterface $engine): self
+    {
         $this->engines[] = $engine;
         return $this;
     }
 
-    public function addEngines(RenderInterface ...$engines): self {
+    public function addEngines(RenderInterface ...$engines): self
+    {
         $this->engines = array_merge($this->engines, $engines);
         return $this;
     }

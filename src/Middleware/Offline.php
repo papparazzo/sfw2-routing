@@ -37,13 +37,13 @@ class Offline implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if($this->container->has('site.offline') && !$this->container->get('site.offline')) {
+        if ($this->container->has('site.offline') && !$this->container->get('site.offline')) {
             return $handler->handle($request);
         }
 
         $tokenFromConfig = $this->getBypassTokenFromConfig();
 
-        if(
+        if (
             $this->bypassTokenCache->has(self::BY_PASS_TOKEN_KEY) &&
             $tokenFromConfig == $this->bypassTokenCache->get(self::BY_PASS_TOKEN_KEY)
         ) {
@@ -52,7 +52,7 @@ class Offline implements MiddlewareInterface
 
         $tokenFromRequest = $request->getAttribute(self::BY_PASS_TOKEN_KEY);
 
-        if($tokenFromRequest != $tokenFromConfig) {
+        if ($tokenFromRequest != $tokenFromConfig) {
             throw new HttpServiceUnavailable("website offline");
         }
 
@@ -64,8 +64,9 @@ class Offline implements MiddlewareInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    private function getBypassTokenFromConfig(): string {
-        if(!$this->container->has('site.offlineBypassToken')) {
+    private function getBypassTokenFromConfig(): string
+    {
+        if (!$this->container->has('site.offlineBypassToken')) {
             return '';
         }
         return (string)$this->container->get('site.offlineBypassToken');

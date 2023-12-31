@@ -22,7 +22,6 @@
 
 namespace SFW2\Routing\Middleware;
 
-use DateTime;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -42,9 +41,9 @@ use Throwable;
 class Error implements MiddlewareInterface
 {
     public function __construct(
-        protected ResponseEngine $responseEngine,
+        protected ResponseEngine     $responseEngine,
         protected ContainerInterface $config,
-        protected LoggerInterface $logger = new NullLogger()
+        protected LoggerInterface    $logger = new NullLogger()
     )
     {
     }
@@ -60,7 +59,7 @@ class Error implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
-        } catch(Throwable $exception) {
+        } catch (Throwable $exception) {
             $exception = $this->convertException($request, $exception);
             return
                 $this->createResponseFromException($request, $exception)->
@@ -72,7 +71,8 @@ class Error implements MiddlewareInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function convertException(Request $request, Throwable $exception): HttpException {
+    protected function convertException(Request $request, Throwable $exception): HttpException
+    {
         if (!$exception instanceof HttpException) {
             $exception = new HttpInternalServerError($exception->getMessage(), $exception);
         }
@@ -80,8 +80,7 @@ class Error implements MiddlewareInterface
         // TODO: Reformat!
         $message =
             "Error <{$exception->getCode()}> on line: {$exception->getFile()}:{$exception->getLine()} " .
-            "{$exception->getMessage()}" . $request->getUri() . 'Interner Fehler [ID: ' . $exception->getIdentifier() . ']'
-        ;
+            "{$exception->getMessage()}" . $request->getUri() . 'Interner Fehler [ID: ' . $exception->getIdentifier() . ']';
 
         if (
             $exception->getCode() >= StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR &&
@@ -99,7 +98,8 @@ class Error implements MiddlewareInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function createResponseFromException(Request $request, HttpException $exception): ResponseInterface {
+    protected function createResponseFromException(Request $request, HttpException $exception): ResponseInterface
+    {
         $data = [
             'title' => $exception->getTitle(),
             'caption' => $exception->getCaption(),
@@ -128,7 +128,7 @@ class Error implements MiddlewareInterface
             "Content-Transfer-Encoding: 8bit"
         ];
 
-         mail(
+        mail(
             to: $this->config->get('project.webmaster_mail_address'),
             subject: "Interner Fehler [ID: {$exception->getIdentifier()}]",
             message: nl2br($this->getContentString($request, $exception)),

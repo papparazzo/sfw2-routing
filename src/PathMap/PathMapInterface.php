@@ -24,7 +24,8 @@ namespace SFW2\Routing\PathMap;
 
 // TODO: Outsource into sfw-core!
 
-interface PathMapInterface {
+interface PathMapInterface
+{
 
     public function hasPath(string $path): bool;
 

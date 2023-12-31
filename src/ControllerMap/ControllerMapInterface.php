@@ -22,7 +22,8 @@
 
 namespace SFW2\Routing\ControllerMap;
 
-interface ControllerMapInterface {
+interface ControllerMapInterface
+{
 
     public function getControllerRulsetByPathId(int $pathId): ControllerData;
 }

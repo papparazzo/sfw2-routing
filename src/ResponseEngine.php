@@ -27,16 +27,18 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use SFW2\Routing\Render\RenderInterface;
 
-class ResponseEngine {
+class ResponseEngine
+{
 
     public function __construct(
-        private readonly RenderInterface $renderEngine,
+        private readonly RenderInterface          $renderEngine,
         private readonly ResponseFactoryInterface $responseFactory
     )
     {
     }
 
-    public function render(Request $request, array $data = [], ?string $template = null): Response {
+    public function render(Request $request, array $data = [], ?string $template = null): Response
+    {
         $response = $this->responseFactory->createResponse();
         return $this->renderEngine->render($request, $response, $data, $template);
     }

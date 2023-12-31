@@ -26,17 +26,20 @@ namespace SFW2\Routing\ControllerMap;
 
 use OutOfRangeException;
 
-class ControllerMap implements ControllerMapInterface {
+class ControllerMap implements ControllerMapInterface
+{
 
     protected array $controllerMap = [];
 
-    public function __construct(array $controllerMap) {
+    public function __construct(array $controllerMap)
+    {
         $this->controllerMap = $controllerMap;
     }
 
-    public function getControllerRulsetByPathId(int $pathId): ControllerData {
+    public function getControllerRulsetByPathId(int $pathId): ControllerData
+    {
 
-        if(!isset($this->controllerMap[$pathId])) {
+        if (!isset($this->controllerMap[$pathId])) {
             throw new OutOfRangeException("path <$pathId> not set");
         }
 

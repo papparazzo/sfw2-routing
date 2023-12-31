@@ -36,35 +36,40 @@ abstract class AbstractController
      *
      * Übersicht auf Landingpage
      */
-    public function preview(Request $request, ResponseEngine $responseEngine): Response {
+    public function preview(Request $request, ResponseEngine $responseEngine): Response
+    {
         throw new HttpNotFound();
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function create(Request $request, ResponseEngine $responseEngine): Response {
+    public function create(Request $request, ResponseEngine $responseEngine): Response
+    {
         throw new HttpNotFound();
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function read(Request $request, ResponseEngine $responseEngine): Response {
+    public function read(Request $request, ResponseEngine $responseEngine): Response
+    {
         throw new HttpNotFound();
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function update(Request $request, ResponseEngine $responseEngine): Response {
+    public function update(Request $request, ResponseEngine $responseEngine): Response
+    {
         throw new HttpNotFound("delete-action not found");
     }
 
     /**
      * @throws HttpNotFound
      */
-    public function delete(Request $request, ResponseEngine $responseEngine): Response {
+    public function delete(Request $request, ResponseEngine $responseEngine): Response
+    {
         throw new HttpNotFound("delete-action not found");
     }
 }

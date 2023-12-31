@@ -31,27 +31,32 @@ use Psr\Http\Server\RequestHandlerInterface;
 use SFW2\Routing\HelperTraits\getRoutingDataTrait;
 use SFW2\Routing\PathMap\PathMapInterface;
 
-class Router implements RequestHandlerInterface {
+class Router implements RequestHandlerInterface
+{
 
     use getRoutingDataTrait;
 
     public function __construct(
-        private RequestHandlerInterface $top,
+        private RequestHandlerInterface   $top,
         private readonly PathMapInterface $pathMap
-    ) {
+    )
+    {
     }
 
-    public function addMiddleware(MiddlewareInterface $middleware): self {
+    public function addMiddleware(MiddlewareInterface $middleware): self
+    {
         $tmp = $this->top;
         $this->top = new RequestHandler($middleware, $tmp);
         return $this;
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface {
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
         return $this->top->handle($this->appendData($request));
     }
 
-    private function appendData(ServerRequestInterface $request): ServerRequestInterface {
+    private function appendData(ServerRequestInterface $request): ServerRequestInterface
+    {
 
         $path = $this->getPath($request);
 
