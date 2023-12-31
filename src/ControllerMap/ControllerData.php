@@ -2,14 +2,11 @@
 
 namespace SFW2\Routing\ControllerMap;
 
-use Psr\Container\ContainerInterface;
-use SFW2\Routing\Container;
-
 class ControllerData
 {
     public function __construct(
         protected readonly string $className,
-        protected Container $additionalData = new Container()
+        protected readonly array  $additionalData = []
     )
     {
     }
@@ -18,7 +15,8 @@ class ControllerData
         return $this->className;
     }
 
-    public function getAdditionalData(): ContainerInterface {
+    public function getAdditionalData(): array
+    {
         return $this->additionalData;
     }
 }

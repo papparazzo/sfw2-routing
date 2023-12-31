@@ -24,8 +24,8 @@ declare(strict_types=1);
 
 namespace SFW2\Routing;
 
+use DI\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -41,7 +41,7 @@ class Runner implements RequestHandlerInterface
 
     public function __construct(
         protected ControllerMapInterface $controllerMap,
-        protected ContainerInterface $container,
+        protected FactoryInterface $container,
         protected ResponseEngine $responseEngine
     )
     {
@@ -60,8 +60,7 @@ class Runner implements RequestHandlerInterface
         $controller = $this->controllerMap->getControllerRulsetByPathId($pathId);
         $action = $this->getAction($request);
 
-        $ctrl = $this->getController($controller->getClassName(), $action);
-        $ctrl->appendAdditionalData($controller->getAdditionalData());
+        $ctrl = $this->getController($controller->getClassName(), $action, $controller->getAdditionalData());
 
         return call_user_func([$ctrl, $action], $request, $this->responseEngine);
     }
@@ -71,7 +70,7 @@ class Runner implements RequestHandlerInterface
      * @throws HttpNotFound
      * @throws ContainerExceptionInterface
      */
-    protected function getController(string $class, string $action): AbstractController
+    protected function getController(string $class, string $action, array $additionalParams): AbstractController
     {
         if (!class_exists($class)) {
             throw new HttpNotFound("class <$class> does not exists");
@@ -83,7 +82,7 @@ class Runner implements RequestHandlerInterface
             throw new HttpNotFound("method <$action> is not public");
         }
 
-        $ctrl = $this->container->get($class);
+        $ctrl = $this->container->make($class, $additionalParams);
 
         if (!($ctrl instanceof AbstractController)) {
             throw new HttpNotFound("class <$class> is no controller");
