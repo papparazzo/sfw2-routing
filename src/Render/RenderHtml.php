@@ -9,14 +9,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 final class RenderHtml implements RenderInterface
 {
-    protected Handlebars $handlebars;
-
-    public function __construct(Loader $loader, private readonly string $skeleton)
+    public function __construct(
+        private readonly Handlebars $handlebars, private readonly string $skeleton)
     {
-        $this->handlebars = new Handlebars([
-            "loader" => $loader,
-            "partials_loader" => $loader
-        ]);
     }
 
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response

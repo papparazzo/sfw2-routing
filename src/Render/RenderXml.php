@@ -7,16 +7,11 @@ use Handlebars\Loader;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
-class RenderXml implements RenderInterface
+final class RenderXml implements RenderInterface
 {
-    protected Handlebars $handlebars;
-
-    public function __construct(Loader $loader)
+    public function __construct(
+        private readonly Handlebars $handlebars)
     {
-        $this->handlebars = new Handlebars([
-            "loader" => $loader,
-            "partials_loader" => $loader
-        ]);
     }
 
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
