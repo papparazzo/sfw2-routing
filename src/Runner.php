@@ -66,7 +66,6 @@ class Runner implements RequestHandlerInterface
     }
 
     /**
-     * @throws ReflectionException
      * @throws HttpNotFound
      * @throws ContainerExceptionInterface
      */
@@ -76,7 +75,11 @@ class Runner implements RequestHandlerInterface
             throw new HttpNotFound("class <$class> does not exists");
         }
 
-        $refl = new ReflectionMethod($class, $action);
+        try {
+            $refl = new ReflectionMethod($class, $action);
+        } catch(ReflectionException) {
+            throw new HttpNotFound("method <$action> does not exist");
+        }
 
         if (!$refl->isPublic()) {
             throw new HttpNotFound("method <$action> is not public");
