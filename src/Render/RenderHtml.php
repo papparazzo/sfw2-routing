@@ -6,9 +6,12 @@ use Handlebars\Handlebars;
 use Handlebars\Loader;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use SFW2\Routing\HelperTraits\getRequestTypeTrait;
 
 final class RenderHtml implements RenderInterface
 {
+    use getRequestTypeTrait;
+
     public function __construct(
         private readonly Handlebars $handlebars, private readonly string $skeleton)
     {
@@ -16,7 +19,7 @@ final class RenderHtml implements RenderInterface
 
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
-        if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+        if ($this->isAjaxRequest($request)) {
             return $response;
         }
 
