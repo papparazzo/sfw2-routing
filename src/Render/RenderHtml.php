@@ -3,7 +3,6 @@
 namespace SFW2\Routing\Render;
 
 use Handlebars\Handlebars;
-use Handlebars\Loader;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use SFW2\Routing\HelperTraits\getRequestTypeTrait;
