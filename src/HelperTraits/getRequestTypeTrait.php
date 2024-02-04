@@ -51,4 +51,13 @@ trait getRequestTypeTrait
         }
         return false;
     }
+
+    protected function isFormRequest(Request $request): bool
+    {
+        $data = $request->getQueryParams();
+        if(isset($data['getForm'])) {
+            return true;
+        }
+        return false;
+    }
 }
