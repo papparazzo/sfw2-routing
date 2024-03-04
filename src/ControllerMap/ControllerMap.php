@@ -36,7 +36,7 @@ class ControllerMap implements ControllerMapInterface
         $this->controllerMap = $controllerMap;
     }
 
-    public function getControllerRulsetByPathId(int $pathId): ControllerData
+    public function getControllerRulesetByPathId(int $pathId): ControllerData
     {
 
         if (!isset($this->controllerMap[$pathId])) {
