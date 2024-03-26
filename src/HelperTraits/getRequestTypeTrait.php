@@ -60,4 +60,18 @@ trait getRequestTypeTrait
         }
         return false;
     }
+
+    protected function isRestricted(Request $request): bool
+    {
+        $perm = $request->getAttribute('sfw2_authority');
+
+        if (is_null($perm)) {
+            return false;
+        }
+
+        if (isset($perm['restricted']) && $perm['restricted']) {
+            return true;
+        }
+        return false;
+    }
 }
