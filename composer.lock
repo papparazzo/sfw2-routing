@@ -684,16 +684,16 @@
         },
         {
             "name": "sfw2/core",
-            "version": "5.2.0",
+            "version": "5.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/papparazzo/sfw2-core.git",
-                "reference": "8426ede0138f55145a76e96aee0dc55fb2ac85ac"
+                "url": "git@github.com:papparazzo/sfw2-core.git",
+                "reference": "315d01998505b2f5684d334a42515b2849900648"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/8426ede0138f55145a76e96aee0dc55fb2ac85ac",
-                "reference": "8426ede0138f55145a76e96aee0dc55fb2ac85ac",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/315d01998505b2f5684d334a42515b2849900648",
+                "reference": "315d01998505b2f5684d334a42515b2849900648",
                 "shasum": ""
             },
             "require": {
@@ -714,26 +714,22 @@
             "license": [
                 "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
             ],
-            "support": {
-                "source": "https://github.com/papparazzo/sfw2-core/tree/5.2.0",
-                "issues": "https://github.com/papparazzo/sfw2-core/issues"
-            },
-            "time": "2024-01-02T15:06:37+00:00"
+            "time": "2024-03-09T19:39:02+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.50",
+            "version": "1.10.62",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "06a98513ac72c03e8366b5a0cb00750b487032e4"
+                "reference": "cd5c8a1660ed3540b211407c77abf4af193a6af9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/06a98513ac72c03e8366b5a0cb00750b487032e4",
-                "reference": "06a98513ac72c03e8366b5a0cb00750b487032e4",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cd5c8a1660ed3540b211407c77abf4af193a6af9",
+                "reference": "cd5c8a1660ed3540b211407c77abf4af193a6af9",
                 "shasum": ""
             },
             "require": {
@@ -782,7 +778,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-13T10:59:42+00:00"
+            "time": "2024-03-13T12:27:20+00:00"
         }
     ],
     "aliases": [],
