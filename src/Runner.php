@@ -57,7 +57,7 @@ class Runner implements RequestHandlerInterface
     {
         $pathId = $this->getPathId($request);
 
-        $controller = $this->controllerMap->getControllerRulsetByPathId($pathId);
+        $controller = $this->controllerMap->getControllerRulesetByPathId($pathId);
         $action = $this->getAction($request);
 
         $ctrl = $this->getController($controller->getClassName(), $action, $controller->getAdditionalData());
