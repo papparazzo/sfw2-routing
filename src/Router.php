@@ -28,8 +28,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+
 use SFW2\Routing\HelperTraits\getRoutingDataTrait;
-use SFW2\Routing\PathMap\PathMapInterface;
+
+use SFW2\Core\Interfaces\PathMapInterface;
 
 class Router implements RequestHandlerInterface
 {

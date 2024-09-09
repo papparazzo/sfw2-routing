@@ -6,15 +6,15 @@ namespace SFW2\Routing;
 // TODO: make this a enum
 class RequestData
 {
-    public const IS_HOME = 'is_home';
+    public const string IS_HOME = 'is_home';
 
-    public const ACTION = 'action';
+    public const string ACTION = 'action';
 
-    public const PATH_ID = 'path_id';
+    public const string PATH_ID = 'path_id';
 
-    public const PATH_SIMPLIFIED = 'path_simplified';
+    public const string PATH_SIMPLIFIED = 'path_simplified';
 
-    public const PATH = 'path';
+    public const string PATH = 'path';
 
 
     #public bool $authenticated;
