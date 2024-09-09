@@ -28,8 +28,21 @@ use SFW2\Core\HttpExceptions\HttpNotFound;
 
 abstract class AbstractController
 {
-
+    /**
+     * @deprecated
+     * Consider to change to read as default action
+     *
+     * read -> readOwn, readOther combined... Permission: 'allow', 'read*'
+     * readOwn
+     * readOther
+     *
+     */
     abstract public function index(Request $request, ResponseEngine $responseEngine): Response;
+
+    public function read(Request $request, ResponseEngine $responseEngine): Response
+    {
+        return $this->index($request, $responseEngine);
+    }
 
     /**
      * @throws HttpNotFound
@@ -45,14 +58,6 @@ abstract class AbstractController
      * @throws HttpNotFound
      */
     public function create(Request $request, ResponseEngine $responseEngine): Response
-    {
-        throw new HttpNotFound();
-    }
-
-    /**
-     * @throws HttpNotFound
-     */
-    public function read(Request $request, ResponseEngine $responseEngine): Response
     {
         throw new HttpNotFound();
     }
