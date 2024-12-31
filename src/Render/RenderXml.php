@@ -27,7 +27,9 @@ final class RenderXml implements RenderInterface
 
         $payload =
             '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL .
-            $this->handlebars->render($template, $data);
+            '<div>' .
+            $this->handlebars->render($template, $data) .
+            '</div>';
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'text/xml');
