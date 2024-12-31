@@ -32,9 +32,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use SFW2\Core\HttpExceptions\HttpException;
-use SFW2\Core\HttpExceptions\HttpInternalServerError;
-use SFW2\Core\SFW2Exception;
+use SFW2\Exception\HttpExceptions\HttpException;
+use SFW2\Exception\HttpExceptions\HttpInternalServerError;
+use SFW2\Exception\SFW2Exception;
 use SFW2\Routing\ResponseEngine;
 use Throwable;
 

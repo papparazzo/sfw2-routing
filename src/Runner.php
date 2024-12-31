@@ -29,7 +29,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use SFW2\Core\HttpExceptions\HttpNotFound;
+use SFW2\Exception\HttpExceptions\HttpNotFound;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use SFW2\Routing\HelperTraits\getRoutingDataTrait;
 use ReflectionException;

@@ -24,7 +24,7 @@ namespace SFW2\Routing;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use SFW2\Core\HttpExceptions\HttpNotFound;
+use SFW2\Exception\HttpExceptions\HttpNotFound;
 
 abstract class AbstractController
 {
