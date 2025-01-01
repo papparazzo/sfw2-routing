@@ -3,15 +3,12 @@
 namespace SFW2\Routing\Render;
 
 use Handlebars\Handlebars;
-use Handlebars\Loader;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use SFW2\Routing\HelperTraits\getRequestTypeTrait;
+use SFW2\Routing\Helper\GetRequestType;
 
 final class RenderXml implements RenderInterface
 {
-    use getRequestTypeTrait;
-
     public function __construct(
         private readonly Handlebars $handlebars)
     {
@@ -19,7 +16,7 @@ final class RenderXml implements RenderInterface
 
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
-        if (!$this->isXmlRequest($request)) {
+        if (!GetRequestType::isXmlRequest($request)) {
             return $response;
         }
 

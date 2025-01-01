@@ -5,12 +5,10 @@ namespace SFW2\Routing\Render;
 use Handlebars\Handlebars;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use SFW2\Routing\HelperTraits\getRequestTypeTrait;
+use SFW2\Routing\Helper\GetRequestType;
 
 final class RenderHtml implements RenderInterface
 {
-    use getRequestTypeTrait;
-
     public function __construct(
         private readonly Handlebars $handlebars, private readonly string $skeleton)
     {
@@ -18,7 +16,7 @@ final class RenderHtml implements RenderInterface
 
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
-        if ($this->isAjaxRequest($request)) {
+        if (GetRequestType::isAjaxRequest($request)) {
             return $response;
         }
 

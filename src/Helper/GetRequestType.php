@@ -22,13 +22,13 @@
 
 declare(strict_types=1);
 
-namespace SFW2\Routing\HelperTraits;
+namespace SFW2\Routing\Helper;
 
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface;
 
-trait getRequestTypeTrait
+final class GetRequestType
 {
-    protected function isAjaxRequest(Request $request): bool
+    public static function isAjaxRequest(ServerRequestInterface $request): bool
     {
         if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
             return true;
@@ -36,7 +36,7 @@ trait getRequestTypeTrait
         return false;
     }
 
-    protected function isXmlRequest(Request $request): bool
+    public static function isXmlRequest(ServerRequestInterface $request): bool
     {
         if ($request->getHeaderLine('Accept') === 'application/xml') {
             return true;
@@ -44,7 +44,7 @@ trait getRequestTypeTrait
         return false;
     }
 
-    protected function isJsonRequest(Request $request): bool
+    public static function isJsonRequest(ServerRequestInterface $request): bool
     {
         if ($request->getHeaderLine('Accept') === 'application/json') {
             return true;
@@ -52,7 +52,7 @@ trait getRequestTypeTrait
         return false;
     }
 
-    protected function isFormRequest(Request $request): bool
+    public static function isFormRequest(ServerRequestInterface $request): bool
     {
         $data = $request->getQueryParams();
         if(isset($data['getForm'])) {
@@ -61,7 +61,7 @@ trait getRequestTypeTrait
         return false;
     }
 
-    protected function isRestricted(Request $request): bool
+    public static function isRestricted(ServerRequestInterface $request): bool
     {
         $perm = $request->getAttribute('sfw2_authority');
 

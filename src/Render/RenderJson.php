@@ -5,18 +5,16 @@ namespace SFW2\Routing\Render;
 use JsonException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use SFW2\Routing\HelperTraits\getRequestTypeTrait;
+use SFW2\Routing\Helper\GetRequestType;
 
 class RenderJson implements RenderInterface
 {
-    use getRequestTypeTrait;
-
     /**
      * @throws JsonException
      */
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
-        if (!$this->isJsonRequest($request)) {
+        if (!GetRequestType::isJsonRequest($request)) {
             return $response;
         }
 
