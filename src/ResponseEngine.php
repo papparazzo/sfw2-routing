@@ -33,8 +33,7 @@ class ResponseEngine
     public function __construct(
         private readonly RenderInterface          $renderEngine,
         private readonly ResponseFactoryInterface $responseFactory
-    )
-    {
+    ) {
     }
 
     public function render(Request $request, array $data = [], ?string $template = null): Response

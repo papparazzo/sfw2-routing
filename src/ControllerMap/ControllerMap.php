@@ -28,9 +28,14 @@ use OutOfRangeException;
 
 class ControllerMap implements ControllerMapInterface
 {
-
+    /**
+     * @var ControllerData[]
+     */
     protected array $controllerMap = [];
 
+    /**
+     * @param ControllerData[] $controllerMap
+     */
     public function __construct(array $controllerMap)
     {
         $this->controllerMap = $controllerMap;
@@ -38,7 +43,6 @@ class ControllerMap implements ControllerMapInterface
 
     public function getControllerRulesetByPathId(int $pathId): ControllerData
     {
-
         if (!isset($this->controllerMap[$pathId])) {
             throw new OutOfRangeException("path <$pathId> not set");
         }

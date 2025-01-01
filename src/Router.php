@@ -29,20 +29,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use SFW2\Routing\HelperTraits\getRoutingDataTrait;
-
 use SFW2\Core\Interfaces\PathMapInterface;
 
 class Router implements RequestHandlerInterface
 {
-
-    use getRoutingDataTrait;
-
     public function __construct(
         private RequestHandlerInterface   $top,
         private readonly PathMapInterface $pathMap
-    )
-    {
+    ) {
     }
 
     public function addMiddleware(MiddlewareInterface $middleware): self
@@ -59,8 +53,7 @@ class Router implements RequestHandlerInterface
 
     private function appendData(ServerRequestInterface $request): ServerRequestInterface
     {
-
-        $path = $this->getPath($request);
+        $path = $request->getUri()->getPath();
 
         $pathId = null;
         if ($this->pathMap->hasPath($path)) {
@@ -68,7 +61,6 @@ class Router implements RequestHandlerInterface
         }
 
         $requestData = [
-            RequestData::ACTION => $this->getAction($request),
             RequestData::IS_HOME => $path == '/',
             RequestData::PATH_ID => $pathId,
             RequestData::PATH_SIMPLIFIED => strtolower('p_' . str_replace('/', '_', $path)),

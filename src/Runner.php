@@ -43,8 +43,7 @@ class Runner implements RequestHandlerInterface
         protected ControllerMapInterface $controllerMap,
         protected FactoryInterface $container,
         protected ResponseEngine $responseEngine
-    )
-    {
+    ) {
     }
 
     /**
