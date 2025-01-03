@@ -10,18 +10,15 @@ use SFW2\Routing\Helper\GetRequestType;
 final class RenderHtml implements RenderInterface
 {
     public function __construct(
-        private readonly Handlebars $handlebars, private readonly string $skeleton)
-    {
+        private readonly Handlebars $handlebars,
+        private readonly string $skeleton,
+        private readonly bool $appendAttributes = false
+    ) {
     }
 
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
-        if (GetRequestType::isAjaxRequest($request)) {
-            return $response;
-        }
-
-        $data = array_merge($request->getAttributes(), $data);
-
+        $data = $this->appendAttributes ? array_merge($request->getAttributes(), $data) : $data;
         if($template !== null) {
             $payload = $this->handlebars->render($template, $data);
             $data['content'] = $payload;

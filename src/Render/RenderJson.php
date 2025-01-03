@@ -9,17 +9,17 @@ use SFW2\Routing\Helper\GetRequestType;
 
 class RenderJson implements RenderInterface
 {
+    public function __construct(
+        private readonly bool $appendAttributes = false
+    ) {
+    }
+
     /**
      * @throws JsonException
      */
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
-        if (!GetRequestType::isJsonRequest($request)) {
-            return $response;
-        }
-
-        $data = array_merge($request->getAttributes(), $data);
-
+        $data = $this->appendAttributes ? array_merge($request->getAttributes(), $data) : $data;
         $payload = json_encode($data, JSON_THROW_ON_ERROR);
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
