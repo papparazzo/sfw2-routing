@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2023  Stefan Paproth
+ *  Copyright (C) 2025  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -22,25 +22,17 @@
 
 declare(strict_types=1);
 
-namespace SFW2\Routing\HelperTraits;
+namespace SFW2\Routing\Render\Conditions;
 
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface;
 
-trait getUrlTrait
+final class IsAjaxRequest implements ConditionInterface
 {
-    protected function getUrl(Request $request): string
+    public function __invoke(ServerRequestInterface $request): bool
     {
-        $uri = (string)$request->getUri();
-
-        $pos = strrpos($uri, '#');
-        if($pos !== false) {
-            $uri = substr($uri, 0, $pos);
+        if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+            return true;
         }
-
-        $pos = strrpos($uri, '?');
-        if($pos !== false) {
-            $uri = substr($uri, 0, $pos);
-        }
-        return $uri;
+        return false;
     }
 }
