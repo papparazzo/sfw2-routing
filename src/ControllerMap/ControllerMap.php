@@ -33,24 +33,17 @@ class ControllerMap implements ControllerMapInterface
      */
     protected array $controllerMap = [];
 
-    /**
-     * @param ControllerData[] $controllerMap
-     */
-    public function __construct(array $controllerMap)
+    public function appendControllerData(int $pathId, string $method, ControllerData $controllerData): void
     {
-        $this->controllerMap = $controllerMap;
+        $this->controllerMap["$method:$pathId"] = $controllerData;
     }
 
-    public function getControllerRulesetByPathId(int $pathId): ControllerData
+    public function getControllerRulesetByPathId(int $pathId, string $method): ControllerData
     {
-        if (!isset($this->controllerMap[$pathId])) {
-            throw new OutOfRangeException("path <$pathId> not set");
+        if (!isset($this->controllerMap["$method:$pathId"])) {
+            throw new OutOfRangeException("path for id <$pathId> and method <$method> not set");
         }
 
-        return $this->controllerMap[$pathId];
+        return $this->controllerMap["$method:$pathId"];
     }
 }
-
-
-
-
