@@ -29,16 +29,14 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use ReflectionClass;
+use SFW2\Exception\HttpExceptions\HttpInternalServerError;
 use SFW2\Exception\HttpExceptions\HttpNotFound;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
-use SFW2\Routing\HelperTraits\getRoutingDataTrait;
 use ReflectionException;
-use ReflectionMethod;
 
 class Runner implements RequestHandlerInterface
 {
-    use getRoutingDataTrait;
-
     public function __construct(
         protected ControllerMapInterface $controllerMap,
         protected FactoryInterface $container,
@@ -51,45 +49,75 @@ class Runner implements RequestHandlerInterface
      * @throws HttpNotFound
      * @throws ContainerExceptionInterface
      * @throws ReflectionException
+     * @throws HttpInternalServerError
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $pathId = $this->getPathId($request);
+        $pathId = $request->getAttribute('sfw2_routing')[RequestData::PATH_ID];
 
-        $controller = $this->controllerMap->getControllerRulesetByPathId($pathId);
-        $action = $this->getAction($request);
+        if (is_null($pathId)) {
+            throw new HttpNotFound("could not load <{$request->getUri()->getPath()}>");
+        }
 
-        $ctrl = $this->getController($controller->getClassName(), $action, $controller->getAdditionalData());
+        $controller = $this->controllerMap->getControllerRulesetByPathId((int)$pathId, $request->getMethod());
 
-        return call_user_func([$ctrl, $action], $request, $this->responseEngine);
+        $class = $controller->getClassName();
+        $action = $controller->getAction();
+
+        $this->checkControllerAndAction($class, $action);
+
+        $ctrl = $this->container->make($class, $controller->getAdditionalData());
+
+        return call_user_func([$ctrl, $action], $request, $this->responseEngine, []);
     }
 
     /**
      * @throws HttpNotFound
-     * @throws ContainerExceptionInterface
+     * @throws HttpInternalServerError
      */
-    protected function getController(string $class, string $action, array $additionalParams): AbstractController
+    protected function checkControllerAndAction(string $class, string $action): void
     {
-        if (!class_exists($class)) {
+        try {
+            $refl = new ReflectionClass($class);
+        } catch(ReflectionException) {
             throw new HttpNotFound("class <$class> does not exists");
         }
 
-        try {
-            $refl = new ReflectionMethod($class, $action);
-        } catch(ReflectionException) {
-            throw new HttpNotFound("method <$action> does not exist");
+        if (!$refl->hasMethod($action)) {
+            throw new HttpNotFound("action <$action> does not exists");
         }
 
-        if (!$refl->isPublic()) {
+        $method = $refl->getMethod($action);
+
+        if (!$method->isPublic()) {
             throw new HttpNotFound("method <$action> is not public");
         }
 
-        $ctrl = $this->container->make($class, $additionalParams);
-
-        if (!($ctrl instanceof AbstractController)) {
-            throw new HttpNotFound("class <$class> is no controller");
+        if ($method->getNumberOfRequiredParameters() != 3) {
+            throw new HttpInternalServerError("method <$action> does not have a required parameter");
         }
 
-        return $ctrl;
+        foreach ($method->getParameters() as $param) {
+            switch($param->getPosition()) {
+                case 0:
+                    if ($param->getType()->getName() != ServerRequestInterface::class) {
+                        throw new HttpInternalServerError("method <$action> has invalid signature");
+                    }
+                    break;
+                case 1:
+                    if ($param->getType()->getName() != ResponseEngine::class) {
+                        throw new HttpInternalServerError("method <$action> has invalid signature");
+                    }
+                    break;
+                case 2:
+                    if ($param->getType()->getName() != 'array') {
+                        throw new HttpInternalServerError("method <$action> has invalid signature");
+                    }
+                    break;
+
+                default:
+                    throw new HttpInternalServerError("method <$action> has invalid signature");
+            }
+        }
     }
 }
