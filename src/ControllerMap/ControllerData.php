@@ -2,8 +2,13 @@
 
 namespace SFW2\Routing\ControllerMap;
 
-readonly class ControllerData
+class ControllerData
 {
+    /**
+     * @var array<string, string>
+     */
+    private array $actionData = [];
+
     /**
      * @param class-string $className
      * @param non-empty-string $action
@@ -14,6 +19,18 @@ readonly class ControllerData
         protected string $action = 'index',
         protected array  $additionalData = []
     ) {
+    }
+
+    /**
+     * @param array<string, string> $actionData
+     * @return self
+     */
+    public function withActionParams(array $actionData): self
+    {
+        $new = clone $this;
+        $new->actionData = $actionData;
+
+        return $new;
     }
 
     /**
@@ -30,6 +47,14 @@ readonly class ControllerData
     public function getAction(): string
     {
         return $this->action;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getActionData(): array
+    {
+        return $this->actionData;
     }
 
     /**
