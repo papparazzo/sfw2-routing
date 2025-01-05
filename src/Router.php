@@ -43,6 +43,7 @@ class Router implements RequestHandlerInterface
     {
         $tmp = $this->top;
         $this->top = new RequestHandler($middleware, $tmp);
+
         return $this;
     }
 

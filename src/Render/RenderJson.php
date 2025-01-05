@@ -5,7 +5,6 @@ namespace SFW2\Routing\Render;
 use JsonException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use SFW2\Routing\Helper\GetRequestType;
 
 class RenderJson implements RenderInterface
 {

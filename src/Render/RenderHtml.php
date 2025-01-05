@@ -5,7 +5,6 @@ namespace SFW2\Routing\Render;
 use Handlebars\Handlebars;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use SFW2\Routing\Helper\GetRequestType;
 
 final class RenderHtml implements RenderInterface
 {
