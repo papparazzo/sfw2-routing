@@ -39,6 +39,7 @@ class ResponseEngine
     public function render(Request $request, array $data = [], ?string $template = null): Response
     {
         $response = $this->responseFactory->createResponse();
+
         return $this->renderEngine->render($request, $response, $data, $template);
     }
 }
