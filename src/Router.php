@@ -29,13 +29,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use SFW2\Core\Interfaces\PathMapInterface;
-
 class Router implements RequestHandlerInterface
 {
     public function __construct(
-        private RequestHandlerInterface   $top,
-        private readonly PathMapInterface $pathMap
+        private RequestHandlerInterface $top
     ) {
     }
 
@@ -56,14 +53,8 @@ class Router implements RequestHandlerInterface
     {
         $path = $request->getUri()->getPath();
 
-        $pathId = null;
-        if ($this->pathMap->hasPath($path)) {
-            $pathId = $this->pathMap->getPathId($path);
-        }
-
         $requestData = [
             RequestData::IS_HOME => $path == '/',
-            RequestData::PATH_ID => $pathId,
             RequestData::PATH_SIMPLIFIED => strtolower('p_' . str_replace('/', '_', $path)),
             RequestData::PATH => $path
         ];
