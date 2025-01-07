@@ -53,22 +53,16 @@ class Runner implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $pathId = $request->getAttribute('sfw2_routing')[RequestData::PATH_ID];
+        $ctrl = $this->controllerMap->getControllerRulesetByPath($request->getMethod(), $request->getUri()->getPath());
 
-        if (is_null($pathId)) {
-            throw new HttpNotFound("could not load <{$request->getUri()->getPath()}>");
-        }
-
-        $controller = $this->controllerMap->getControllerRulesetByPathId((int)$pathId, $request->getMethod());
-
-        $class = $controller->getClassName();
-        $action = $controller->getAction();
+        $class = $ctrl->getClassName();
+        $action = $ctrl->getAction();
 
         $this->checkControllerAndAction($class, $action);
 
-        $ctrl = $this->container->make($class, $controller->getAdditionalData());
+        $obj = $this->container->make($class, $ctrl->getAdditionalData());
 
-        return call_user_func([$ctrl, $action], $request, $this->responseEngine, []);
+        return call_user_func([$obj, $action], $request, $this->responseEngine, $ctrl->getActionData());
     }
 
     /**
