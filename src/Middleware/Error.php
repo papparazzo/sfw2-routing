@@ -44,8 +44,7 @@ class Error implements MiddlewareInterface
         protected ResponseEngine     $responseEngine,
         protected ContainerInterface $config,
         protected LoggerInterface    $logger = new NullLogger()
-    )
-    {
+    ) {
     }
 
     /**
