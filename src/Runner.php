@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace SFW2\Routing;
 
 use DI\FactoryInterface;
+use OutOfRangeException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -53,7 +54,11 @@ class Runner implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $ctrl = $this->controllerMap->getControllerRulesetByPath($request->getMethod(), $request->getUri()->getPath());
+        try {
+            $ctrl = $this->controllerMap->getControllerRulesetByPath($request->getMethod(), $request->getUri()->getPath());
+        } catch (OutOfRangeException $exception) {
+            throw new HttpNotFound($exception->getMessage());
+        }
 
         $class = $ctrl->getClassName();
         $action = $ctrl->getAction();
