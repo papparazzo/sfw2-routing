@@ -24,5 +24,5 @@ namespace SFW2\Routing\ControllerMap;
 
 interface ControllerMapInterface
 {
-    public function getControllerRulesetByPath(string $path, string $method = 'GET'): ControllerData;
+    public function getControllerRulesetByPath(string $method, string $path): ControllerData;
 }

@@ -26,24 +26,30 @@ namespace SFW2\Routing\ControllerMap;
 
 use OutOfRangeException;
 
-class ControllerMap implements ControllerMapInterface
+class PathToControllerMap implements ControllerMapInterface
 {
     /**
-     * @var ControllerData[]
+     * @var array<string, array<string, ControllerData>>
      */
     protected array $controllerMap = [];
 
-    public function appendControllerData(int $pathId, string $method, ControllerData $controllerData): void
+    public function appendControllerData(string $method, string $path, ControllerData $controllerData): void
     {
-        $this->controllerMap["$method:$pathId"] = $controllerData;
+        $this->controllerMap[$method][$path] = $controllerData;
     }
 
-    public function getControllerRulesetByPathId(int $pathId, string $method): ControllerData
+    public function getControllerRulesetByPath(string $method, string $path): ControllerData
     {
-        if (!isset($this->controllerMap["$method:$pathId"])) {
-            throw new OutOfRangeException("path for id <$pathId> and method <$method> not set");
-        }
+        $map = $this->controllerMap[$method] ?? [];
 
-        return $this->controllerMap["$method:$pathId"];
+        $matches = [];
+
+        foreach($map as $pattern => $controllerData) {
+            if(preg_match("{^$pattern$}", $path, $matches)) {
+                array_shift($matches);
+                return $controllerData->withActionParams($matches);
+            }
+        }
+        throw new OutOfRangeException("no controller for path <$path> and method <$method> set");
     }
 }
