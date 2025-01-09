@@ -24,11 +24,12 @@ declare(strict_types=1);
 
 namespace SFW2\Routing\Render\Conditions;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 final class IsAjaxRequest implements ConditionInterface
 {
-    public function __invoke(ServerRequestInterface $request): bool
+    public function __invoke(Request $request, Response $response): bool
     {
         if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
             return true;

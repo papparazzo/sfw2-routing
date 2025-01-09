@@ -24,7 +24,8 @@ declare(strict_types=1);
 
 namespace SFW2\Routing\Render\Conditions;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 final class InvertCondition implements ConditionInterface
 {
@@ -33,8 +34,8 @@ final class InvertCondition implements ConditionInterface
     ) {
     }
 
-    public function __invoke(ServerRequestInterface $request): bool
+    public function __invoke(Request $request, Response $response): bool
     {
-        return !$this->condition->__invoke($request);
+        return !$this->condition->__invoke($request, $response);
     }
 }
