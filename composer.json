@@ -20,7 +20,7 @@
         "ext-fileinfo": "*",
 
         "sfw2/exception": "^1.0",
-        "sfw2/core": "^7.0.0",
+        "sfw2/core": "^9.0.0",
 
         "psr/http-server-middleware": "^1.0.2",
         "psr/container": "^2.0",
@@ -36,6 +36,6 @@
         }
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^2.1.1"
     }
 }
