@@ -2,6 +2,7 @@
 
 namespace SFW2\Routing\Render;
 
+use OutOfRangeException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use SFW2\Routing\Render\Conditions\ConditionInterface;
@@ -22,9 +23,10 @@ class RenderComposite implements RenderInterface
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         foreach ($this->engines as $entry) {
-            $response =
-                $entry['on']($request) ? $entry['render']->render($request, $response, $data, $template) : $response;
+            if ($entry['on']($request, $response)) {
+                return $entry['render']->render($request, $response, $data, $template);
+            }
         }
-        return $response;
+        throw new OutOfRangeException("no render engines found");
     }
 }
