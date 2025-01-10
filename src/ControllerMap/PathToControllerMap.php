@@ -38,8 +38,6 @@ class PathToControllerMap implements ControllerMapInterface
         $this->controllerMap[$path][strtoupper($method)] = $controllerData;
     }
 
-    }
-
     public function getControllerRulesetByPath(string $method, string $path): ControllerData
     {
         foreach($this->controllerMap as $pattern => $controllerData) {
