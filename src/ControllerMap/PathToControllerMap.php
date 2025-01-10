@@ -35,21 +35,26 @@ class PathToControllerMap implements ControllerMapInterface
 
     public function appendControllerData(string $method, string $path, ControllerData $controllerData): void
     {
-        $this->controllerMap[$method][$path] = $controllerData;
+        $this->controllerMap[$path][strtoupper($method)] = $controllerData;
+    }
+
     }
 
     public function getControllerRulesetByPath(string $method, string $path): ControllerData
     {
-        $map = $this->controllerMap[$method] ?? [];
-
-        $matches = [];
-
-        foreach($map as $pattern => $controllerData) {
-            if(preg_match("{^$pattern$}", $path, $matches)) {
-                array_shift($matches);
-                return $controllerData->withActionParams($matches);
+        foreach($this->controllerMap as $pattern => $controllerData) {
+            if(!preg_match("{^$pattern$}", $path, $matches)) {
+                continue;
             }
+            if(!isset($controllerData[$method])) {
+
+                // implode(',', array_keys($controllerData));
+                throw new OutOfRangeException("no controller for path <$path> and method <$method> set");
+            }
+            array_shift($matches);
+            return $controllerData[$method]->withActionParams($matches);
         }
+
         throw new OutOfRangeException("no controller for path <$path> and method <$method> set");
     }
 }
