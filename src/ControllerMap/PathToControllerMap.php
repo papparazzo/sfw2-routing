@@ -24,7 +24,8 @@ declare(strict_types=1);
 
 namespace SFW2\Routing\ControllerMap;
 
-use OutOfRangeException;
+use SFW2\Exception\HttpExceptions\HttpMethodNotAllowed;
+use SFW2\Exception\HttpExceptions\HttpNotFound;
 
 class PathToControllerMap implements ControllerMapInterface
 {
@@ -45,14 +46,12 @@ class PathToControllerMap implements ControllerMapInterface
                 continue;
             }
             if(!isset($controllerData[$method])) {
-
-                // implode(',', array_keys($controllerData));
-                throw new OutOfRangeException("no controller for path <$path> and method <$method> set");
+                throw new HttpMethodNotAllowed(array_keys($controllerData));
             }
             array_shift($matches);
             return $controllerData[$method]->withActionParams($matches);
         }
 
-        throw new OutOfRangeException("no controller for path <$path> and method <$method> set");
+        throw new HttpNotFound();
     }
 }
