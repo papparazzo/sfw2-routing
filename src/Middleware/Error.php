@@ -111,7 +111,12 @@ class Error implements MiddlewareInterface
             $data['debugData'] = $this->getContentString($request, $exception);
         }
 
-        return $this->responseEngine->render($request, $data, "notice");
+        $response = $this->responseEngine->render($request, $data, "notice");
+
+        foreach ($exception->getAdditionalHeaders() as $header => $content) {
+            $response = $response->withHeader($header, $content);
+        }
+        return $response;
     }
 
     /**
