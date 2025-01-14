@@ -22,7 +22,17 @@
 
 namespace SFW2\Routing\ControllerMap;
 
+use SFW2\Exception\HttpExceptions\HttpMethodNotAllowed;
+use SFW2\Exception\HttpExceptions\HttpNotFound;
+
 interface ControllerMapInterface
 {
+    /**
+     * @param string $method
+     * @param string $path
+     * @return ControllerData
+     * @throws HttpMethodNotAllowed
+     * @throws HttpNotFound
+     */
     public function getControllerRulesetByPath(string $method, string $path): ControllerData;
 }
