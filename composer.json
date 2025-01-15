@@ -5,10 +5,6 @@
     "repositories" : [
         {
             "type": "vcs",
-            "url": "https://github.com/papparazzo/sfw2-core.git"
-        },
-        {
-            "type": "vcs",
             "url": "https://github.com/papparazzo/sfw2-exception.git"
         }
     ],
@@ -19,8 +15,7 @@
         "ext-mbstring": "*",
         "ext-fileinfo": "*",
 
-        "sfw2/exception": "^1.0",
-        "sfw2/core": "^9.0.0",
+        "sfw2/exception": "^1.1",
 
         "psr/http-server-middleware": "^1.0.2",
         "psr/container": "^2.0",

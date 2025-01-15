@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0d635404eeefa042f8749939ff0ce53",
+    "content-hash": "82b3dab23b552cda09c06c200c42b14a",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -684,59 +684,25 @@
             "time": "2023-01-12T16:24:23+00:00"
         },
         {
-            "name": "sfw2/core",
-            "version": "9.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/papparazzo/sfw2-core.git",
-                "reference": "b2dd251f7a1cb7946451c4448e9685ccbf31814c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-core/zipball/b2dd251f7a1cb7946451c4448e9685ccbf31814c",
-                "reference": "b2dd251f7a1cb7946451c4448e9685ccbf31814c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-gd": "*",
-                "ext-intl": "*",
-                "ext-mbstring": "*",
-                "php": "^8.3",
-                "psr/container": "^2.0.2",
-                "salesforce/handlebars-php": "^3.0.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SFW2\\Core\\": "src/"
-                }
-            },
-            "license": [
-                "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
-            ],
-            "support": {
-                "source": "https://github.com/papparazzo/sfw2-core/tree/9.0.0",
-                "issues": "https://github.com/papparazzo/sfw2-core/issues"
-            },
-            "time": "2025-01-06T16:55:41+00:00"
-        },
-        {
             "name": "sfw2/exception",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/papparazzo/sfw2-exception.git",
-                "reference": "f25813c459344df441905eb99a767b7ca5f381b6"
+                "reference": "0ecbe0a1802a915fcb6dd08a567d4558cc3835a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-exception/zipball/f25813c459344df441905eb99a767b7ca5f381b6",
-                "reference": "f25813c459344df441905eb99a767b7ca5f381b6",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-exception/zipball/0ecbe0a1802a915fcb6dd08a567d4558cc3835a8",
+                "reference": "0ecbe0a1802a915fcb6dd08a567d4558cc3835a8",
                 "shasum": ""
             },
             "require": {
                 "fig/http-message-util": "^1.1.5",
                 "php": "^8.3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1.1"
             },
             "type": "library",
             "autoload": {
@@ -748,10 +714,10 @@
                 "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
             ],
             "support": {
-                "source": "https://github.com/papparazzo/sfw2-exception/tree/1.0.0",
+                "source": "https://github.com/papparazzo/sfw2-exception/tree/1.1.0",
                 "issues": "https://github.com/papparazzo/sfw2-exception/issues"
             },
-            "time": "2024-09-18T17:41:59+00:00"
+            "time": "2025-01-12T08:00:45+00:00"
         }
     ],
     "packages-dev": [
