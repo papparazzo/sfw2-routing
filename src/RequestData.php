@@ -10,46 +10,16 @@ class RequestData
 
     public const string ACTION = 'action';
 
-    public const string PATH_ID = 'path_id';
-
     public const string PATH_SIMPLIFIED = 'path_simplified';
 
     public const string PATH = 'path';
-
-
-    #public bool $authenticated;
-
-    # sitemapdata    => $this->menu->getFullMenu());
-    # main_menu       => $this->menu->getMainMenu());
-    # side_menu       => $this->menu->getSideMenu());
-    # authenticated  => (bool)$this->session->getGlobalEntry(User::class));
 
     # created        => creationDate
     # updated        => modificationDate
     # currentPath
 
-    # path_simplified
     # token (xsrf?) / exception? $exc->getIdentifier()
-    # id' => $request->getPathSimplified(),
-    # permission => 'permission', # $this->pagePermission->getPermissionArray(),
-    # error => $this->result->hasErrors(),
-    # data' => $this->result->getData()
-/*
-     $this->assignArray([
-        'title' => $exc->getTitle(),
-        'caption' => $exc->getCaption(),
-        'description' => $exc->getDescription(),
-    ]);
-*/
-        #$title =
-        #    $this->config->get('project.title') . ' - ' .
-        #    $this->result->getValue('title', '');
-
-        #$view->assign('title', trim($title, ' -'));
-
-/*
-
-
+    /*
     protected function showContent(): void
     {
         if (!isset($this->vars['modificationDate']) || $this->vars['modificationDate'] == '') {
