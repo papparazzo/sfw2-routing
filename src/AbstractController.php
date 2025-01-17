@@ -17,7 +17,6 @@
  *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program. If not, see <https://www.gnu.org/licenses/agpl.txt>.
- *
  */
 
 namespace SFW2\Routing;
@@ -35,9 +34,18 @@ abstract class AbstractController
      * read -> readOwn, readOther combined... Permission: 'allow', 'read*'
      * readOwn
      * readOther
-     *
      */
-    abstract public function index(Request $request, ResponseEngine $responseEngine): Response;
+    public function index(Request $request, ResponseEngine $responseEngine): Response
+    {
+        $request->getUri();
+        $params = $request->getQueryParams();
+        if(!isset($params['do'])) {
+            return $responseEngine->render($request);
+        }
+
+
+        return $params['do'];
+    }
 
     public function read(Request $request, ResponseEngine $responseEngine): Response
     {
