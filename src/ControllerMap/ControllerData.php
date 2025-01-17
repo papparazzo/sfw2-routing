@@ -10,8 +10,8 @@ class ControllerData
     private array $actionData = [];
 
     /**
-     * @param class-string $className
-     * @param non-empty-string $action
+     * @param class-string            $className
+     * @param non-empty-string        $action
      * @param array<array-key, mixed> $additionalData
      */
     public function __construct(
@@ -22,7 +22,7 @@ class ControllerData
     }
 
     /**
-     * @param array<string, string> $actionData
+     * @param  array<string, string> $actionData
      * @return self
      */
     public function withActionParams(array $actionData): self
