@@ -22,5 +22,5 @@ class RenderJson implements RenderInterface
         $payload = json_encode($data, JSON_THROW_ON_ERROR);
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
-   }
+    }
 }

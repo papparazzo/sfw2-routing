@@ -14,11 +14,11 @@ class RequestData
 
     public const string PATH = 'path';
 
-    # created        => creationDate
-    # updated        => modificationDate
-    # currentPath
+    // created        => creationDate
+    // updated        => modificationDate
+    // currentPath
 
-    # token (xsrf?) / exception? $exc->getIdentifier()
+    // token (xsrf?) / exception? $exc->getIdentifier()
     /*
     protected function showContent(): void
     {

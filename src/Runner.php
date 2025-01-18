@@ -17,7 +17,6 @@
  *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
- *
  */
 
 declare(strict_types=1);
@@ -47,9 +46,9 @@ class Runner implements RequestHandlerInterface
 
     /**
      * @inheritDoc
-     * @throws HttpNotFound|HttpMethodNotAllowed|HttpInternalServerError
-     * @throws ContainerExceptionInterface
-     * @throws ReflectionException
+     * @throws     HttpNotFound|HttpMethodNotAllowed|HttpInternalServerError
+     * @throws     ContainerExceptionInterface
+     * @throws     ReflectionException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
