@@ -17,7 +17,6 @@
  *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
- *
  */
 
 namespace SFW2\Routing\ControllerMap;
@@ -28,8 +27,8 @@ use SFW2\Exception\HttpExceptions\HttpNotFound;
 interface ControllerMapInterface
 {
     /**
-     * @param string $method
-     * @param string $path
+     * @param  string $method
+     * @param  string $path
      * @return ControllerData
      * @throws HttpMethodNotAllowed
      * @throws HttpNotFound

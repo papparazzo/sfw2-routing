@@ -17,7 +17,6 @@
  *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program. If not, see <https://www.gnu.org/licenses/agpl.txt>.
- *
  */
 
 namespace SFW2\Routing\Middleware;
@@ -48,8 +47,8 @@ class Error implements MiddlewareInterface
     }
 
     /**
-     * @param Request $request
-     * @param RequestHandlerInterface $handler
+     * @param  Request                 $request
+     * @param  RequestHandlerInterface $handler
      * @return ResponseInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
