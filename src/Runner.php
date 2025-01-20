@@ -25,6 +25,7 @@ namespace SFW2\Routing;
 
 use DI\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -40,7 +41,7 @@ class Runner implements RequestHandlerInterface
     public function __construct(
         protected ControllerMapInterface $controllerMap,
         protected FactoryInterface $container,
-        protected ResponseEngine $responseEngine
+        protected ResponseFactoryInterface $responseFactory
     ) {
     }
 
@@ -56,12 +57,13 @@ class Runner implements RequestHandlerInterface
 
         $class = $ctrl->getClassName();
         $action = $ctrl->getAction();
+        $response = $this->responseFactory->createResponse();
 
         $this->checkControllerAndAction($class, $action);
 
         $obj = $this->container->make($class, $ctrl->getAdditionalData());
 
-        return call_user_func([$obj, $action], $request, $this->responseEngine, $ctrl->getActionData());
+        return call_user_func([$obj, $action], $request, $response, $ctrl->getActionData());
     }
 
     /**
@@ -98,7 +100,7 @@ class Runner implements RequestHandlerInterface
                     }
                     break;
                 case 1:
-                    if ($param->getType()->getName() != ResponseEngine::class) {
+                    if ($param->getType()->getName() != ResponseInterface::class) {
                         throw new HttpInternalServerError("method <$action> has invalid signature");
                     }
                     break;
