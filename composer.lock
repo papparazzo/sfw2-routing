@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fca8ad2c65bc615048a16a2289f8ef2f",
+    "content-hash": "3f17eaf226f70416736e0d66b15bb56a",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -125,16 +125,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "2.3.4",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/59f15608528d8a8838d69b422a919fd6b16aa576",
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576",
                 "shasum": ""
             },
             "require": {
@@ -168,7 +168,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
-                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.6"
             },
             "funding": [
                 {
@@ -176,7 +176,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-08T09:24:21+00:00"
+            "time": "2025-01-17T12:49:27+00:00"
         },
         {
             "name": "php-di/php-di",
@@ -685,24 +685,25 @@
         },
         {
             "name": "sfw2/exception",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/papparazzo/sfw2-exception.git",
-                "reference": "0ecbe0a1802a915fcb6dd08a567d4558cc3835a8"
+                "reference": "d48dc7c0b50a537219ad21808157bea8181536aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-exception/zipball/0ecbe0a1802a915fcb6dd08a567d4558cc3835a8",
-                "reference": "0ecbe0a1802a915fcb6dd08a567d4558cc3835a8",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-exception/zipball/d48dc7c0b50a537219ad21808157bea8181536aa",
+                "reference": "d48dc7c0b50a537219ad21808157bea8181536aa",
                 "shasum": ""
             },
             "require": {
                 "fig/http-message-util": "^1.1.5",
-                "php": "^8.3"
+                "php": "^8.1"
             },
             "require-dev": {
-                "phpstan/phpstan": "^2.1.1"
+                "phpstan/phpstan": "^2.1.1",
+                "squizlabs/php_codesniffer": "^3.11"
             },
             "type": "library",
             "autoload": {
@@ -710,14 +711,22 @@
                     "SFW2\\Exception\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
+                "AGPL-3.0-or-later"
             ],
+            "authors": [
+                {
+                    "name": "Stefan Paproth",
+                    "email": "pappi-@gmx.de"
+                }
+            ],
+            "description": "http status as exceptions",
             "support": {
-                "source": "https://github.com/papparazzo/sfw2-exception/tree/1.1.0",
-                "issues": "https://github.com/papparazzo/sfw2-exception/issues"
+                "issues": "https://github.com/papparazzo/sfw2-exception/issues",
+                "source": "https://github.com/papparazzo/sfw2-exception/tree/1.2.0"
             },
-            "time": "2025-01-12T08:00:45+00:00"
+            "time": "2025-01-18T10:32:35+00:00"
         }
     ],
     "packages-dev": [

@@ -1,13 +1,7 @@
 {
     "name": "sfw2/routing",
     "type": "library",
-    "license": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3",
-    "repositories" : [
-        {
-            "type": "vcs",
-            "url": "https://github.com/papparazzo/sfw2-exception.git"
-        }
-    ],
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.3",
 
