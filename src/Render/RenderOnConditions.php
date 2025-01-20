@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use SFW2\Routing\Render\Conditions\ConditionInterface;
 
-class RenderComposite implements RenderInterface
+class RenderOnConditions implements RenderInterface
 {
     /**
      * @var list<array{on: ConditionInterface, render: RenderInterface}>
