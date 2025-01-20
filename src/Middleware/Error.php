@@ -25,6 +25,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -34,13 +35,14 @@ use Psr\Log\NullLogger;
 use SFW2\Exception\HttpExceptions\HttpException;
 use SFW2\Exception\HttpExceptions\HttpInternalServerError;
 use SFW2\Exception\SFW2Exception;
-use SFW2\Routing\ResponseEngine;
+use SFW2\Routing\Render\RenderInterface;
 use Throwable;
 
 class Error implements MiddlewareInterface
 {
     public function __construct(
-        protected ResponseEngine     $responseEngine,
+        protected ResponseFactoryInterface $responseFactory,
+        protected RenderInterface    $renderEngine,
         protected ContainerInterface $config,
         protected LoggerInterface    $logger = new NullLogger()
     ) {
@@ -59,9 +61,7 @@ class Error implements MiddlewareInterface
             return $handler->handle($request);
         } catch (Throwable $exception) {
             $exception = $this->convertException($request, $exception);
-            return
-                $this->createResponseFromException($request, $exception)->
-                withStatus($exception->getCode());
+            return $this->createResponseFromException($request, $exception);
         }
     }
 
@@ -110,7 +110,8 @@ class Error implements MiddlewareInterface
             $data['debugData'] = $this->getContentString($request, $exception);
         }
 
-        $response = $this->responseEngine->render($request, $data, "notice");
+        $response = $this->responseFactory->createResponse($exception->getCode());
+        $response = $this->renderEngine->render($request, $response, $data, "notice");
 
         foreach ($exception->getAdditionalHeaders() as $header => $content) {
             $response = $response->withHeader($header, $content);
