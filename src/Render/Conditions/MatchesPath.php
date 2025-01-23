@@ -3,7 +3,7 @@
 /**
  *  SFW2 - SimpleFrameWork
  *
- *  Copyright (C) 2018  Stefan Paproth
+ *  Copyright (C) 2025  Stefan Paproth
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -19,26 +19,31 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.
  */
 
-namespace SFW2\Routing;
+declare(strict_types=1);
 
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseFactoryInterface;
+namespace SFW2\Routing\Render\Conditions;
+
 use Psr\Http\Message\ResponseInterface as Response;
-use SFW2\Routing\Render\RenderInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
-class ResponseEngine
+final class MatchesPath implements ConditionInterface
 {
-
     public function __construct(
-        private readonly RenderInterface          $renderEngine,
-        private readonly ResponseFactoryInterface $responseFactory
+        private readonly string $pattern,
+        private readonly string $method = 'GET'
     ) {
     }
 
-    public function render(Request $request, array $data = [], ?string $template = null): Response
+    public function __invoke(Request $request, Response $response): bool
     {
-        $response = $this->responseFactory->createResponse();
+        if ($request->getMethod() != $this->method) {
+            return false;
+        }
 
-        return $this->renderEngine->render($request, $response, $data, $template);
+        $path = $request->getUri()->getPath();
+        if(!preg_match("{^$this->pattern$}", $path, $matches)) {
+            return false;
+        }
+        return true;
     }
 }
