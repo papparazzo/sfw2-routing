@@ -30,9 +30,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
-use SFW2\Exception\HttpExceptions\HttpInternalServerError;
-use SFW2\Exception\HttpExceptions\HttpMethodNotAllowed;
-use SFW2\Exception\HttpExceptions\HttpNotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
+use SFW2\Exception\HttpExceptions\Status5xx\HttpStatus500InternalServerError;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use ReflectionException;
 
@@ -47,7 +46,7 @@ class Runner implements RequestHandlerInterface
 
     /**
      * @inheritDoc
-     * @throws     HttpNotFound|HttpMethodNotAllowed|HttpInternalServerError
+     * @throws     HttpStatus404NotFound|HttpStatus500InternalServerError
      * @throws     ContainerExceptionInterface
      * @throws     ReflectionException
      */
@@ -67,25 +66,25 @@ class Runner implements RequestHandlerInterface
     }
 
     /**
-     * @throws HttpNotFound
-     * @throws HttpInternalServerError
+     * @throws HttpStatus404NotFound
+     * @throws HttpStatus500InternalServerError
      */
     protected function checkControllerAndAction(string $class, string $action): void
     {
         try {
             $refl = new ReflectionClass($class);
         } catch(ReflectionException) {
-            throw new HttpNotFound("class <$class> does not exists");
+            throw new HttpStatus404NotFound("class <$class> does not exists");
         }
 
         if (!$refl->hasMethod($action)) {
-            throw new HttpNotFound("action <$action> does not exists");
+            throw new HttpStatus404NotFound("action <$action> does not exists");
         }
 
         $method = $refl->getMethod($action);
 
         if (!$method->isPublic()) {
-            throw new HttpNotFound("method <$action> is not public");
+            throw new HttpStatus404NotFound("method <$action> is not public");
         }
 
         if ($method->getNumberOfRequiredParameters() != 3) {
