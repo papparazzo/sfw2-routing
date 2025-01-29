@@ -89,29 +89,29 @@ class Runner implements RequestHandlerInterface
         }
 
         if ($method->getNumberOfRequiredParameters() != 3) {
-            throw new HttpInternalServerError("method <$action> does not have a required parameter");
+            throw new HttpStatus500InternalServerError("method <$action> does not have a required parameter");
         }
 
         foreach ($method->getParameters() as $param) {
             switch($param->getPosition()) {
                 case 0:
                     if ($param->getType()->getName() != ServerRequestInterface::class) {
-                        throw new HttpInternalServerError("method <$action> has invalid signature");
+                        throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
                     }
                     break;
                 case 1:
                     if ($param->getType()->getName() != ResponseInterface::class) {
-                        throw new HttpInternalServerError("method <$action> has invalid signature");
+                        throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
                     }
                     break;
                 case 2:
                     if ($param->getType()->getName() != 'array') {
-                        throw new HttpInternalServerError("method <$action> has invalid signature");
+                        throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
                     }
                     break;
 
                 default:
-                    throw new HttpInternalServerError("method <$action> has invalid signature");
+                    throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
             }
         }
     }
