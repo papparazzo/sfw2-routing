@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f17eaf226f70416736e0d66b15bb56a",
+    "content-hash": "c10043a8ed8bd7015d942837b9d48f84",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -685,16 +685,16 @@
         },
         {
             "name": "sfw2/exception",
-            "version": "1.2.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/papparazzo/sfw2-exception.git",
-                "reference": "d48dc7c0b50a537219ad21808157bea8181536aa"
+                "reference": "4e14f2f797d2ca100d73f47d590d2b4b199dc0ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/papparazzo/sfw2-exception/zipball/d48dc7c0b50a537219ad21808157bea8181536aa",
-                "reference": "d48dc7c0b50a537219ad21808157bea8181536aa",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-exception/zipball/4e14f2f797d2ca100d73f47d590d2b4b199dc0ef",
+                "reference": "4e14f2f797d2ca100d73f47d590d2b4b199dc0ef",
                 "shasum": ""
             },
             "require": {
@@ -724,24 +724,24 @@
             "description": "http status as exceptions",
             "support": {
                 "issues": "https://github.com/papparazzo/sfw2-exception/issues",
-                "source": "https://github.com/papparazzo/sfw2-exception/tree/1.2.0"
+                "source": "https://github.com/papparazzo/sfw2-exception/tree/2.0.0"
             },
-            "time": "2025-01-18T10:32:35+00:00"
+            "time": "2025-01-28T16:22:46+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "cd6e973e04b4c2b94c86e8612b5a65f0da0e08e7"
+                "reference": "7d08f569e582ade182a375c366cbd896eccadd3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cd6e973e04b4c2b94c86e8612b5a65f0da0e08e7",
-                "reference": "cd6e973e04b4c2b94c86e8612b5a65f0da0e08e7",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7d08f569e582ade182a375c366cbd896eccadd3a",
+                "reference": "7d08f569e582ade182a375c366cbd896eccadd3a",
                 "shasum": ""
             },
             "require": {
@@ -786,20 +786,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-05T16:43:48+00:00"
+            "time": "2025-01-21T14:54:06+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.11.2",
+            "version": "3.11.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "1368f4a58c3c52114b86b1abe8f4098869cb0079"
+                "reference": "ba05f990e79cbe69b9f35c8c1ac8dca7eecc3a10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/1368f4a58c3c52114b86b1abe8f4098869cb0079",
-                "reference": "1368f4a58c3c52114b86b1abe8f4098869cb0079",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/ba05f990e79cbe69b9f35c8c1ac8dca7eecc3a10",
+                "reference": "ba05f990e79cbe69b9f35c8c1ac8dca7eecc3a10",
                 "shasum": ""
             },
             "require": {
@@ -864,9 +864,13 @@
                 {
                     "url": "https://opencollective.com/php_codesniffer",
                     "type": "open_collective"
+                },
+                {
+                    "url": "https://thanks.dev/phpcsstandards",
+                    "type": "thanks_dev"
                 }
             ],
-            "time": "2024-12-11T16:04:26+00:00"
+            "time": "2025-01-23T17:04:15+00:00"
         }
     ],
     "aliases": [],

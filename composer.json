@@ -9,7 +9,7 @@
         "ext-mbstring": "*",
         "ext-fileinfo": "*",
 
-        "sfw2/exception": "^1.1",
+        "sfw2/exception": "^2.0",
 
         "psr/http-server-middleware": "^1.0.2",
         "psr/container": "^2.0",
