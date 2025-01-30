@@ -23,7 +23,7 @@ namespace SFW2\Routing;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use SFW2\Exception\HttpExceptions\HttpNotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
 
 abstract class AbstractController
 {
@@ -53,36 +53,36 @@ abstract class AbstractController
     }
 
     /**
-     * @throws HttpNotFound
+     * @throws HttpStatus404NotFound
      *
      * Übersicht auf Landingpage
      */
     public function preview(Request $request, ResponseEngine $responseEngine): Response
     {
-        throw new HttpNotFound();
+        throw new HttpStatus404NotFound();
     }
 
     /**
-     * @throws HttpNotFound
+     * @throws HttpStatus404NotFound
      */
     public function create(Request $request, ResponseEngine $responseEngine): Response
     {
-        throw new HttpNotFound();
+        throw new HttpStatus404NotFound();
     }
 
     /**
-     * @throws HttpNotFound
+     * @throws HttpStatus404NotFound
      */
     public function update(Request $request, ResponseEngine $responseEngine): Response
     {
-        throw new HttpNotFound("delete-action not found");
+        throw new HttpStatus404NotFound("delete-action not found");
     }
 
     /**
-     * @throws HttpNotFound
+     * @throws HttpStatus404NotFound
      */
     public function delete(Request $request, ResponseEngine $responseEngine): Response
     {
-        throw new HttpNotFound("delete-action not found");
+        throw new HttpStatus404NotFound("delete-action not found");
     }
 }
