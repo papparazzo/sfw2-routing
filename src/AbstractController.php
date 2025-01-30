@@ -35,21 +35,21 @@ abstract class AbstractController
      * readOwn
      * readOther
      */
-    public function index(Request $request, ResponseEngine $responseEngine): Response
+    public function index(Request $request, Response $response): Response
     {
         $request->getUri();
         $params = $request->getQueryParams();
         if(!isset($params['do'])) {
-            return $responseEngine->render($request);
+            return $response;
         }
 
 
         return $params['do'];
     }
 
-    public function read(Request $request, ResponseEngine $responseEngine): Response
+    public function read(Request $request, $response): Response
     {
-        return $this->index($request, $responseEngine);
+        return $this->index($request, $response);
     }
 
     /**
@@ -57,7 +57,7 @@ abstract class AbstractController
      *
      * Übersicht auf Landingpage
      */
-    public function preview(Request $request, ResponseEngine $responseEngine): Response
+    public function preview(Request $request, Response $response): Response
     {
         throw new HttpStatus404NotFound();
     }
@@ -65,7 +65,7 @@ abstract class AbstractController
     /**
      * @throws HttpStatus404NotFound
      */
-    public function create(Request $request, ResponseEngine $responseEngine): Response
+    public function create(Request $request, Response $response): Response
     {
         throw new HttpStatus404NotFound();
     }
@@ -73,7 +73,7 @@ abstract class AbstractController
     /**
      * @throws HttpStatus404NotFound
      */
-    public function update(Request $request, ResponseEngine $responseEngine): Response
+    public function update(Request $request, Response $response): Response
     {
         throw new HttpStatus404NotFound("delete-action not found");
     }
@@ -81,7 +81,7 @@ abstract class AbstractController
     /**
      * @throws HttpStatus404NotFound
      */
-    public function delete(Request $request, ResponseEngine $responseEngine): Response
+    public function delete(Request $request, Response $response): Response
     {
         throw new HttpStatus404NotFound("delete-action not found");
     }
