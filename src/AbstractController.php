@@ -25,6 +25,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractController
 {
     /**
@@ -42,7 +45,6 @@ abstract class AbstractController
         if(!isset($params['do'])) {
             return $response;
         }
-
 
         return $params['do'];
     }
