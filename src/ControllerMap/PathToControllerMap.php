@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace SFW2\Routing\ControllerMap;
 
-use SFW2\Exception\HttpExceptions\HttpMethodNotAllowed;
-use SFW2\Exception\HttpExceptions\HttpNotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus405MethodNotAllowed;
 
 class PathToControllerMap implements ControllerMapInterface
 {
@@ -45,12 +45,12 @@ class PathToControllerMap implements ControllerMapInterface
                 continue;
             }
             if(!isset($controllerData[$method])) {
-                throw new HttpMethodNotAllowed(array_keys($controllerData));
+                throw new HttpStatus405MethodNotAllowed(array_keys($controllerData));
             }
             array_shift($matches);
             return $controllerData[$method]->withActionParams($matches);
         }
 
-        throw new HttpNotFound();
+        throw new HttpStatus404NotFound();
     }
 }

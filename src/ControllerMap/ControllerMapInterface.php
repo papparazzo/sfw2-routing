@@ -21,8 +21,8 @@
 
 namespace SFW2\Routing\ControllerMap;
 
-use SFW2\Exception\HttpExceptions\HttpMethodNotAllowed;
-use SFW2\Exception\HttpExceptions\HttpNotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus405MethodNotAllowed;
 
 interface ControllerMapInterface
 {
@@ -30,8 +30,8 @@ interface ControllerMapInterface
      * @param  string $method
      * @param  string $path
      * @return ControllerData
-     * @throws HttpMethodNotAllowed
-     * @throws HttpNotFound
+     * @throws HttpStatus405MethodNotAllowed
+     * @throws HttpStatus404NotFound
      */
     public function getControllerRulesetByPath(string $method, string $path): ControllerData;
 }

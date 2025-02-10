@@ -33,7 +33,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SFW2\Exception\HttpExceptions\HttpException;
-use SFW2\Exception\HttpExceptions\HttpInternalServerError;
+use SFW2\Exception\HttpExceptions\Status5xx\HttpStatus500InternalServerError;
 use SFW2\Exception\SFW2Exception;
 use SFW2\Routing\Render\RenderInterface;
 use Throwable;
@@ -72,7 +72,7 @@ class Error implements MiddlewareInterface
     protected function convertException(Request $request, Throwable $exception): HttpException
     {
         if (!$exception instanceof HttpException) {
-            $exception = new HttpInternalServerError($exception->getMessage(), $exception);
+            $exception = new HttpStatus500InternalServerError($exception->getMessage(), $exception);
         }
 
         // TODO: Reformat!

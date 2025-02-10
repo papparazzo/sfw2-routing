@@ -33,7 +33,8 @@ class Offline implements MiddlewareInterface
      * @return ResponseInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws InvalidArgumentException|HttpServiceUnavailable
+     * @throws InvalidArgumentException
+     * @throws HttpStatus503ServiceUnavailable
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -53,7 +54,7 @@ class Offline implements MiddlewareInterface
         $tokenFromRequest = $request->getAttribute(self::BY_PASS_TOKEN_KEY);
 
         if ($tokenFromRequest != $tokenFromConfig) {
-            throw new HttpServiceUnavailable("website offline");
+            throw new HttpStatus503ServiceUnavailable("website offline");
         }
 
         $this->bypassTokenCache->set(self::BY_PASS_TOKEN_KEY, $tokenFromConfig);

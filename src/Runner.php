@@ -31,6 +31,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
+use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus405MethodNotAllowed;
 use SFW2\Exception\HttpExceptions\Status5xx\HttpStatus500InternalServerError;
 use SFW2\Routing\ControllerMap\ControllerMapInterface;
 use ReflectionException;
@@ -46,7 +47,7 @@ class Runner implements RequestHandlerInterface
 
     /**
      * @inheritDoc
-     * @throws     HttpStatus404NotFound|HttpStatus500InternalServerError
+     * @throws     HttpStatus404NotFound|HttpStatus500InternalServerError|HttpStatus405MethodNotAllowed
      * @throws     ContainerExceptionInterface
      * @throws     ReflectionException
      */
