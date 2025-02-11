@@ -63,10 +63,14 @@ class Runner implements RequestHandlerInterface
 
         $obj = $this->container->make($class, $ctrl->getAdditionalData());
 
+        /** @var ResponseInterface */
         return call_user_func([$obj, $action], $request, $response, $ctrl->getActionData());
     }
 
     /**
+     * @param class-string $class
+     * @param string $action
+     * @return void
      * @throws HttpStatus404NotFound
      * @throws HttpStatus500InternalServerError
      */
@@ -93,19 +97,20 @@ class Runner implements RequestHandlerInterface
         }
 
         foreach ($method->getParameters() as $param) {
+            $name = $param->getType()?->getName() ?? '';
             switch($param->getPosition()) {
                 case 0:
-                    if ($param->getType()->getName() != ServerRequestInterface::class) {
+                    if ($name != ServerRequestInterface::class) {
                         throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
                     }
                     break;
                 case 1:
-                    if ($param->getType()->getName() != ResponseInterface::class) {
+                    if ($name != ResponseInterface::class) {
                         throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
                     }
                     break;
                 case 2:
-                    if ($param->getType()->getName() != 'array') {
+                    if ($name != 'array') {
                         throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
                     }
                     break;
