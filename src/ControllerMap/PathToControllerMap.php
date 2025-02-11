@@ -40,6 +40,7 @@ class PathToControllerMap implements ControllerMapInterface
 
     public function getControllerRulesetByPath(string $method, string $path): ControllerData
     {
+        $matches = [];
         foreach($this->controllerMap as $pattern => $controllerData) {
             if(!preg_match("{^$pattern$}", $path, $matches)) {
                 continue;
@@ -48,6 +49,8 @@ class PathToControllerMap implements ControllerMapInterface
                 throw new HttpStatus405MethodNotAllowed(array_keys($controllerData));
             }
             array_shift($matches);
+
+            /** @var array<string, string> $matches */
             return $controllerData[$method]->withActionParams($matches);
         }
 

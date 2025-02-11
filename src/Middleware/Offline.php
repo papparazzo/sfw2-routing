@@ -70,6 +70,7 @@ class Offline implements MiddlewareInterface
         if (!$this->container->has('site.offlineBypassToken')) {
             return '';
         }
-        return (string)$this->container->get('site.offlineBypassToken');
+        /** @var string */
+        return $this->container->get('site.offlineBypassToken');
     }
 }
