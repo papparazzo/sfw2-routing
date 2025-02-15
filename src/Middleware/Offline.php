@@ -11,7 +11,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
-use SFW2\Exception\HttpExceptions\HttpServiceUnavailable;
+use SFW2\Exception\HttpExceptions\Status5xx\HttpStatus503ServiceUnavailable;
 
 class Offline implements MiddlewareInterface
 {
