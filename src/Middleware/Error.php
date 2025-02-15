@@ -126,13 +126,15 @@ class Error implements MiddlewareInterface
     protected function sendMail(Request $request, SFW2Exception $exception): void
     {
         $header = [
-            "From:{$this->config->get('project.default_sender_address')}",
+            /** @phpstan-ignore encapsedStringPart.nonString */
+            "From: {$this->config->get('project.default_sender_address')}",
             "MIME-Version: 1.0",
             "Content-Type:text/html; charset=utf-8",
             "Content-Transfer-Encoding: 8bit"
         ];
 
         mail(
+            /** @phpstan-ignore argument.type */
             to: $this->config->get('project.webmaster_mail_address'),
             subject: "Interner Fehler [ID: {$exception->getIdentifier()}]",
             message: nl2br($this->getContentString($request, $exception)),
