@@ -10,6 +10,7 @@
         "ext-fileinfo": "*",
 
         "sfw2/exception": "^2.0",
+        "sfw2/render": "^1.0",
 
         "psr/http-message": "^2.0",
         "psr/http-server-middleware": "^1.0.2",

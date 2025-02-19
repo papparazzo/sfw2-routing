@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b60e9c294705ac341a7a666b013b82f",
+    "content-hash": "32d1934d4d2c8fcfdde1a5caa2a5a466",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -727,21 +727,75 @@
                 "source": "https://github.com/papparazzo/sfw2-exception/tree/2.0.0"
             },
             "time": "2025-01-28T16:22:46+00:00"
+        },
+        {
+            "name": "sfw2/render",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/papparazzo/sfw2-render.git",
+                "reference": "52dfb6360da82feaa797e76d02c914dcb1ee4bee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/papparazzo/sfw2-render/zipball/52dfb6360da82feaa797e76d02c914dcb1ee4bee",
+                "reference": "52dfb6360da82feaa797e76d02c914dcb1ee4bee",
+                "shasum": ""
+            },
+            "require": {
+                "ext-fileinfo": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "^8.3",
+                "psr/http-message": "^2.0",
+                "salesforce/handlebars-php": "^3.0.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1.1",
+                "phpunit/phpunit": "12.0.1",
+                "squizlabs/php_codesniffer": "^3.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SFW2\\Render\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Stefan Paproth",
+                    "email": "pappi-@gmx.de"
+                }
+            ],
+            "description": "simple redering library for rendering response content on conditions (Content negotiation)",
+            "keywords": [
+                "micro-framework",
+                "sfw2"
+            ],
+            "support": {
+                "issues": "https://github.com/papparazzo/sfw2-render/issues",
+                "source": "https://github.com/papparazzo/sfw2-render/tree/1.0.1"
+            },
+            "time": "2025-02-09T06:25:18+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.2",
+            "version": "2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "7d08f569e582ade182a375c366cbd896eccadd3a"
+                "reference": "64ae44e48214f3deebdaeebf2694297a10a2bea9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7d08f569e582ade182a375c366cbd896eccadd3a",
-                "reference": "7d08f569e582ade182a375c366cbd896eccadd3a",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/64ae44e48214f3deebdaeebf2694297a10a2bea9",
+                "reference": "64ae44e48214f3deebdaeebf2694297a10a2bea9",
                 "shasum": ""
             },
             "require": {
@@ -786,7 +840,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-21T14:54:06+00:00"
+            "time": "2025-02-07T15:05:24+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
