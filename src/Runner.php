@@ -47,7 +47,7 @@ class Runner implements RequestHandlerInterface
 
     /**
      * @inheritDoc
-     * @throws     HttpStatus404NotFound|HttpStatus500InternalServerError|HttpStatus405MethodNotAllowed
+     * @throws     HttpStatus404NotFound | HttpStatus500InternalServerError | HttpStatus405MethodNotAllowed
      * @throws     ContainerExceptionInterface
      * @throws     ReflectionException
      */
@@ -78,7 +78,8 @@ class Runner implements RequestHandlerInterface
     {
         try {
             $refl = new ReflectionClass($class);
-        } catch(ReflectionException) {
+            /** @phpstan-ignore catch.neverThrown */
+        } catch (ReflectionException) {
             throw new HttpStatus404NotFound("class <$class> does not exists");
         }
 
