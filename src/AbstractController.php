@@ -31,6 +31,7 @@ use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
 abstract class AbstractController
 {
     /**
+     * @throws HttpStatus404NotFound
      * @deprecated
      * Consider to change to read as default action
      *
@@ -46,7 +47,14 @@ abstract class AbstractController
             return $response;
         }
 
-        return $params['do'];
+        $method = $params['do'];
+
+        if (!is_callable([$this, $method])) {
+            throw new HttpStatus404NotFound();
+        }
+
+        /** @var Response */
+        return $this->$method($request, $response);
     }
 
     public function read(Request $request, $response): Response
