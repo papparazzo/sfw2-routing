@@ -2,6 +2,15 @@
     "name": "sfw2/routing",
     "type": "library",
     "license": "AGPL-3.0-or-later",
+    "description": "simple routing library",
+    "keywords": ["sfw2", "micro-framework"],
+    "authors": [
+        {
+            "name": "Stefan Paproth",
+            "email": "pappi-@gmx.de"
+        }
+    ],
+
     "require": {
         "php": "^8.3",
 
