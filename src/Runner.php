@@ -113,17 +113,17 @@ class Runner implements RequestHandlerInterface
                     break;
                 case 1:
                     if ($name != ResponseInterface::class) {
-                        throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
+                        throw new HttpStatus500InternalServerError("param #1 <$action> has invalid signature");
                     }
                     break;
                 case 2:
                     if ($name != 'array') {
-                        throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
+                        throw new HttpStatus500InternalServerError("param #2 is not an array in method <$action>");
                     }
                     break;
 
                 default:
-                    throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
+                    throw new HttpStatus500InternalServerError("too many params in method <$action>");
             }
         }
     }
