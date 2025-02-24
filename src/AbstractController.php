@@ -57,7 +57,7 @@ abstract class AbstractController
         return $this->$method($request, $response);
     }
 
-    public function read(Request $request, $response): Response
+    public function read(Request $request, Response $response): Response
     {
         return $this->index($request, $response);
     }
