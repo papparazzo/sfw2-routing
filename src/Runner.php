@@ -98,7 +98,12 @@ class Runner implements RequestHandlerInterface
         }
 
         foreach ($method->getParameters() as $param) {
-            $name = $param->getType()?->getName() ?? '';
+            $type = $param->getType();
+            if (!($type instanceof ReflectionNamedType)) {
+                throw new HttpStatus500InternalServerError("method <$action> has invalid signature");
+            }
+
+            $name = $type->getName();
             switch($param->getPosition()) {
                 case 0:
                     if ($name != ServerRequestInterface::class) {
