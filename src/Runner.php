@@ -30,6 +30,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
+use ReflectionNamedType;
 use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus404NotFound;
 use SFW2\Exception\HttpExceptions\Status4xx\HttpStatus405MethodNotAllowed;
 use SFW2\Exception\HttpExceptions\Status5xx\HttpStatus500InternalServerError;
