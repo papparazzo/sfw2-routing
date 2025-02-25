@@ -64,6 +64,12 @@ class Runner implements RequestHandlerInterface
 
         $obj = $this->container->make($class, $ctrl->getAdditionalData());
 
+        $callable = [$obj, $action];
+
+        if (!is_callable($callable)) {
+            throw new HttpStatus500InternalServerError();
+        }
+
         /** @var ResponseInterface */
         return call_user_func([$obj, $action], $request, $response, $ctrl->getActionData());
     }
