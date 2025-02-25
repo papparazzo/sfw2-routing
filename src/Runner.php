@@ -71,7 +71,7 @@ class Runner implements RequestHandlerInterface
         }
 
         /** @var ResponseInterface */
-        return call_user_func([$obj, $action], $request, $response, $ctrl->getActionData());
+        return call_user_func($callable, $request, $response, $ctrl->getActionData());
     }
 
     /**
