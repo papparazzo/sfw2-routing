@@ -45,13 +45,17 @@ class PathToControllerMap implements ControllerMapInterface
             if(!preg_match("{^$pattern$}", $path, $matches)) {
                 continue;
             }
-            if(!isset($controllerData[$method])) {
-                throw new HttpStatus405MethodNotAllowed(array_keys($controllerData));
-            }
             array_shift($matches);
 
             /** @var array<string, string> $matches */
-            return $controllerData[$method]->withActionParams($matches);
+            if(isset($controllerData[$method])) {
+                return $controllerData[$method]->withActionParams($matches);
+            }
+
+            if(isset($controllerData['ANY'])) {
+                return $controllerData['ANY']->withActionParams($matches);
+            }
+            throw new HttpStatus405MethodNotAllowed(array_keys($controllerData));
         }
 
         throw new HttpStatus404NotFound();
