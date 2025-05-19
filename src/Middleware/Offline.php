@@ -30,7 +30,9 @@ class Offline implements MiddlewareInterface
     /**
      * @param  ServerRequestInterface  $request
      * @param  RequestHandlerInterface $handler
+     *
      * @return ResponseInterface
+     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws InvalidArgumentException

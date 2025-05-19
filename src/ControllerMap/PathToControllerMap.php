@@ -42,17 +42,17 @@ class PathToControllerMap implements ControllerMapInterface
     {
         $matches = [];
         foreach($this->controllerMap as $pattern => $controllerData) {
-            if(!preg_match("{^$pattern$}", $path, $matches)) {
+            if (!preg_match("{^$pattern$}", $path, $matches)) {
                 continue;
             }
             array_shift($matches);
 
             /** @var array<string, string> $matches */
-            if(isset($controllerData[$method])) {
+            if (isset($controllerData[$method])) {
                 return $controllerData[$method]->withActionParams($matches);
             }
 
-            if(isset($controllerData['ANY'])) {
+            if (isset($controllerData['ANY'])) {
                 return $controllerData['ANY']->withActionParams($matches);
             }
             throw new HttpStatus405MethodNotAllowed(array_keys($controllerData));

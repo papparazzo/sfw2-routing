@@ -43,7 +43,7 @@ abstract class AbstractController
     {
         $request->getUri();
         $params = $request->getQueryParams();
-        if(!isset($params['do'])) {
+        if (!isset($params['do'])) {
             return $response;
         }
 
